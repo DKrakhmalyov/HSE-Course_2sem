@@ -6,7 +6,12 @@
 
 template<typename T = void>
 class ArcGraph : public IGraph<T> {
+public:
     virtual void AddEdge(int from, int to, T &&element) {};
+
+    ArcGraph() {};
+
+    ArcGraph(IGraph<T> *_oth) {};
 
     virtual int VerticesCount() const { return 0; };
 

@@ -7,7 +7,12 @@
 
 template<typename T = void>
 class MatrixGraph : public IGraph<T> {
+public:
     virtual void AddEdge(int from, int to, T &&element) {};
+
+    MatrixGraph() {};
+
+    MatrixGraph(IGraph<T> *_oth) {};
 
     virtual int VerticesCount() const { return 0; };
 
