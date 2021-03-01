@@ -9,19 +9,102 @@ template<typename T = void>
 class PtrsGraph : public IPtrsGraph<T> {
 
 public:
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {};
+    PtrsGraph(): _vCount(0) {};
 
-    PtrsGraph() {};
+    ~PtrsGraph() {
+        for (size_t i = 0; i < _vCount; i++) {
+            delete nodes[i];
+        }
+    }
 
-    virtual int VerticesCount() const { return 0; };
+    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
+        from->addEdge(to, std::move(_obj));
+        if (_getPosition(from) == -1) {
+            nodes.push_back(from);
+        }
+        if (_getPosition(to) == -1) {
+            nodes.push_back(to);
+        }
+    };
 
-    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual int VerticesCount() const {
+        return _vCount;
+    };
 
-    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        vertices = vertex->next;
+    };
 
-    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        for (size_t i = 0; i < _vCount; i++) {
+            bool connected = false;
+            for (size_t j = 0; j < nodes[i]->next.size(); j++) {
+                if (nodes[i]->next[j] == vertex) {
+                    connected = true;
+                }
+            }
+            if (connected) {
+                vertices.push_back(nodes[i]);
+            }
+        }
+    };
 
-    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        bool *used = new bool[_vCount];
+        _dfs(vertex, vertices, used);
+        delete[] used;
+    };
+
+    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        bool *used = new bool[_vCount];
+        std::queue<Node<T>*> queue;
+        queue.push(vertex);
+        while (!queue.empty()) {
+            vertex = queue.front();
+            queue.pop();
+            vertices.push_back(vertex);
+            for (auto node : vertex->next) {
+                int to = _getPosition(node);
+                if (!used[to]) {
+                    queue.push(node);
+                    used[to] = true;
+                }
+            }
+        }
+        delete[] used;
+    };
+
+private:
+    size_t _vCount;
+
+    std::vector<Node<T>*> nodes;
+
+    int _getPosition(Node<T> *node) const {
+        size_t position;
+        bool contains = false;
+        for (size_t i = 0; i < _vCount; i++) {
+            if (nodes[i] == node) {
+                contains = true;
+                position = i;
+            }
+        }
+        if (!contains) {
+            return -1;
+        }
+        return position;
+    }
+
+    virtual void _dfs(Node<T> *vertex, std::vector<Node<T> *> &vertices, bool* used) const {
+        int pos = _getPosition(vertex);
+        used[pos] = true;
+        vertices.push_back(vertex);
+        for (auto node : vertex->next) {
+            int to = _getPosition(node);
+            if (!used[to]) {
+                _dfs(vertex, vertices, used);
+            }
+        }
+    };
 };
 
 #endif //HOMEWORK_1_PTRSGRAPH_H
