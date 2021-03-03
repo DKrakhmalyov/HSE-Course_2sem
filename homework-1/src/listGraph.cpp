@@ -39,7 +39,7 @@ void ListGraph<T>::AddEdge(int from, int to, T&& elem) {
     if (m_graph.find(to) == m_graph.end())
         m_graph[to] = std::vector <std::pair <int, T>>();
     
-    if (m_reversed_graph.find(to) == m_reversed_graph.end())
+    if (m_reversed_graph.find(from) == m_reversed_graph.end())
         m_reversed_graph[from] = std::vector <std::pair <int, T>>();
     
     m_graph[from].emplace_back(to, elem);
