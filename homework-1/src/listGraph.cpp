@@ -1,7 +1,5 @@
 #include "listGraph.h"
 
-#include <iostream>
-
 template <typename T>
 void ListGraph<T>::GetVertices(std::vector<int> &vertices) const {
     for (const std::pair<int, std::vector<std::pair<int, T>>> & i : m_graph)

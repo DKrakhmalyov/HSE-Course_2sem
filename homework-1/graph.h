@@ -1,4 +1,3 @@
-
 #ifndef HOMEWORK_1_GRAPH_H
 #define HOMEWORK_1_GRAPH_H
 
@@ -31,8 +30,6 @@ public:
     virtual void TransformToArc(std::vector<std::pair<T, std::pair<int, int>>> &graph) const = 0;
 
 private:
-
-    virtual void GetVertices(std::vector<int> &vertices) const = 0;
 
     virtual void DoDFS(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const = 0;
 
