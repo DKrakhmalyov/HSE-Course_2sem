@@ -16,8 +16,6 @@ public:
     virtual ~MatrixGraph() = default;
 
     virtual int VerticesCount() const;
-
-    virtual bool CheckEdge(int from, int to) const;
     
     virtual void AddEdge(int from, int to, T &&element);
 
@@ -33,6 +31,12 @@ public:
 
 private:
 
+    void AddVertex(int vertex);
+
+    void ResizeGraph(std::size_t new_size);
+    
+    virtual bool CheckEdge(int from, int to) const;
+
     virtual void ConstructFromArc(std::vector<std::pair<T, std::pair<int, int>>> &graph);
 
     virtual void DoDFS(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const;
@@ -42,8 +46,11 @@ private:
 
 public:
 
-    std::vector<std::vector<T>> m_graph;
+    std::vector<std::vector<std::pair<bool, T>>> m_graph;
 
+    std::unordered_map<int, int> m_vtx2idx;
+
+    std::vector<int> m_idx2vtx;
 };
 
 #endif //HOMEWORK_1_MATRIXGRAPH_H

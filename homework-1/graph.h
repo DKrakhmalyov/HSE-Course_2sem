@@ -13,11 +13,9 @@ public:
 
     virtual ~IGraph() = default;
 
-    virtual bool CheckEdge(int from, int to) const = 0;
+    virtual int VerticesCount() const = 0;
 
     virtual void AddEdge(int from, int to, T &&_obj) = 0;
-
-    virtual int VerticesCount() const = 0;
 
     virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const = 0;
 
@@ -30,6 +28,8 @@ public:
     virtual void TransformToArc(std::vector<std::pair<T, std::pair<int, int>>> &graph) const = 0;
 
 private:
+
+    virtual bool CheckEdge(int from, int to) const = 0;
 
     virtual void DoDFS(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const = 0;
 

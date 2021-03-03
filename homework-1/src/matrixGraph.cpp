@@ -1,17 +1,35 @@
 #include "matrixGraph.h"
 
 template <typename T>
-void MatrixGraph<T>::AddEdge(int from, int to, T&& element) {
-    if (std::max(from, to) >= MatrixGraph<T>::VerticesCount()) {
-        m_graph.resize(std::max(from, to) + 1);
-        for (std::size_t i = 0; i < static_cast<std::size_t>(MatrixGraph<T>::VerticesCount()); i++)
-            m_graph[i].resize(std::max(from, to) + 1);
-    }
+void MatrixGraph<T>::ResizeGraph(std::size_t new_size) {
+    m_graph.resize(new_size);
+    for (std::vector<std::pair<bool, T>> & i : m_graph)
+        i.resize(new_size);
+}
 
-    if (MatrixGraph<T>::CheckEdge(from, to))
+template <typename T>
+void MatrixGraph<T>::AddVertex(int vertex) {
+    if (m_vtx2idx.find(vertex) != m_vtx2idx.end())
         return;
 
-    m_graph[from][to] = element;
+    m_vtx2idx[vertex] = m_vtx2idx.size();
+    m_idx2vtx.push_back(vertex);
+
+    MatrixGraph<T>::ResizeGraph(MatrixGraph<T>::VerticesCount() + 1);
+}
+
+template <typename T>
+void MatrixGraph<T>::AddEdge(int from, int to, T&& element) {
+    if (m_vtx2idx.find(from) == m_vtx2idx.end())
+        MatrixGraph<T>::AddVertex(from);
+
+    if (m_vtx2idx.find(to) == m_vtx2idx.end())
+        MatrixGraph<T>::AddVertex(to);
+
+    if (MatrixGraph<T>::CheckEdge(m_vtx2idx.at(from), m_vtx2idx.at(to)))
+        return;
+
+    m_graph[m_vtx2idx.at(from)][m_vtx2idx.at(to)] = std::make_pair(true, element);
 }
     
 template <typename T>
@@ -21,29 +39,33 @@ int MatrixGraph<T>::VerticesCount() const {
 
 template <typename T>
 bool MatrixGraph<T>::CheckEdge(int from, int to) const {
-    if (std::max(from, to) >= MatrixGraph<T>::VerticesCount())
-        return false;
-    return bool(m_graph[from][to] != T());
+    return m_graph[from][to].first;
 }
 
 template <typename T>
 void MatrixGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) const {
+    if (m_vtx2idx.find(vertex) == m_vtx2idx.end())
+        return;
+    
     for (std::size_t to = 0; to < static_cast<std::size_t>(MatrixGraph<T>::VerticesCount()); to++)
-        if (MatrixGraph<T>::CheckEdge(vertex, static_cast<int>(to)))
-            vertices.push_back(to);
+        if (MatrixGraph<T>::CheckEdge(m_vtx2idx.at(vertex), to))
+            vertices.push_back(m_idx2vtx[to]);
 }
 
 template <typename T>
 void MatrixGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) const {
+    if (m_vtx2idx.find(vertex) == m_vtx2idx.end())
+        return;
+
     for (std::size_t from = 0; from < static_cast<std::size_t>(MatrixGraph<T>::VerticesCount()); from++)
-        if (MatrixGraph<T>::CheckEdge(from, vertex))
-            vertices.push_back(from);
+        if (MatrixGraph<T>::CheckEdge(from, m_vtx2idx.at(vertex)))
+            vertices.push_back(m_idx2vtx[from]);
 }
 
 template <typename T>
 void MatrixGraph<T>::DoDFS(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const {
     used[vertex] = true;
-    vertices.push_back(vertex);
+    vertices.push_back(m_idx2vtx[vertex]);
 
     for (std::size_t v = 0; v < static_cast<std::size_t>(MatrixGraph<T>::VerticesCount()); v++)
         if (MatrixGraph<T>::CheckEdge(vertex, v) && !used[v])
@@ -53,7 +75,7 @@ void MatrixGraph<T>::DoDFS(int vertex, std::vector<int> &vertices, std::vector<b
 template <typename T>
 void MatrixGraph<T>::DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
     std::vector<bool> used(MatrixGraph<T>::VerticesCount(), false);
-    MatrixGraph<T>::DoDFS(vertex, vertices, used);
+    MatrixGraph<T>::DoDFS(m_vtx2idx.at(vertex), vertices, used);
 }
 
 template <typename T>
@@ -65,7 +87,7 @@ void MatrixGraph<T>::DoBFS(int vertex, std::vector<int> &vertices, std::vector<b
 
     while (q.size()) {
         int current_vertex = q.front();
-        vertices.push_back(current_vertex);
+        vertices.push_back(m_idx2vtx[current_vertex]);
         q.pop();
 
         for (std::size_t v = 0; v < static_cast<std::size_t>(MatrixGraph<T>::VerticesCount()); v++)
@@ -79,7 +101,7 @@ void MatrixGraph<T>::DoBFS(int vertex, std::vector<int> &vertices, std::vector<b
 template <typename T>
 void MatrixGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
     std::vector<bool> used(MatrixGraph<T>::VerticesCount(), false);
-    MatrixGraph<T>::DoBFS(vertex, vertices, used);
+    MatrixGraph<T>::DoBFS(m_vtx2idx.at(vertex), vertices, used);
 }
 
 template <typename T>
@@ -87,13 +109,20 @@ void MatrixGraph<T>::TransformToArc(std::vector<std::pair<T, std::pair<int, int>
     for (std::size_t from = 0; from < static_cast<std::size_t>(MatrixGraph<T>::VerticesCount()); from++)
         for (std::size_t to = 0; to < static_cast<std::size_t>(MatrixGraph<T>::VerticesCount()); to++)
             if (MatrixGraph<T>::CheckEdge(from, to))
-                graph.push_back(std::make_pair(m_graph[from][to], std::make_pair(from, to)));
+                graph.push_back(std::make_pair(
+                    m_graph[from][to].second, 
+                    std::make_pair(m_idx2vtx[from], m_idx2vtx[to]))
+                );
 }
 
 template <typename T> 
 void MatrixGraph<T>::ConstructFromArc(std::vector<std::pair<T, std::pair<int, int>>> &graph) {
     for (std::pair<T, std::pair<int, int>> & arc : graph)
-        MatrixGraph<T>::AddEdge(arc.second.first, arc.second.second, std::move(arc.first));
+        MatrixGraph<T>::AddEdge(
+            m_vtx2idx[arc.second.first], 
+            m_vtx2idx[arc.second.second], 
+            std::move(arc.first)
+        );
 }
 
 template <typename T>

@@ -16,8 +16,6 @@ public:
 
     virtual int VerticesCount() const;
 
-    virtual bool CheckEdge(int from, int to) const;
-
     virtual void AddEdge(int from, int to, T &&element);
 
     virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const;
@@ -32,6 +30,8 @@ public:
 
 private:
 
+    virtual bool CheckEdge(int from, int to) const;
+    
     void GetVertices(std::vector<int> &vertices) const;
 
     virtual void ConstructFromArc(std::vector<std::pair<T, std::pair<int, int>>> &graph);
