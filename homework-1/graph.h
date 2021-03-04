@@ -32,20 +32,19 @@ private:
 
     virtual bool CheckEdge(int from, int to) const = 0;
 
+    virtual void ConstructFromArc(std::vector<std::pair<T, std::pair<int, int>>> &graph) = 0;
+
     virtual void DoDFS(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const = 0;
 
     virtual void DoBFS(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const = 0;
-
-    virtual void ConstructFromArc(std::vector<std::pair<T, std::pair<int, int>>> &graph) = 0;
 };
 
 template<typename T>
 class IPtrsGraph {
+
 public:
     
-    IPtrsGraph() = default;
-
-    virtual ~IPtrsGraph();
+    virtual ~IPtrsGraph() = default;
 
     virtual int VerticesCount() const = 0;
 
@@ -57,7 +56,13 @@ public:
 
     virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
 
-    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;    
+
+private:
+
+    virtual void DoDFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+
+    virtual void DoBFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
 };
 
 #endif //HOMEWORK_1_GRAPH_H
