@@ -49,7 +49,7 @@ TEST(MatrixGraph, Cycled) {
 
     std::vector<int> res;
     matGr->DeepFirstSearch(1, res);
-    EXPECT_EQ(*res.rend(), 3000);
+    EXPECT_EQ(res.back(), 3000);
     EXPECT_EQ(res.size(), 3);
 
     std::vector<int> res2;
