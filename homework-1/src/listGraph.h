@@ -30,9 +30,11 @@ public:
 
 private:
 
-    virtual bool CheckEdge(int from, int to) const;
-    
+    void AddVertex(int vertex);
+
     void GetVertices(std::vector<int> &vertices) const;
+
+    virtual bool CheckEdge(int from, int to) const;
 
     virtual void ConstructFromArc(std::vector<std::pair<T, std::pair<int, int>>> &graph);
 
@@ -43,8 +45,13 @@ private:
 
 private:
 
-    std::unordered_map<int, std::vector<std::pair<int, T>>> m_graph;
-    std::unordered_map<int, std::vector<std::pair<int, T>>> m_reversed_graph;
+    std::vector<int> m_idx2vtx;
+
+    std::unordered_map<int, int> m_vtx2idx;
+
+    std::vector<std::vector<std::pair<int, T>>> m_graph;
+
+    std::vector<std::vector<std::pair<int, T>>> m_reversed_graph;
 };
 
 #endif //HOMEWORK_1_LISTGRAPH_H

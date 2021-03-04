@@ -46,11 +46,11 @@ private:
 
 public:
 
-    std::vector<std::vector<std::pair<bool, T>>> m_graph;
+    std::vector<int> m_idx2vtx;
 
     std::unordered_map<int, int> m_vtx2idx;
 
-    std::vector<int> m_idx2vtx;
+    std::vector<std::vector<std::pair<bool, T>>> m_graph;
 };
 
 #endif //HOMEWORK_1_MATRIXGRAPH_H

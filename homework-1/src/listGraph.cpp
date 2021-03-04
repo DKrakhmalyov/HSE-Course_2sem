@@ -2,8 +2,7 @@
 
 template <typename T>
 void ListGraph<T>::GetVertices(std::vector<int> &vertices) const {
-    for (const std::pair<int, std::vector<std::pair<int, T>>> & i : m_graph)
-        vertices.push_back(i.first);
+    vertices = m_idx2vtx;
 }
 
 template <typename T>
@@ -18,8 +17,8 @@ void ListGraph<T>::TransformToArc(std::vector<std::pair<T, std::pair<int, int>>>
     ListGraph<T>::GetVertices(vertices);
 
     for (const int & vertex : vertices)
-        for (const std::pair<int, T> & to : m_graph.at(vertex))
-            graph.push_back(std::make_pair(to.second, std::make_pair(vertex, to.first)));
+        for (const std::pair<int, T> & to : m_graph[m_vtx2idx.at(vertex)])
+            graph.push_back(std::make_pair(to.second, std::make_pair(vertex, m_idx2vtx[to.first])));
 }
 
 template <typename T>
@@ -30,68 +29,80 @@ ListGraph<T>::ListGraph(IGraph<T> *_oth) {
 }
 
 template <typename T>
-void ListGraph<T>::AddEdge(int from, int to, T&& elem) {    
-    if (ListGraph<T>::CheckEdge(from, to))
+void ListGraph<T>::AddVertex(int vertex) {
+    if (m_vtx2idx.find(vertex) != m_vtx2idx.end())
         return;
 
-    if (m_graph.find(to) == m_graph.end())
-        m_graph[to] = std::vector <std::pair <int, T>>();
-    
-    if (m_reversed_graph.find(from) == m_reversed_graph.end())
-        m_reversed_graph[from] = std::vector <std::pair <int, T>>();
-    
-    m_graph[from].emplace_back(to, elem);
-    m_reversed_graph[to].emplace_back(from, elem);
+    m_vtx2idx[vertex] = m_vtx2idx.size();
+    m_idx2vtx.push_back(vertex);
+
+    m_graph.push_back(std::vector<std::pair<int, T>>());
+    m_reversed_graph.push_back(std::vector<std::pair<int, T>>());
+}
+
+template <typename T>
+void ListGraph<T>::AddEdge(int from, int to, T&& elem) {    
+    if (m_vtx2idx.find(from) == m_vtx2idx.end())
+        ListGraph<T>::AddVertex(from);
+
+    if (m_vtx2idx.find(to) == m_vtx2idx.end())
+        ListGraph<T>::AddVertex(to);
+
+    if (ListGraph<T>::CheckEdge(m_vtx2idx.at(from), m_vtx2idx.at(to)))
+        return;
+        
+    m_graph[m_vtx2idx.at(from)].emplace_back(m_vtx2idx.at(to), elem);
+    m_reversed_graph[m_vtx2idx.at(to)].emplace_back(m_vtx2idx.at(from), elem);
 }
 
 template <typename T>
 int ListGraph<T>::VerticesCount() const {
-    return static_cast<int>(m_graph.size());
+    return static_cast<int>(m_idx2vtx.size());
 }
 
 template <typename T>
 bool ListGraph<T>::CheckEdge(int from, int to) const {
-    if (m_graph.find(from) == m_graph.end())
-        return false;
-
-    bool hasEdge = 0;
-    for (const std::pair<int, T> & i : m_graph.at(from))
+    bool hasEdge = false;
+    for (const std::pair<int, T> & i : m_graph[from])
         hasEdge |= bool(i.first == to);
     return hasEdge;
 }
 
 template <typename T>
 void ListGraph<T>::GetNextVertices(int vertex, std::vector<int>& vertices) const {
-    if (m_graph.find(vertex) == m_graph.end())
+    if (m_vtx2idx.find(vertex) == m_vtx2idx.end())
         return;
 
-    for (const std::pair<int, T> & v : m_graph.at(vertex))
-        vertices.push_back(v.first);
+    for (const std::pair<int, T> & i : m_graph[m_vtx2idx.at(vertex)])
+        vertices.push_back(m_idx2vtx[i.first]);
 }
 
 template <typename T>
 void ListGraph<T>::GetPrevVertices(int vertex, std::vector<int>& vertices) const {
-    if (m_reversed_graph.find(vertex) == m_reversed_graph.end())
+    if (m_vtx2idx.find(vertex) == m_vtx2idx.end())
         return;
 
-    for (const std::pair<int, T> & v : m_reversed_graph.at(vertex))
-        vertices.push_back(v.first);
+    for (const std::pair<int, T> & i : m_reversed_graph[m_vtx2idx.at(vertex)])
+        vertices.push_back(m_idx2vtx[i.first]);
 }
 
 template <typename T>
 void ListGraph<T>::DoDFS(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const {
     used[vertex] = true;
-    vertices.push_back(vertex);
+    vertices.push_back(m_idx2vtx[vertex]);
 
-    for (const std::pair<int, T> &next : m_graph.at(vertex))
+    for (const std::pair<int, T> &next : m_graph[vertex])
         if (!used[next.first])
-            DoDFS(next.first, vertices, used);
+            ListGraph<T>::DoDFS(next.first, vertices, used);
 }
 
 template <typename T>
 void ListGraph<T>::DeepFirstSearch(int vertex, std::vector<int>& vertices) const {
+    if (m_vtx2idx.find(vertex) == m_vtx2idx.end())
+        return;
+
     std::vector <bool> used(ListGraph<T>::VerticesCount(), false);
-    ListGraph<T>::DoDFS(vertex, vertices, used);
+    ListGraph<T>::DoDFS(m_vtx2idx.at(vertex), vertices, used);
 }
 
 template<typename T>
@@ -103,7 +114,7 @@ void ListGraph<T>::DoBFS(int vertex, std::vector<int> &vertices, std::vector <bo
 
     while (q.size()) {
         int current_vertex = q.front();
-        vertices.push_back(current_vertex);
+        vertices.push_back(m_idx2vtx[current_vertex]);
         q.pop();
 
         for (const std::pair<int, T> &next : m_graph.at(current_vertex))
@@ -116,6 +127,9 @@ void ListGraph<T>::DoBFS(int vertex, std::vector<int> &vertices, std::vector <bo
 
 template <typename T>
 void ListGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
+    if (m_vtx2idx.find(vertex) == m_vtx2idx.end())
+        return;
+
     std::vector <bool> used(ListGraph<T>::VerticesCount(), false);
-    ListGraph<T>::DoBFS(vertex, vertices, used);
+    ListGraph<T>::DoBFS(m_vtx2idx.at(vertex), vertices, used);
 }

@@ -74,6 +74,9 @@ void MatrixGraph<T>::DoDFS(int vertex, std::vector<int> &vertices, std::vector<b
 
 template <typename T>
 void MatrixGraph<T>::DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
+    if (m_vtx2idx.find(vertex) == m_vtx2idx.end())
+        return;
+
     std::vector<bool> used(MatrixGraph<T>::VerticesCount(), false);
     MatrixGraph<T>::DoDFS(m_vtx2idx.at(vertex), vertices, used);
 }
@@ -100,6 +103,9 @@ void MatrixGraph<T>::DoBFS(int vertex, std::vector<int> &vertices, std::vector<b
 
 template <typename T>
 void MatrixGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
+    if (m_vtx2idx.find(vertex) == m_vtx2idx.end())
+        return;
+
     std::vector<bool> used(MatrixGraph<T>::VerticesCount(), false);
     MatrixGraph<T>::DoBFS(m_vtx2idx.at(vertex), vertices, used);
 }
@@ -117,12 +123,13 @@ void MatrixGraph<T>::TransformToArc(std::vector<std::pair<T, std::pair<int, int>
 
 template <typename T> 
 void MatrixGraph<T>::ConstructFromArc(std::vector<std::pair<T, std::pair<int, int>>> &graph) {
-    for (std::pair<T, std::pair<int, int>> & arc : graph)
+    for (std::pair<T, std::pair<int, int>> & arc : graph) {
         MatrixGraph<T>::AddEdge(
-            m_vtx2idx[arc.second.first], 
-            m_vtx2idx[arc.second.second], 
+            arc.second.first, 
+            arc.second.second, 
             std::move(arc.first)
         );
+    }
 }
 
 template <typename T>

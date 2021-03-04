@@ -1,6 +1,7 @@
 #ifndef HOMEWORK_1_GRAPH_H
 #define HOMEWORK_1_GRAPH_H
 
+#include <set>
 #include <queue>
 #include <vector>
 #include <unordered_map>
@@ -38,16 +39,17 @@ private:
     virtual void ConstructFromArc(std::vector<std::pair<T, std::pair<int, int>>> &graph) = 0;
 };
 
-template<typename T = void>
+template<typename T>
 class IPtrsGraph {
 public:
+    
+    IPtrsGraph() = default;
+
     virtual ~IPtrsGraph();
 
-    IPtrsGraph();
+    virtual int VerticesCount() const = 0;
 
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) = 0;
-
-    virtual int VerticesCount() const = 0;
 
     virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
 
