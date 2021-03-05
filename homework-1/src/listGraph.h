@@ -1,29 +1,78 @@
-
 #ifndef HOMEWORK_1_LISTGRAPH_H
 #define HOMEWORK_1_LISTGRAPH_H
 
+#include <list>
+#include <map>
+#include <queue>
+#include <utility>
+
 #include "../graph.h"
+#include "graph_builder.hpp"
 
-
-template<typename T>
+template <typename T>
 class ListGraph : public IGraph<T> {
-public:
-    virtual void AddEdge(int from, int to, T &&element) {};
+ public:
+  void AddEdge(int from, int to, T &&element) override {
+    m_edges[from].emplace_back(to, element);
+    if (m_edges.find(to) == m_edges.end()) {
+      m_edges.emplace(to, std::list<std::pair<int, T>>{});
+    }
+  };
 
-    ListGraph() {};
+  ListGraph() = default;
 
-    ListGraph(IGraph<T> *_oth) {};
+  ListGraph(IGraph<T> *other) {
+    ConcreteGraphBuilder<ListGraph> builder;
+    other->BuildCopy(builder);
 
-    virtual int VerticesCount() const { return 0; };
+    auto ptr = builder.Build().release();
+    ListGraph(std::move(*ptr));
+    delete ptr;
+  }
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {};
+  ListGraph(ListGraph &&other) : m_edges(std::move(other.m_edges)) {}
 
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {};
+  int VerticesCount() const override {
+    return static_cast<int>(m_edges.size());
+  };
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {};
+  void GetNextVertices(int vertex, std::vector<int> &vertices) const override {
+    vertices.clear();
+    auto it = m_edges.find(vertex);
+    if (it == m_edges.end()) {
+      return;
+    }
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {};
+    vertices.reserve(it->second.size());
+    for (const auto &t : it->second) {
+      vertices.push_back(t.first);
+    }
+  };
+
+  void GetPrevVertices(int vertex, std::vector<int> &vertices) const override {
+    vertices.clear();
+    for (const auto &node : m_edges) {
+      for (const auto &edge : node.second) {
+        if (edge.first == vertex) {
+          vertices.push_back(node.first);
+        }
+      }
+    }
+  };
+
+  void BuildCopy(IGraphBuilder<T> &builder) override {
+    builder.Init();
+    for (auto &[vertex, edges] : m_edges) {
+      for (auto &edge : edges) {
+        builder.AddEdge(vertex, edge.first, T(edge.second));
+      }
+    }
+  }
+
+  ~ListGraph() override = default;
+
+ private:
+  std::map<int, std::list<std::pair<int, T>>> m_edges;
 };
 
-
-#endif //HOMEWORK_1_LISTGRAPH_H
+#endif  // HOMEWORK_1_LISTGRAPH_H
