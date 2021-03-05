@@ -11,6 +11,14 @@ public:
 
     MatrixGraph() = default;
 
+    MatrixGraph(const MatrixGraph<T> &other) = default;
+
+    MatrixGraph(MatrixGraph<T> &&other) = default;
+
+    MatrixGraph<T>& operator=(const MatrixGraph<T> &other);
+
+    MatrixGraph<T>& operator=(MatrixGraph<T> &&other);
+
     MatrixGraph(IGraph<T> *_oth);
 
     virtual ~MatrixGraph() = default;

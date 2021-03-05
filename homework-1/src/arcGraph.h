@@ -11,6 +11,14 @@ public:
 
     ArcGraph() = default;
 
+    ArcGraph(const ArcGraph<T> &other) = default;
+
+    ArcGraph(ArcGraph<T> &&other) = default;
+
+    ArcGraph<T>& operator=(const ArcGraph<T> &other);
+
+    ArcGraph<T>& operator=(ArcGraph<T> &&other);
+
     ArcGraph(IGraph<T> *_oth);
 
     virtual ~ArcGraph() = default;

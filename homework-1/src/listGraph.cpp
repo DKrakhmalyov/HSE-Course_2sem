@@ -1,6 +1,30 @@
 #include "listGraph.h"
 
 template<typename T>
+ListGraph<T>& ListGraph<T>::operator=(const ListGraph<T> &other) {
+    if (&other == this)
+        return *this;
+
+    m_graph = other.m_graph;
+    m_idx2vtx = other.m_idx2vtx;
+    m_vtx2idx = other.m_vtx2idx;
+    m_reversed_graph = other.m_reversed_graph;
+    return *this;
+}
+
+template<typename T>
+ListGraph<T>& ListGraph<T>::operator=(ListGraph<T> &&other) {
+    if (&other == this)
+        return *this;
+
+    m_graph = std::move(other.m_graph);
+    m_idx2vtx = std::move(other.m_idx2vtx);
+    m_vtx2idx = std::move(other.m_vtx2idx);
+    m_reversed_graph = std::move(other.m_reversed_graph);
+    return *this;
+}
+
+template<typename T>
 ListGraph<T>::ListGraph(IGraph<T> *_oth) {
     std::vector<std::pair<T, std::pair<int, int>>> arcGraph;
     _oth->TransformToArc(arcGraph);

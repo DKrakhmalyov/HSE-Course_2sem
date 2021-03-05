@@ -10,6 +10,14 @@ public:
 
     ListGraph() = default;
 
+    ListGraph(const ListGraph<T> &other) = default;
+
+    ListGraph(ListGraph<T> &&other) = default;
+
+    ListGraph<T>& operator=(const ListGraph<T> &other);
+
+    ListGraph<T>& operator=(ListGraph<T> &&other);
+
     ListGraph(IGraph<T> *_oth);
 
     virtual ~ListGraph() = default;

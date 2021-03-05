@@ -1,6 +1,28 @@
 #include "matrixGraph.h"
 
 template<typename T>
+MatrixGraph<T>& MatrixGraph<T>::operator=(const MatrixGraph<T> &other) {
+    if (&other == this)
+        return *this;
+
+    m_graph = other.m_graph;
+    m_idx2vtx = other.m_idx2vtx;
+    m_vtx2idx = other.m_vtx2idx;
+    return *this;
+}
+
+template<typename T>
+MatrixGraph<T>& MatrixGraph<T>::operator=(MatrixGraph<T> &&other) {
+    if (&other == this)
+        return *this;
+
+    m_graph = std::move(other.m_graph);
+    m_idx2vtx = std::move(other.m_idx2vtx);
+    m_vtx2idx = std::move(other.m_vtx2idx);
+    return *this;
+}
+
+template<typename T>
 MatrixGraph<T>::MatrixGraph(IGraph<T> *_oth) {
     std::vector<std::pair<T, std::pair<int, int>>> arcGraph;
     _oth->TransformToArc(arcGraph);

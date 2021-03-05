@@ -1,11 +1,27 @@
 #include "ptrsGraph.h"
 
-template <typename T>
+template<typename T>
+PtrsGraph<T>& PtrsGraph<T>::operator=(const PtrsGraph<T> &other) {
+    if (&other == this)
+        return *this;
+
+    m_vertices = other.m_vertices;
+}
+
+template<typename T>
+PtrsGraph<T>& PtrsGraph<T>::operator=(PtrsGraph<T> &&other) {
+    if (&other == this)
+        return *this;
+
+    m_vertices = std::move(other.m_vertices);
+}
+
+template<typename T>
 int PtrsGraph<T>::VerticesCount() const {
     return static_cast<int>(m_vertices.size());
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::AddVertex(Node<T> *vertex) {
     if (m_vertices.find(vertex) != m_vertices.end())
         return;
@@ -13,7 +29,7 @@ void PtrsGraph<T>::AddVertex(Node<T> *vertex) {
     m_vertices.insert(vertex);
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::AddEdge(Node<T> *from, Node<T> *to, T &&element) {
     if (from->CheckEdgeTo(to))
         return;
@@ -28,7 +44,7 @@ void PtrsGraph<T>::AddEdge(Node<T> *from, Node<T> *to, T &&element) {
     from->AddNextVertex(to, std::move(element));
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     if (m_vertices.find(vertex) == m_vertices.end())
         return;
@@ -36,7 +52,7 @@ void PtrsGraph<T>::GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vert
     vertex->GetNextVertices(vertices);
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     if (m_vertices.find(vertex) == m_vertices.end())
         return;
@@ -46,7 +62,7 @@ void PtrsGraph<T>::GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vert
             vertices.push_back(v);
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::DoDFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     vertex->Mark();
     vertices.push_back(vertex);
@@ -59,7 +75,7 @@ void PtrsGraph<T>::DoDFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) cons
             DoDFS(v, vertices);
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     if (m_vertices.find(vertex) == m_vertices.end())
         return;
@@ -68,7 +84,7 @@ void PtrsGraph<T>::DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vert
     PtrsGraph<T>::UnmarkVertices();
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::DoBFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     vertex->Mark();
 
@@ -91,7 +107,7 @@ void PtrsGraph<T>::DoBFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) cons
     }
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     if (m_vertices.find(vertex) == m_vertices.end())
         return;
@@ -100,7 +116,7 @@ void PtrsGraph<T>::BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &v
     PtrsGraph<T>::UnmarkVertices();
 }
 
-template <typename T>
+template<typename T>
 void PtrsGraph<T>::UnmarkVertices() const {
     for (Node<T> *vertex : m_vertices)
         vertex->Unmark();

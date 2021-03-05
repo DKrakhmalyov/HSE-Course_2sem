@@ -11,7 +11,15 @@ class PtrsGraph : public IPtrsGraph<T> {
 
 public:
 
-    PtrsGraph() = default;
+    PtrsGraph() = default;    
+
+    PtrsGraph(const PtrsGraph<T> &other) = default;
+
+    PtrsGraph(PtrsGraph<T> &&other) = default;
+
+    PtrsGraph<T>& operator=(const PtrsGraph<T> &other);
+
+    PtrsGraph<T>& operator=(PtrsGraph<T> &&other);
 
     virtual ~PtrsGraph() = default;
 
