@@ -1,27 +1,100 @@
 
 #ifndef HOMEWORK_1_PTRSGRAPH_H
 #define HOMEWORK_1_PTRSGRAPH_H
+#include <map>
+#include <queue>
+#include <vector>
 
-#include "node.h"
 #include "../graph.h"
+#include "node.h"
 
-template<typename T = void>
+template <typename T = void>
 class PtrsGraph : public IPtrsGraph<T> {
+ public:
+  PtrsGraph() = default;
+  ~PtrsGraph() override {
+    for (auto node : m_nodes) {
+      delete node;
+    }
+  }
 
-public:
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {};
+  void AddEdge(Node<T> *from, Node<T> *to, T &&weight) override {
+    from->edges.emplace_back(to, weight);
+    m_nodes.insert(from);
+    m_nodes.insert(to);
+  }
 
-    PtrsGraph() {};
+  int VerticesCount() const override { return m_nodes.size(); };
 
-    virtual int VerticesCount() const { return 0; };
+  void GetNextVertices(Node<T> *vertex,
+                       std::vector<Node<T> *> &vertices) const override {
+    vertices.clear();
+    for (auto &[node, _] : vertex->edges) {
+      vertices.emplace_back(node);
+    }
+  };
 
-    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+  void GetPrevVertices(Node<T> *vertex,
+                       std::vector<Node<T> *> &vertices) const override {
+    vertices.clear();
+    for (auto &node : m_nodes) {
+      auto it = std::find_if(node->edges.begin(), node->edges.end(),
+                          [vertex](const std::pair<Node<T> *, T> &arg) {
+                            return arg.first == vertex;
+                          });
+      if (it != node->edges.end()) {
+        vertices.emplace_back(node);
+      }
+    }
+  };
 
-    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+  void DeepFirstSearch(Node<T> *vertex,
+                       std::vector<Node<T> *> &vertices) const override {
+    std::set<Node<T> *> used;
+    DeepFirstSearchImpl(vertex, vertices, used);
+  };
 
-    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+  void BreadthFirstSearch(Node<T> *vertex,
+                          std::vector<Node<T> *> &vertices) const override {
+    vertices.clear();
+    BreadthFirstSearchImpl(vertex, vertices);
+  };
 
-    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+ private:
+  void DeepFirstSearchImpl(Node<T> *vertex, std::vector<Node<T> *> &vertices,
+                           std::set<Node<T> *> &used) const {
+    used.insert(vertex);
+    for (auto &edge : vertex->edges) {
+      if (used.find(edge.first) == used.end()) {
+        DeepFirstSearchImpl(edge.first, vertices, used);
+      }
+    }
+
+    vertices.push_back(vertex);
+  }
+
+  void BreadthFirstSearchImpl(Node<T> *vertex,
+                              std::vector<Node<T> *> &vertices) const {
+    std::set<Node<T> *> used;
+    std::queue<Node<T> *> q;
+
+    q.push(vertex);
+    while (!q.empty()) {
+      vertex = q.front();
+      q.pop();
+      used.insert(vertex);
+      vertices.push_back(vertex);
+
+      for (const auto &edge : vertex->edges) {
+        if (used.find(edge.first) == used.end()) {
+          q.push(edge.first);
+        }
+      }
+    }
+  }
+
+ private:
+  std::set<Node<T> *> m_nodes;
 };
 
-#endif //HOMEWORK_1_PTRSGRAPH_H
+#endif  // HOMEWORK_1_PTRSGRAPH_H

@@ -2,8 +2,12 @@
 #ifndef HOMEWORK_1_NODE_H
 #define HOMEWORK_1_NODE_H
 
-template<typename T>
-class Node {
+#include <utility>
+#include <list>
+
+template <typename T>
+struct Node {
+  std::list<std::pair<Node<T>*, T>> edges;
 };
 
-#endif //HOMEWORK_1_NODE_H
+#endif  // HOMEWORK_1_NODE_H
