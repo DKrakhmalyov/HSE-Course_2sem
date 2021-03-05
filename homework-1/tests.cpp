@@ -3,9 +3,16 @@
 #include "gtest/gtest.h"
 
 #include "src/listGraph.h"
+#include "src/listGraph.cpp"
+
 #include "src/matrixGraph.h"
+#include "src/matrixGraph.cpp"
+
 #include "src/arcGraph.h"
+#include "src/arcGraph.cpp"
+
 #include "src/ptrsGraph.h"
+#include "src/ptrsGraph.cpp"
 
 TEST(IGraph, Creating) {
     IGraph<int> *listGr = new ListGraph<int>;
@@ -19,7 +26,7 @@ TEST(IGraph, Creating) {
     delete pGraph;
 }
 
-// Simple linear graph
+//Simple linear graph
 // 1 --> 2 --> 3 -->4
 TEST(ListGraph, Simple) {
     std::shared_ptr<IGraph<int>> listGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<ListGraph<int>>());
@@ -29,7 +36,7 @@ TEST(ListGraph, Simple) {
 
     std::vector<int> res;
     listGr->DeepFirstSearch(1, res);
-    EXPECT_EQ(*res.rend(), 4);
+    EXPECT_EQ(*res.rbegin(), 4);
     EXPECT_EQ(res.size(), 4);
 
     std::vector<int> res2;
@@ -49,11 +56,11 @@ TEST(MatrixGraph, Cycled) {
 
     std::vector<int> res;
     matGr->DeepFirstSearch(1, res);
-    EXPECT_EQ(*res.rend(), 3000);
+    EXPECT_EQ(*res.rbegin(), 3000);
     EXPECT_EQ(res.size(), 3);
 
     std::vector<int> res2;
-    matGr->GetPrevVertices(3, res2);
+    matGr->GetPrevVertices(3000, res2);
     EXPECT_EQ(res2[0], 2);
     EXPECT_EQ(res2.size(), 1);
 }
@@ -92,15 +99,19 @@ TEST(PtrsGraph, Cycled) {
     ptrGr->AddEdge(second, third, 20);
     ptrGr->AddEdge(third, first, 30);
 
+
     std::vector<Node<int> *> res;
     ptrGr->DeepFirstSearch(first, res);
-    EXPECT_EQ(*res.rend(), third);
+    EXPECT_EQ(*res.rbegin(), third);
     EXPECT_EQ(res.size(), 3);
 
     std::vector<Node<int> *> res2;
     ptrGr->GetPrevVertices(third, res2);
-    EXPECT_EQ(res2[0], first);
+    EXPECT_EQ(res2[0], second);
 
+    delete first;
+    delete second;
+    delete third;
     delete ptrGr;
 }
 
