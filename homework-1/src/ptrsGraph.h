@@ -11,20 +11,11 @@ class PtrsGraph : public IPtrsGraph<T>
 public:
     PtrsGraph(){};
 
-    virtual ~PtrsGraph()
-    {
-        for (auto node : nodes)
-        {
-            delete node;
-            node = nullptr;
-        }
-    }
-
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj)
+    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&weight)
     {
         nodes.insert(from);
         nodes.insert(to);
-        from->addEgde(to, std::move(_obj));
+        from->addEgde(to, std::move(weight));
     };
 
     virtual int VerticesCount() const
@@ -47,7 +38,6 @@ public:
 
 private:
     std::unordered_set<Node<T> *> nodes;
-    std::unordered_set<int> usedVertices;
 };
 
 #endif //HOMEWORK_1_PTRSGRAPH_H

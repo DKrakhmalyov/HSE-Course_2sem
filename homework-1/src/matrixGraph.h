@@ -10,23 +10,23 @@ class MatrixGraph : public IGraph<T>
 public:
     MatrixGraph(){};
 
-    MatrixGraph(IGraph<T> *_oth){};
+    MatrixGraph(IGraph<T> *other){};
 
     virtual void AddEdge(int from, int to, T &&element)
     {
         existingVertices.insert(from);
         existingVertices.insert(to);
-        matrix[from][to] = matrix[to][from] = element;
+        matrix[from][to] = element;
     };
 
     virtual void GetEdges(std::vector<std::pair<int, int>> &edges, std::vector<T> &weights) const
     {
-        for (auto iter : matrix)
+        for (auto [from, fromEdges] : matrix)
         {
-            for (auto edge : iter.second)
+            for (auto [to, weight] : fromEdges)
             {
-                edges.push_back({iter.first, edge.first});
-                weights.push_back(edge.second);
+                edges.push_back({from, to});
+                weights.push_back(weight);
             }
         }
     };

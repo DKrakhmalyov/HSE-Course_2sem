@@ -6,10 +6,10 @@ template <typename T>
 class Node
 {
 public:
-    void addEgde(Node<T> *node, T &&obj)
+    void addEgde(Node<T> *node, T &&weight)
     {
         edges.push_back(node);
-        weights.push_back(obj);
+        weights.push_back(weight);
     }
 
     const std::vector<Node<T> *> &getEdges() const

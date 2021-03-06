@@ -16,19 +16,19 @@ class IGraph
 public:
     IGraph(){};
 
-    IGraph(IGraph *_oth)
+    IGraph(IGraph *other)
     {
         std::vector<std::pair<int, T>> edges;
         std::vector<T> weights;
-        _oth->GetEdges(edges, weights);
+        other->GetEdges(edges, weights);
 
         for (int i = 0; i < edges.size(); i++)
             AddEdge(edges[i].first, edges[i].second, weights[i]);
     };
-    
+
     virtual ~IGraph() {}
 
-    virtual void AddEdge(int from, int to, T &&_obj) = 0;
+    virtual void AddEdge(int from, int to, T &&weight) = 0;
 
     virtual void GetEdges(std::vector<std::pair<int, int>> &edges, std::vector<T> &weights) const = 0;
 
@@ -91,7 +91,7 @@ public:
 
     virtual ~IPtrsGraph() {}
 
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) = 0;
+    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&weight) = 0;
 
     virtual int VerticesCount() const = 0;
 

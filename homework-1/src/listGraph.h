@@ -8,9 +8,9 @@ template <typename T = void>
 class ListGraph : public IGraph<T>
 {
 public:
-    ListGraph() {};
+    ListGraph(){};
 
-    ListGraph(IGraph<T> *_oth) {};
+    ListGraph(IGraph<T> *other){};
 
     virtual void AddEdge(int from, int to, T &&element)
     {
@@ -20,12 +20,12 @@ public:
 
     virtual void GetEdges(std::vector<std::pair<int, int>> &edges, std::vector<T> &weights) const
     {
-        for (auto iter : nextVertices)
+        for (auto [from, fromEdges] : nextVertices)
         {
-            for (auto edge : iter.second)
+            for (auto [to, weight] : fromEdges)
             {
-                edges.push_back({iter.first, edge.first});
-                weights.push_back(edge.second);
+                edges.push_back({from, to});
+                weights.push_back(weight);
             }
         }
     };
