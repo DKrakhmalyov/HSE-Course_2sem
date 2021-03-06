@@ -4,24 +4,48 @@
 
 #include "../graph.h"
 
-template<typename T = void>
-class ArcGraph : public IGraph<T> {
+template <typename T = void>
+class ArcGraph : public IGraph<T>
+{
 public:
-    virtual void AddEdge(int from, int to, T &&element) {};
+    ArcGraph(){};
 
-    ArcGraph() {};
+    ArcGraph(IGraph<T> *_oth){};
 
-    ArcGraph(IGraph<T> *_oth) {};
+    virtual void AddEdge(int from, int to, T &&element)
+    {
+        arcs.push_back({from, to});
+        weights.push_back(element);
+    };
 
-    virtual int VerticesCount() const { return 0; };
+    virtual void GetEdges(std::vector<std::pair<int, int>> &edges, std::vector<T> &weights) const
+    {
+        edges = arcs;
+        weights = this->weights;
+    };
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {};
+    virtual int VerticesCount() const
+    {
+        return arcs.size();
+    };
 
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {};
+    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const
+    {
+        for (auto arc : arcs)
+            if (arc.first == vertex)
+                vertices.push_back(arc.second);
+    };
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {};
+    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const
+    {
+        for (auto arc : arcs)
+            if (arc.second == vertex)
+                vertices.push_back(arc.first);
+    };
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {};
+private:
+    std::vector<std::pair<int, int>> arcs;
+    std::vector<T> weights;
 };
 
 #endif //HOMEWORK_1_ARCGRAPH_H

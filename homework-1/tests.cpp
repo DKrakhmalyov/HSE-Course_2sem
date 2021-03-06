@@ -7,7 +7,8 @@
 #include "src/arcGraph.h"
 #include "src/ptrsGraph.h"
 
-TEST(IGraph, Creating) {
+TEST(IGraph, Creating)
+{
     IGraph<int> *listGr = new ListGraph<int>;
     IGraph<int> *arcGr = new ArcGraph<int>;
     IGraph<int> *matGr = new MatrixGraph<int>;
@@ -21,7 +22,8 @@ TEST(IGraph, Creating) {
 
 // Simple linear graph
 // 1 --> 2 --> 3 --> 4
-TEST(ListGraph, Simple) {
+TEST(ListGraph, Simple)
+{
     std::shared_ptr<IGraph<int>> listGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<ListGraph<int>>());
     listGr->AddEdge(1, 2, 10);
     listGr->AddEdge(2, 3, 20);
@@ -36,12 +38,12 @@ TEST(ListGraph, Simple) {
     listGr->GetPrevVertices(3, res2);
     EXPECT_EQ(res2.front(), 2);
     EXPECT_EQ(res2.size(), 1);
-
 }
 
 // Cycled graph
 // 1 --> 2 --> 3000 --> 1
-TEST(MatrixGraph, Cycled) {
+TEST(MatrixGraph, Cycled)
+{
     std::shared_ptr<IGraph<int>> matGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<MatrixGraph<int>>());
     matGr->AddEdge(1, 2, 10);
     matGr->AddEdge(2, 3000, 20);
@@ -64,7 +66,8 @@ TEST(MatrixGraph, Cycled) {
 //     -> 4 --> 5
 //        \
 //          ->6
-TEST(ArcGraph, Cycled) {
+TEST(ArcGraph, Cycled)
+{
     std::shared_ptr<IGraph<int>> arcGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<ArcGraph<int>>());
     arcGr->AddEdge(1, 2, 10);
     arcGr->AddEdge(2, 3, 20);
@@ -83,9 +86,10 @@ TEST(ArcGraph, Cycled) {
 
 // Cycled graph
 // 1 --> 2 --> 3 --> 1
-TEST(PtrsGraph, Cycled) {
+TEST(PtrsGraph, Cycled)
+{
     std::shared_ptr<IPtrsGraph<int>> ptrGr = std::dynamic_pointer_cast<IPtrsGraph<int>>(
-            std::make_shared<PtrsGraph<int>>());
+        std::make_shared<PtrsGraph<int>>());
     Node<int> *first = new Node<int>;
     Node<int> *second = new Node<int>;
     Node<int> *third = new Node<int>;
@@ -100,7 +104,7 @@ TEST(PtrsGraph, Cycled) {
 
     std::vector<Node<int> *> res2;
     ptrGr->GetPrevVertices(third, res2);
-    EXPECT_EQ(res2[0], first);
+    EXPECT_EQ(res2[0], second);
 
     // Возможно, лучше не удалять объекты вершин, а передавать владение сразу графу
     // Решите точно в реализации и удалите строки, если что
@@ -111,7 +115,8 @@ TEST(PtrsGraph, Cycled) {
 
 // Cycled graph
 // 1 --> 2 --> 3000 --> 1
-TEST(IGraph, Copying) {
+TEST(IGraph, Copying)
+{
     IGraph<int> *matGr = new MatrixGraph<int>;
     matGr->AddEdge(1, 2, 10);
     matGr->AddEdge(2, 3000, 20);
@@ -127,7 +132,8 @@ TEST(IGraph, Copying) {
     delete mat2Gr;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

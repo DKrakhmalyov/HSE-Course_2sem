@@ -5,23 +5,49 @@
 #include "node.h"
 #include "../graph.h"
 
-template<typename T = void>
-class PtrsGraph : public IPtrsGraph<T> {
-
+template <typename T = void>
+class PtrsGraph : public IPtrsGraph<T>
+{
 public:
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {};
+    PtrsGraph(){};
 
-    PtrsGraph() {};
+    virtual ~PtrsGraph()
+    {
+        for (auto node : nodes)
+        {
+            delete node;
+            node = nullptr;
+        }
+    }
 
-    virtual int VerticesCount() const { return 0; };
+    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj)
+    {
+        nodes.insert(from);
+        nodes.insert(to);
+        from->addEgde(to, std::move(_obj));
+    };
 
-    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual int VerticesCount() const
+    {
+        return nodes.size();
+    };
 
-    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const
+    {
+        vertices = vertex->getEdges();
+    };
 
-    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const
+    {
+        for (auto node : nodes)
+            for (auto edge : node->getEdges())
+                if (edge == vertex)
+                    vertices.push_back(node);
+    };
 
-    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+private:
+    std::unordered_set<Node<T> *> nodes;
+    std::unordered_set<int> usedVertices;
 };
 
 #endif //HOMEWORK_1_PTRSGRAPH_H
