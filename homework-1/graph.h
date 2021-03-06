@@ -12,9 +12,13 @@ public:
 
     IGraph() {};
 
-    IGraph(IGraph *_oth) {};
+    IGraph(IGraph *_oth) {
+        
+    };
 
     virtual void AddEdge(int from, int to, T &&_obj) = 0;
+
+    virtual void GetNextWeights(int vertex, std::vector<T> &weights) = 0;
 
     virtual int VerticesCount() const = 0;
 

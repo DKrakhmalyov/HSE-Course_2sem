@@ -58,12 +58,12 @@ TEST(MatrixGraph, Cycled) {
     EXPECT_EQ(res2.size(), 1);
 }
 
-// Tree graph
-// 1 --> 2 --> 3
-//   \
-//     -> 4 --> 5
-//        \
-//          ->6
+// // Tree graph
+// // 1 --> 2 --> 3
+// //   \
+// //     -> 4 --> 5
+// //        \
+// //          ->6
 TEST(ArcGraph, Cycled) {
     std::shared_ptr<IGraph<int>> arcGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<ArcGraph<int>>());
     arcGr->AddEdge(1, 2, 10);
@@ -81,8 +81,8 @@ TEST(ArcGraph, Cycled) {
     EXPECT_EQ(res2.size(), 2);
 }
 
-// Cycled graph
-// 1 --> 2 --> 3 --> 1
+// // Cycled graph
+// // 1 --> 2 --> 3 --> 1
 TEST(PtrsGraph, Cycled) {
     std::shared_ptr<IPtrsGraph<int>> ptrGr = std::dynamic_pointer_cast<IPtrsGraph<int>>(
             std::make_shared<PtrsGraph<int>>());
@@ -100,7 +100,7 @@ TEST(PtrsGraph, Cycled) {
 
     std::vector<Node<int> *> res2;
     ptrGr->GetPrevVertices(third, res2);
-    EXPECT_EQ(res2[0], first);
+    EXPECT_EQ(res2[0], second);
 
     // Возможно, лучше не удалять объекты вершин, а передавать владение сразу графу
     // Решите точно в реализации и удалите строки, если что
@@ -109,8 +109,8 @@ TEST(PtrsGraph, Cycled) {
     delete third;
 }
 
-// Cycled graph
-// 1 --> 2 --> 3000 --> 1
+// // Cycled graph
+// // 1 --> 2 --> 3000 --> 1
 TEST(IGraph, Copying) {
     IGraph<int> *matGr = new MatrixGraph<int>;
     matGr->AddEdge(1, 2, 10);
