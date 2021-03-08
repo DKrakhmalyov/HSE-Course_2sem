@@ -27,7 +27,7 @@ void MatrixGraph<T>::AddEdge(int from, int to, T &&element) {
 }
 template<typename T>
 void MatrixGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) const {
-    assert(vertex < _g.size());
+    assert(_vertices.contains(vertex));
     for (int to : _vertices) {
         if (_g[vertex][to].first) {
             vertices.push_back(to);
@@ -37,7 +37,7 @@ void MatrixGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) con
 
 template<typename T>
 void MatrixGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) const {
-    assert(vertex < _g.size());
+    assert(_vertices.contains(vertex));
     for (int to : _vertices) {
         if (_gt[vertex][to].first) {
             vertices.push_back(to);
@@ -47,7 +47,7 @@ void MatrixGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) con
 
 template<typename T>
 void MatrixGraph<T>::DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
-    assert(vertex < _g.size());
+    assert(_vertices.contains(vertex));
     std::unordered_set<int> used;
     _dfs(vertex, used, vertices);
 }
@@ -65,7 +65,7 @@ void MatrixGraph<T>::_dfs(int vertex, std::unordered_set<int> used, std::vector<
 
 template<typename T>
 void MatrixGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
-    assert(vertex < _g.size());
+    assert(_vertices.contains(vertex));
     std::queue<int> q;
     q.push(vertex);
     std::unordered_set<int> used;
