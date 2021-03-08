@@ -7,22 +7,68 @@
 
 template<typename T>
 class ListGraph : public IGraph<T> {
+private:
+  std::vector<std::map<int, T>> upwards;
+  std::vector<std::map<int, T>> downwards;
+  std::set<int> set;
+
 public:
-    virtual void AddEdge(int from, int to, T &&element) {};
+  void AddEdge(int from, int to, T &&element) override {
+    if (upwards.size() <= from) {
+      upwards.resize(from + 1, std::map<int, T>());
+    }
+    if (downwards.size() <= to) {
+      downwards.resize(to + 1, std::map<int, T>());
+    }
 
-    ListGraph() {};
+    upwards[from][to] = downwards[to][from] = element;
+    set.insert(from);
+    set.insert(to);
+  };
 
-    ListGraph(IGraph<T> *_oth) {};
+  ListGraph() {};
 
-    virtual int VerticesCount() const { return 0; };
+  explicit ListGraph(IGraph<T> *oth) {
+    if (oth == nullptr) return;
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {};
+    for (int vtx = 0; vtx < oth->VerticesCount(); vtx++) {
+      std::vector<int> adjacent;
+      oth->GetNextVertices(vtx, adjacent);
 
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {};
+      for (auto next: adjacent) {
+        auto weightPointer = oth->GetWeight(vtx, next);
+        if (weightPointer == nullptr) {
+          throw std::logic_error(
+              "Getting weight of the adjacent vtx " + std::to_string(next) + " of " + std::to_string(vtx) +
+              " runs out with nullptr");
+        }
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {};
+        auto weight = *weightPointer;
+        AddEdge(vtx, next, std::move(weight));
+      }
+    }
+  }
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {};
+  [[nodiscard]] int VerticesCount() const override { return set.size(); };
+
+  void GetNextVertices(int vertex, std::vector<int> &vertices) const override {
+    if (vertex >= upwards.size()) return;
+    for (const auto &data: upwards[vertex])
+      vertices.push_back(data.first);
+  };
+
+  void GetPrevVertices(int vertex, std::vector<int> &vertices) const override {
+    if (vertex >= downwards.size()) return;
+    for (const auto &data: downwards[vertex])
+      vertices.push_back(data.first);
+  };
+
+  const T *GetWeight(int from, int to) const override {
+    if (from < 0 || from >= upwards.size()) return nullptr;
+    auto find = upwards[from].find(to);
+    if (find == upwards[from].end()) return nullptr;
+    return &find->second;
+  }
 };
 
 

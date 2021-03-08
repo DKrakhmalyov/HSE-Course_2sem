@@ -38,8 +38,8 @@ add_executable(homework_1 tests.cpp)
 target_link_libraries(homework_1 LINK_PUBLIC graph gtest_main)
 
 if (UNIX OR APPLE)
-    target_compile_options(homework_1 PUBLIC -fsanitize=address)
-    target_link_options(homework_1 PUBLIC -fsanitize=address)
+    target_compile_options(homework_1 PUBLIC)
+    target_link_options(homework_1 PUBLIC)
 endif ()
 
 add_test(NAME homework_1_test COMMAND homework_1)
