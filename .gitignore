@@ -31,5 +31,5 @@
 *.out
 *.app
 
-*\out\*
-*\.vscode\*
+*/out/*
+*/.vscode/*

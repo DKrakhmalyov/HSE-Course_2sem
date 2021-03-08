@@ -14,50 +14,80 @@ public:
 
     virtual void AddEdge(int from, int to, T &&element)
     {
-        existingVertices.insert(from);
-        existingVertices.insert(to);
-        matrix[from][to] = element;
+        AddVertex(from);
+        AddVertex(to);
+
+        from = newNumber[from];
+        to = newNumber[to];
+
+        matrix[from][to] = true;
+        weights[from][to] = std::forward<T>(element);
     };
 
     virtual void GetEdges(std::vector<std::pair<int, int>> &edges, std::vector<T> &weights) const
     {
-        for (auto [from, fromEdges] : matrix)
-        {
-            for (auto [to, weight] : fromEdges)
-            {
-                edges.push_back({from, to});
-                weights.push_back(weight);
-            }
-        }
+        for (int i = 0; i < matrix.size(); i++)
+            for (int j = 0; i < matrix[i].size(); i++)
+                if (matrix[i][j])
+                {
+                    edges.push_back({oldNumber.at(i), oldNumber.at(j)});
+                    weights.push_back(this->weights[i][j]);
+                }
     };
 
     virtual int VerticesCount() const
     {
-        return matrix.size();
+        return newNumber.size();
     };
 
     virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const
     {
-        if (!matrix.contains(vertex))
+        if (!newNumber.contains(vertex))
             return;
 
-        for (auto nextVertex : (*matrix.find(vertex)).second)
-            vertices.push_back(nextVertex.first);
+        vertex = newNumber.at(vertex);
+
+        for (int i = 0; i < matrix[vertex].size(); i++)
+            if (matrix[vertex][i])
+                vertices.push_back(oldNumber.at(i));
     };
 
     virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const
     {
-        if (!matrix.contains(vertex))
+        if (!newNumber.contains(vertex))
             return;
 
-        for (auto existingVertex : existingVertices)
-            if ((*matrix.find(existingVertex)).second.contains(vertex))
-                vertices.push_back(existingVertex);
+        vertex = newNumber.at(vertex);
+
+        for (int i = 0; i < matrix.size(); i++)
+            if (matrix[i][vertex])
+                vertices.push_back(oldNumber.at(i));
     };
 
 private:
-    std::unordered_map<int, std::unordered_map<int, T>> matrix;
-    std::unordered_set<int> existingVertices;
+    std::vector<std::vector<bool>> matrix;
+    std::vector<std::vector<T>> weights;
+    std::unordered_map<int, int> newNumber;
+    std::unordered_map<int, int> oldNumber;
+
+    void AddVertex(int vertex)
+    {
+        if (newNumber.contains(vertex))
+            return;
+
+        newNumber[vertex] = newNumber.size();
+        oldNumber[newNumber.size() - 1] = vertex;
+
+        int n = newNumber.size();
+
+        matrix.resize(n);
+        for (auto &row : matrix)
+            row.resize(n);
+
+        weights.resize(n);
+        for (auto &row : weights)
+            row.resize(n);
+    }
 };
 
 #endif //HOMEWORK_1_MATRIXGRAPH_H

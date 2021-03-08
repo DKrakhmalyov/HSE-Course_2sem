@@ -15,7 +15,7 @@ public:
     virtual void AddEdge(int from, int to, T &&element)
     {
         nextVertices[from].push_back({to, element});
-        prevVertices[to].push_back({from, element});
+        prevVertices[to].push_back({from, std::forward<T>(element)});
     };
 
     virtual void GetEdges(std::vector<std::pair<int, int>> &edges, std::vector<T> &weights) const

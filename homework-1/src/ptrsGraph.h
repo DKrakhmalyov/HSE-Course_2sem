@@ -15,7 +15,7 @@ public:
     {
         nodes.insert(from);
         nodes.insert(to);
-        from->addEgde(to, std::move(weight));
+        from->addEgde(to, std::forward<T>(weight));
     };
 
     virtual int VerticesCount() const
