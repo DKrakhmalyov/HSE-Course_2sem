@@ -17,16 +17,19 @@ void ListGraph<T>::AddEdge(int from, int to, T &&element) {
 
 template<typename T>
 void ListGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) const {
+    assert(vertex < _g.size());
     vertices = _g[vertex];
 }
 
 template<typename T>
 void ListGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) const {
+    assert(vertex < _g.size());
     vertices = _gt[vertex];
 }
 
 template<typename T>
 void ListGraph<T>::DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
+    assert(vertex < _g.size());
     std::unordered_set<int> used;
     _dfs(vertex, used, vertices);
 }
@@ -44,6 +47,7 @@ void ListGraph<T>::_dfs(int vertex, std::unordered_set<int> used, std::vector<in
 
 template<typename T>
 void ListGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
+    assert(vertex < _g.size());
     std::queue<int> q;
     q.push(vertex);
     std::unordered_set<int> used;
