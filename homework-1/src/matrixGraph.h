@@ -33,7 +33,7 @@ protected:
 
     std::unordered_set<int> _vertices;
 
-    void _dfs(int vertex, std::unordered_set<int> used, std::vector<int> &vertices) const;
+    void _dfs(int vertex, std::unordered_set<int> &used, std::vector<int> &vertices) const;
 };
 
 #endif //HOMEWORK_1_MATRIXGRAPH_H

@@ -30,7 +30,7 @@ public:
 protected:
     std::unordered_map<int, std::vector<std::pair<int, T>>> _g;
     std::unordered_map<int, std::vector<std::pair<int, T>>> _gt;
-    void _dfs(int vertex, std::unordered_set<int> used, std::vector<int> &vertices) const;
+    void _dfs(int vertex, std::unordered_set<int> &used, std::vector<int> &vertices) const;
 };
 
 #endif //HOMEWORK_1_LISTGRAPH_H

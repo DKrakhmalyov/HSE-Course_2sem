@@ -53,7 +53,7 @@ void MatrixGraph<T>::DeepFirstSearch(int vertex, std::vector<int> &vertices) con
 }
 
 template<typename T>
-void MatrixGraph<T>::_dfs(int vertex, std::unordered_set<int> used, std::vector<int> &vertices) const {
+void MatrixGraph<T>::_dfs(int vertex, std::unordered_set<int> &used, std::vector<int> &vertices) const {
     used.insert(vertex);
     vertices.push_back(vertex);
     for (int to : _vertices) {
