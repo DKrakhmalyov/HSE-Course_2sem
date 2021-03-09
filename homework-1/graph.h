@@ -3,7 +3,10 @@
 #define HOMEWORK_1_GRAPH_H
 
 #include <vector>
+#include <list>
 #include "src/node.h"
+
+const int INF = 1e9;
 
 template<typename T>
 class IGraph {
@@ -25,6 +28,11 @@ public:
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+
+    virtual std::list<std::pair<int, T>> __get__next__(int vertex) const = 0;
+    
+protected:
+    virtual void __dfs__(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const = 0;
 };
 
 template<typename T = void>
