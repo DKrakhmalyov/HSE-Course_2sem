@@ -16,7 +16,7 @@ public:
 
     MatrixGraph() = default;
 
-    MatrixGraph(IGraph<T> *_oth) {};
+    MatrixGraph(IGraph<T> *_oth);
 
     [[nodiscard]] virtual int VerticesCount() const;
 
@@ -142,10 +142,19 @@ template<typename T>
 void MatrixGraph<T>::GetEdges(std::vector<std::tuple<int, int, T>> &edges) const {
     for (const auto &from : _vertices) {
         for (const auto &to : _vertices) {
-            if (_g.at(from).at(to).first) {
+            if (_g[from][to].first) {
                 edges.emplace_back(from, to, _g[from][to].second);
             }
         }
+    }
+}
+
+template<typename T>
+MatrixGraph<T>::MatrixGraph(IGraph<T> *_oth) {
+    std::vector<std::tuple<int, int, T>> edges;
+    _oth->GetEdges(edges);
+    for (auto edge : edges) {
+        AddEdge(get<0>(edge), get<1>(edge), std::move(get<2>(edge)));
     }
 }
 

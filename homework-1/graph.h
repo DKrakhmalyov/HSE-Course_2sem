@@ -39,7 +39,7 @@ class IPtrsGraph {
 public:
     virtual ~IPtrsGraph() {}
 
-    IPtrsGraph() {};
+    IPtrsGraph() = default;
 
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) = 0;
 

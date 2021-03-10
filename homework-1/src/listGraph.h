@@ -18,7 +18,7 @@ public:
 
     ListGraph() = default;
 
-    ListGraph(IGraph<T> *_oth) {};
+    ListGraph(IGraph<T> *_oth);
 
     [[nodiscard]] virtual int VerticesCount() const;
 
@@ -162,6 +162,15 @@ void ListGraph<T>::GetEdges(std::vector<std::tuple<int, int, T>> &edges) const {
         for (auto to : from.second) {
             edges.emplace_back(from.first, to.first, to.second);
         }
+    }
+}
+
+template<typename T>
+ListGraph<T>::ListGraph(IGraph<T> *_oth) {
+    std::vector<std::tuple<int, int, T>> edges;
+    _oth->GetEdges(edges);
+    for (auto edge : edges) {
+        AddEdge(get<0>(edge), get<1>(edge), std::move(get<2>(edge)));
     }
 }
 

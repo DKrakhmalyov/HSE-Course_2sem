@@ -18,7 +18,7 @@ public:
 
     ArcGraph() = default;
 
-    ArcGraph(IGraph<T> *_oth) {};
+    ArcGraph(IGraph<T> *_oth);
 
     [[nodiscard]] virtual int VerticesCount() const;
 
@@ -61,6 +61,15 @@ void ArcGraph<T>::AddEdge(int from, int to, T &&element) {
     // кратные ребра не поддерживаются, т.к. это не мультиграф
     assert(!exist);
     _g.emplace_back(from, to, element);
+}
+
+template<typename T>
+ArcGraph<T>::ArcGraph(IGraph<T> *_oth) {
+    std::vector<std::tuple<int, int, T>> edges;
+    _oth->GetEdges(edges);
+    for (auto edge : edges) {
+        AddEdge(get<0>(edge), get<1>(edge), std::move(get<2>(edge)));
+    }
 }
 
 template<typename T>
@@ -151,6 +160,8 @@ T ArcGraph<T>::GetEdgeWeight(int from, int to) const {
             return get<2>(edge);
         }
     }
+// нельзя получить вес ребра, которое не существует
+    assert(false);
 }
 
 #endif //HOMEWORK_1_ARCGRAPH_H
