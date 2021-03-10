@@ -3,6 +3,12 @@
 #define HOMEWORK_1_GRAPH_H
 
 #include <vector>
+#include <list>
+#include <queue>
+#include <map>
+#include <set>
+#include <functional>
+#include <tuple>
 #include "src/node.h"
 
 template<typename T>
