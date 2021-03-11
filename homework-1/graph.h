@@ -52,8 +52,8 @@ public:
 template<typename T>
 class ObjectCreater {
 public:
-    static T&& Create(const T& _obj) {
-        return std::move(T(_obj));
+    static T Create(const T& _obj) {
+        return T(_obj);
     }
 };
 

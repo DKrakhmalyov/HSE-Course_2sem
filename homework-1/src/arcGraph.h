@@ -30,7 +30,7 @@ public:
         from = _internalIndex[from];
         to = _internalIndex[to];
         _edges.emplace_back(from, to);
-        _weights.emplace_back(element);
+        _weights.emplace_back(std::forward<T>(element));
     };
 
     virtual int VerticesCount() const {

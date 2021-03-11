@@ -71,7 +71,7 @@ void ListGraph<T>::AddEdge(int from, int to, T &&element) {
     _validate(to);
     from = _internalIndex[from];
     to = _internalIndex[to];
-    _graph[from].emplace_back(to, element);
+    _graph[from].emplace_back(to, std::forward<T>(element));
 };
 
 template<typename T>

@@ -13,7 +13,7 @@ public:
 
     void addEdge(Node* other, T&& _obj) {
         next.emplace_back(other);
-        weights.emplace_back(_obj);
+        weights.emplace_back(std::forward<T>(_obj));
     }
 };
 
