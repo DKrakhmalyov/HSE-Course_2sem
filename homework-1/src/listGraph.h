@@ -52,7 +52,7 @@ ListGraph<T>::ListGraph(IGraph<T> *_oth) {
     std::vector<std::pair<std::pair<int,int>, T>> edges;
     _oth->GetEdges(edges);
     for (auto &edge : edges) {
-        AddEdge(edge.first.first, edge.first.second, std::forward<T>(edge.second));
+        AddEdge(edge.first.first, edge.first.second, std::move(edge.second));
     }
 };
 
@@ -71,7 +71,7 @@ void ListGraph<T>::AddEdge(int from, int to, T &&element) {
     _validate(to);
     from = _internalIndex[from];
     to = _internalIndex[to];
-    _graph[from].push_back({to, std::forward<T>(element)});
+    _graph[from].emplace_back(to, element);
 };
 
 template<typename T>
@@ -82,7 +82,7 @@ int ListGraph<T>::VerticesCount() const {
 template<typename T>
 void ListGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) const {
     for (auto to : _graph[_internalIndex.find(vertex)->second]) {
-        vertices.push_back(_externalIndex.find(to.first)->second);
+        vertices.emplace_back(_externalIndex.find(to.first)->second);
     }
 };
 
@@ -91,7 +91,7 @@ void ListGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) const
     for (int from = 0; from < _vCount; from++) {
         for (auto to : _graph[from]) {
             if (_externalIndex.find(to.first)->second == vertex) {
-                vertices.push_back(_externalIndex.find(from)->second);
+                vertices.emplace_back(_externalIndex.find(from)->second);
             }
         }
     }
@@ -111,7 +111,7 @@ void ListGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) co
     while (!queue.empty()) {
         vertex = queue.front();
         queue.pop();
-        vertices.push_back(_externalIndex.find(vertex)->second);
+        vertices.emplace_back(_externalIndex.find(vertex)->second);
         for (auto to : _graph[vertex]) {
             if (!used[to.first]) {
                 queue.push(to.first);
@@ -128,7 +128,7 @@ void ListGraph<T>::GetEdges(std::vector<std::pair<std::pair<int,int>, T>> &edges
     for (int i = 0; i < _vCount; i++) {
         for (auto to : _graph[i]) {
             v1 = _externalIndex.find(i)->second, v2 = _externalIndex.find(to.first)->second;
-            edges.push_back({{v1, v2}, ObjectCreater<T>::Create(to.second)});
+            edges.emplace_back(std::make_pair(v1, v2), ObjectCreater<T>::Create(to.second));
         }
     }
 }
@@ -138,14 +138,14 @@ void ListGraph<T>::_validate(int vertex) {
     if (_internalIndex.find(vertex) == _internalIndex.end()) {
         _externalIndex[_vCount] = vertex;
         _internalIndex[vertex] = _vCount++; 
-        _graph.push_back({});
+        _graph.resize(_vCount);
     }
 }
 
 template<typename T>
 void ListGraph<T>::_dfs(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const {
     used[vertex] = true;
-    vertices.push_back(_externalIndex.find(vertex)->second);
+    vertices.emplace_back(_externalIndex.find(vertex)->second);
     for (auto to : _graph[vertex]) {
         if (!used[to.first]) {
             _dfs(to.first, vertices, used);

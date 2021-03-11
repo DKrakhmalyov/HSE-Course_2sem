@@ -11,9 +11,9 @@ public:
     std::vector<Node*> next;
     std::vector<T> weights;
 
-    void addEdge(Node* other, T &&_obj) {
-        next.push_back(other);
-        weights.push_back(_obj);
+    void addEdge(Node* other, T&& _obj) {
+        next.emplace_back(other);
+        weights.emplace_back(_obj);
     }
 };
 

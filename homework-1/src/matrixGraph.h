@@ -53,7 +53,7 @@ MatrixGraph<T>::MatrixGraph(IGraph<T> *_oth) {
     std::vector<std::pair<std::pair<int,int>, T>> edges;
     _oth->GetEdges(edges);
     for (auto edge : edges) {
-        AddEdge(edge.first.first, edge.first.second, std::forward<T>(edge.second));
+        AddEdge(edge.first.first, edge.first.second, std::move(edge.second));
     }
 };
 
@@ -88,7 +88,7 @@ void MatrixGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) con
     vertex = _internalIndex.find(vertex)->second;
     for (int to = 0; to < _vCount; to++) {
         if (_isConnected[vertex][to]) {
-            vertices.push_back(_externalIndex.find(to)->second);
+            vertices.emplace_back(_externalIndex.find(to)->second);
         }
     }
 };
@@ -98,7 +98,7 @@ void MatrixGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) con
     vertex = _internalIndex.find(vertex)->second;
     for (int to = 0; to < _vCount; to++) {
         if (_isConnected[to][vertex]) {
-            vertices.push_back(_externalIndex.find(to)->second);
+            vertices.emplace_back(_externalIndex.find(to)->second);
         }
     }
 };
@@ -118,7 +118,7 @@ void MatrixGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) 
     while (!queue.empty()) {
         vertex = queue.front();
         queue.pop();
-        vertices.push_back(_externalIndex.find(vertex)->second);
+        vertices.emplace_back(_externalIndex.find(vertex)->second);
         for (int to = 0; to < _vCount; to++) {
             if (_isConnected[vertex][to] && !used[to]) {
                 queue.push(to);
@@ -136,7 +136,7 @@ void MatrixGraph<T>::GetEdges(std::vector<std::pair<std::pair<int,int>, T>> &edg
         for (int j = 0; j < _vCount; j++) {
             if (_isConnected[i][j]) {
                 v1 = _externalIndex.find(i)->second, v2 = _externalIndex.find(j)->second;
-                edges.push_back({{v1, v2}, ObjectCreater<T>::Create(_weight[i][j])});
+                edges.emplace_back(std::make_pair(v1, v2), ObjectCreater<T>::Create(_weight[i][j]));
             }
         }
     }
@@ -148,8 +148,8 @@ void MatrixGraph<T>::_validate(int vertex) {
     if (_internalIndex.find(vertex) == _internalIndex.end()) {
         _externalIndex[_vCount] = vertex;
         _internalIndex[vertex] = _vCount++;
-        _weight.push_back({});
-        _isConnected.push_back({});
+        _weight.resize(_vCount);
+        _isConnected.resize(_vCount);
         for (int i = 0; i < _vCount; i++) {
             _weight[i].resize(_vCount);
             _isConnected[i].resize(_vCount);
@@ -161,7 +161,7 @@ void MatrixGraph<T>::_validate(int vertex) {
 template<typename T>
 void MatrixGraph<T>::_dfs(int vertex, std::vector<int> &vertices, bool* used) const {
     used[vertex] = true;
-    vertices.push_back(_externalIndex.find(vertex)->second);
+    vertices.emplace_back(_externalIndex.find(vertex)->second);
     for (int to = 0; to < _vCount; to++) {
         if (_isConnected[vertex][to] && !used[to]) {
             _dfs(to, vertices, used);

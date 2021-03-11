@@ -21,11 +21,11 @@ public:
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
         from->addEdge(to, std::forward<T>(_obj));
         if (_getPosition(from) == -1) {
-            nodes.push_back(from);
+            nodes.emplace_back(from);
             _vCount++;
         }
         if (_getPosition(to) == -1) {
-            nodes.push_back(to);
+            nodes.emplace_back(to);
             _vCount++;
         }
     };
@@ -47,7 +47,7 @@ public:
                 }
             }
             if (connected) {
-                vertices.push_back(nodes[i]);
+                vertices.emplace_back(nodes[i]);
             }
         }
     };
@@ -64,7 +64,7 @@ public:
         while (!queue.empty()) {
             vertex = queue.front();
             queue.pop();
-            vertices.push_back(vertex);
+            vertices.emplace_back(vertex);
             for (auto node : vertex->next) {
                 int to = _getPosition(node);
                 if (!used[to]) {
@@ -99,7 +99,7 @@ private:
     virtual void _dfs(Node<T> *vertex, std::vector<Node<T> *> &vertices, std::vector<int> &used) const {
         int pos = _getPosition(vertex);
         used[pos] = true;
-        vertices.push_back(vertex);
+        vertices.emplace_back(vertex);
         for (auto node : vertex->next) {
             int to = _getPosition(node);
             if (!used[to]) {

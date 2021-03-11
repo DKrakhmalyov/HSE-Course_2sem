@@ -58,6 +58,8 @@ TEST(MatrixGraph, Cycled) {
     EXPECT_EQ(res2.size(), 1);
 }
 
+// Simple graph
+// 1 --> 2
 TEST(IGraph, PtrWeights) {
     IGraph<int*> *matGr = new MatrixGraph<int*>;
     matGr->AddEdge(1, 2, new int(5));

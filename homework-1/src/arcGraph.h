@@ -14,7 +14,7 @@ public:
         std::vector<std::pair<std::pair<int,int>, T>> edges;
         _oth->GetEdges(edges);
         for (auto edge : edges) {
-            AddEdge(edge.first.first, edge.first.second, std::forward<T>(edge.second));
+            AddEdge(edge.first.first, edge.first.second, std::move(edge.second));
         }
     };
 
@@ -29,8 +29,8 @@ public:
         _validate(to);
         from = _internalIndex[from];
         to = _internalIndex[to];
-        _edges.push_back({from, to});
-        _weights.push_back(std::forward<T>(element));
+        _edges.emplace_back(from, to);
+        _weights.emplace_back(element);
     };
 
     virtual int VerticesCount() const {
@@ -40,7 +40,7 @@ public:
     virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {
         for (auto edge : _edges) {
             if (edge.first == _internalIndex.find(vertex)->second) {
-                vertices.push_back(_externalIndex.find(edge.second)->second);
+                vertices.emplace_back(_externalIndex.find(edge.second)->second);
             }
         }
     };
@@ -48,7 +48,7 @@ public:
     virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {
         for (auto edge : _edges) {
             if (edge.second == _internalIndex.find(vertex)->second) {
-                vertices.push_back(_externalIndex.find(edge.first)->second);
+                vertices.emplace_back(_externalIndex.find(edge.first)->second);
             }
         }
     };
@@ -66,7 +66,7 @@ public:
         while (!queue.empty()) {
             vertex = queue.front();
             queue.pop();
-            vertices.push_back(_externalIndex.find(vertex)->second);
+            vertices.emplace_back(_externalIndex.find(vertex)->second);
             for (auto edge : _edges) {
                 if (edge.first == vertex && !used[edge.second]) {
                     queue.push(edge.second);
@@ -81,7 +81,7 @@ public:
         int v1, v2;
         for (int i = 0; i < _edges.size(); i++) {
             v1 = _externalIndex.find(_edges[i].first)->second, v2 = _externalIndex.find(_edges[i].second)->second;
-            edges.push_back({{v1, v2}, ObjectCreater<T>::Create(_weights[i])});
+            edges.emplace_back(std::make_pair(v1, v2), ObjectCreater<T>::Create(_weights[i]));
         }
     }
 
@@ -103,7 +103,7 @@ private:
 
     void _dfs(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const {
         used[vertex] = true;
-        vertices.push_back(_externalIndex.find(vertex)->second);
+        vertices.emplace_back(_externalIndex.find(vertex)->second);
         for (auto edge : _edges) {
             if (edge.first == vertex && !used[edge.second]) {
                 _dfs(edge.second, vertices, used);
