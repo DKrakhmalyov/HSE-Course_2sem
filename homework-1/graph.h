@@ -25,6 +25,8 @@ public:
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+
+    virtual void GetEdges(std::vector<std::pair<std::pair<int,int>, T>> &edges) const = 0;
 };
 
 template<typename T = void>
@@ -45,6 +47,37 @@ public:
     virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+};
+
+template<typename T>
+class ObjectCreater {
+public:
+    static T&& Create(const T& _obj) {
+        return std::move(T(_obj));
+    }
+};
+
+template<typename T>
+class ObjectCreater<T*> {
+public:
+    static T* Create(const T* _obj) {
+        return new T(*_obj);
+    }
+};
+
+template<typename T>
+class ObjectDeleter {
+public:
+    static void Delete(T& _obj) {}
+};
+
+template<typename T>
+class ObjectDeleter<T*> {
+public:
+    static void Delete(T* _obj) {
+        delete _obj;
+        _obj = nullptr;
+    }
 };
 
 #endif //HOMEWORK_1_GRAPH_H

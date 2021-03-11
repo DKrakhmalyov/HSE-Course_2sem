@@ -4,6 +4,7 @@
 
 #include "node.h"
 #include "../graph.h"
+#include <utility>
 
 template<typename T = void>
 class PtrsGraph : public IPtrsGraph<T> {
@@ -18,12 +19,14 @@ public:
     }
 
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
-        from->addEdge(to, std::move(_obj));
+        from->addEdge(to, std::forward<T>(_obj));
         if (_getPosition(from) == -1) {
             nodes.push_back(from);
+            _vCount++;
         }
         if (_getPosition(to) == -1) {
             nodes.push_back(to);
+            _vCount++;
         }
     };
 
@@ -50,9 +53,8 @@ public:
     };
 
     virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
-        bool *used = new bool[_vCount];
+        std::vector<int> used(_vCount);
         _dfs(vertex, vertices, used);
-        delete[] used;
     };
 
     virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
@@ -94,14 +96,14 @@ private:
         return position;
     }
 
-    virtual void _dfs(Node<T> *vertex, std::vector<Node<T> *> &vertices, bool* used) const {
+    virtual void _dfs(Node<T> *vertex, std::vector<Node<T> *> &vertices, std::vector<int> &used) const {
         int pos = _getPosition(vertex);
         used[pos] = true;
         vertices.push_back(vertex);
         for (auto node : vertex->next) {
             int to = _getPosition(node);
             if (!used[to]) {
-                _dfs(vertex, vertices, used);
+                _dfs(node, vertices, used);
             }
         }
     };
