@@ -25,6 +25,10 @@ public:
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+
+    virtual std::vector<int> GetAllVertices() const = 0;
+
+    virtual T GetWeight(int from, int to) const = 0;
 };
 
 template<typename T = void>
