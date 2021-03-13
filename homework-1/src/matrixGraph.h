@@ -33,6 +33,18 @@ public:
     MatrixGraph() {
         graph.push_back(std::vector <T> (1, inf));
     };
+    MatrixGraph(IGraph<T> *_oth) {
+        std::pair <std::vector < std::vector<T> >, T > m;
+        _oth->ToMatrixGraph(m);
+        T inf = m.second;
+        std::vector < std::vector <T> > matrix = m.first;
+        for (int i = 0; i < matrix.size(); ++i) {
+            for (int j = 0; j < matrix.size(); ++j) {
+                if (matrix[i][j] != inf)
+                    AddEdge(i, j, matrix[i][j]);
+            }
+        }
+    };
 
     virtual int VerticesCount() const { return vc; };
 
@@ -97,6 +109,9 @@ public:
             }
         }
     };
+    virtual void ToMatrixGraph(std::pair< std::vector <std::vector <T> >, T> & m) {
+        m = {graph, inf};
+    }
     
 
 private:

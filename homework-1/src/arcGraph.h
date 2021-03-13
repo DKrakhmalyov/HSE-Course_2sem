@@ -26,7 +26,18 @@ public:
 
     // ArcGraph() {};
 
-    ArcGraph(IGraph<T> *_oth) {};
+    ArcGraph(IGraph<T> *_oth) {
+        std::pair <std::vector < std::vector<T> >, T > m;
+        _oth->ToMatrixGraph(m);
+        T inf = m.second;
+        std::vector < std::vector <T> > matrix = m.first;
+        for (int i = 0; i < matrix.size(); ++i) {
+            for (int j = 0; j < matrix.size(); ++j) {
+                if (matrix[i][j] != inf)
+                    AddEdge(i, j, matrix[i][j]);
+            }
+        }
+    };
 
     virtual int VerticesCount() const { return vc; };
     
@@ -90,10 +101,19 @@ public:
         }
     };
 
-    virtual void ClassicKind(IGraph <T>& second) {
-        
+    virtual void ToMatrixGraph(std::pair< std::vector <std::vector <T> >, T> & m) {
+        T inf;
+        std::vector <std::vector <T> >matrix;
+        matrix.resize(vc, std::vector <T> (vc), inf);
+        for (int i = 0; i < graph.size(); ++i) {
+            int from = private_number[graph[i].first.first];
+            int to = private_number[graph[i].first.second];
+            T element = graph[i].second;
+            matrix[from][to] = element;
+        }
+        m = {matrix, inf};
     };
-    
+
 private:
     std::vector< std::pair< std::pair<int, int>, T> > graph;
     std::map <int, int> private_number, public_number;

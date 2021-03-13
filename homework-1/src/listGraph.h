@@ -30,7 +30,18 @@ public:
         graph.push_back(std::vector <std::pair <int, T> > ());
     };
 
-    ListGraph(IGraph<T> *_oth) {};
+    ListGraph(IGraph<T> *_oth) {
+        std::pair <std::vector < std::vector<T> >, T > m;
+        _oth->ToMatrixGraph(m);
+        T inf = m.second;
+        std::vector < std::vector <T> > matrix = m.first;
+        for (int i = 0; i < matrix.size(); ++i) {
+            for (int j = 0; j < matrix.size(); ++j) {
+                if (matrix[i][j] != inf)
+                    AddEdge(i, j, matrix[i][j]);
+            }
+        }
+    };
 
     virtual int VerticesCount() const { return vc; };
 
@@ -94,6 +105,19 @@ public:
             }
         }
     };
+
+
+    virtual void ToMatrixGraph(std::pair< std::vector <std::vector <T> >, T> & m) {
+        T inf = m.second;
+        std::vector <std::vector <T> > matrix = m.first;
+        matrix.resize(vc, std::vector <T> (vc, inf));
+        for (int i = 0; i < graph.size(); ++i) {
+            for (int j = 0; j < graph[i].size(); ++j) {
+                matrix[i][graph[i][j].first] = graph[i][j].second;
+            }
+        }
+        m = {matrix, inf};
+    }
 
 private:
     std::vector< std::vector < std::pair <int, T> > > graph;
