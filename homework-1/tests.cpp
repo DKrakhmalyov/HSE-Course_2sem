@@ -100,7 +100,7 @@ TEST(PtrsGraph, Cycled) {
 
     std::vector<Node<int> *> res2;
     ptrGr->GetPrevVertices(third, res2);
-    EXPECT_EQ(res2.front(), second);
+    EXPECT_EQ(*res2.front(), *second);
 
     delete first;
     delete second;
