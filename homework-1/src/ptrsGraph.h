@@ -12,11 +12,7 @@ class PtrsGraph : public IPtrsGraph<T> {
 public:
     PtrsGraph(): _vCount(0) {};
 
-    ~PtrsGraph() {
-        for (size_t i = 0; i < _vCount; i++) {
-            delete nodes[i];
-        }
-    }
+    ~PtrsGraph() = default;
 
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
         from->addEdge(to, std::forward<T>(_obj));
