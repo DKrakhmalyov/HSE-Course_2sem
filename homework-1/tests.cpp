@@ -6,7 +6,7 @@
 #include "src/matrixGraph.h"
 #include "src/arcGraph.h"
 #include "src/ptrsGraph.h"
-
+// Я "добавил" своих тестов тоже.
 TEST(IGraph, Creating) {
     IGraph<int> *listGr = new ListGraph<int>;
     IGraph<int> *arcGr = new ArcGraph<int>;
@@ -18,9 +18,9 @@ TEST(IGraph, Creating) {
     delete matGr;
     delete pGraph;
 }
-
-// Simple linear graph
-// 1 --> 2 --> 3 --> 4
+//
+//// Simple linear graph
+//// 1 --> 2 --> 3 --> 4
 TEST(ListGraph, Simple) {
     std::shared_ptr<IGraph<int>> listGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<ListGraph<int>>());
     listGr->AddEdge(1, 2, 10);
@@ -39,6 +39,42 @@ TEST(ListGraph, Simple) {
 
 }
 
+TEST(MatrixGraph, Simple) {
+    std::shared_ptr<IGraph<int>> listGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<MatrixGraph<int>>());
+    listGr->AddEdge(1, 2, 10);
+    listGr->AddEdge(2, 3, 20);
+    listGr->AddEdge(3, 4, 30);
+
+    std::vector<int> res;
+    listGr->DeepFirstSearch(1, res);
+    EXPECT_EQ(res.back(), 4);
+    EXPECT_EQ(res.size(), 4);
+
+    std::vector<int> res2;
+    listGr->GetPrevVertices(3, res2);
+    EXPECT_EQ(res2.front(), 2);
+    EXPECT_EQ(res2.size(), 1);
+
+}
+
+TEST(ArcGraph, SimpleArc) {
+    std::shared_ptr<IGraph<int>> listGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<ArcGraph<int>>());
+    listGr->AddEdge(1, 2, 10);
+    listGr->AddEdge(2, 3, 20);
+    listGr->AddEdge(3, 4, 30);
+
+    std::vector<int> res;
+    listGr->DeepFirstSearch(1, res);
+    EXPECT_EQ(res.back(), 4);
+    EXPECT_EQ(res.size(), 4);
+
+    std::vector<int> res2;
+    listGr->GetPrevVertices(3, res2);
+    EXPECT_EQ(res2.front(), 2);
+    EXPECT_EQ(res2.size(), 1);
+
+}
+//
 // Cycled graph
 // 1 --> 2 --> 3000 --> 1
 TEST(MatrixGraph, Cycled) {
@@ -57,7 +93,7 @@ TEST(MatrixGraph, Cycled) {
     EXPECT_EQ(res2[0], 2);
     EXPECT_EQ(res2.size(), 1);
 }
-
+//
 // Tree graph
 // 1 --> 2 --> 3
 //   \
@@ -79,16 +115,58 @@ TEST(ArcGraph, Cycled) {
     std::vector<int> res2;
     arcGr->GetNextVertices(1, res2);
     EXPECT_EQ(res2.size(), 2);
+
+    EXPECT_EQ(arcGr->VerticesCount(), 6);
+
+
 }
+
+TEST(MatrixGraph, Cycled_2) {
+    std::shared_ptr<IGraph<int>> arcGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<MatrixGraph<int>>());
+    arcGr->AddEdge(1, 2, 10);
+    arcGr->AddEdge(2, 3, 20);
+    arcGr->AddEdge(1, 4, 30);
+    arcGr->AddEdge(4, 5, 40);
+    arcGr->AddEdge(4, 6, 50);
+
+    std::vector<int> res;
+    arcGr->BreadthFirstSearch(4, res);
+    EXPECT_EQ(res.size(), 3);
+
+    std::vector<int> res2;
+    arcGr->GetNextVertices(1, res2);
+    EXPECT_EQ(res2.size(), 2);
+}
+
+TEST(ListGraph, Cycled_2) {
+    std::shared_ptr<IGraph<int>> arcGr = std::dynamic_pointer_cast<IGraph<int>>(std::make_shared<ListGraph<int>>());
+    arcGr->AddEdge(1, 2, 10);
+    arcGr->AddEdge(2, 3, 20);
+    arcGr->AddEdge(1, 4, 30);
+    arcGr->AddEdge(4, 5, 40);
+    arcGr->AddEdge(4, 6, 50);
+
+    std::vector<int> res;
+    arcGr->BreadthFirstSearch(4, res);
+    EXPECT_EQ(res.size(), 3);
+
+    std::vector<int> res2;
+    arcGr->GetNextVertices(1, res2);
+    EXPECT_EQ(res2.size(), 2);
+}
+
 
 // Cycled graph
 // 1 --> 2 --> 3 --> 1
 TEST(PtrsGraph, Cycled) {
-    std::shared_ptr<IPtrsGraph<int>> ptrGr = std::dynamic_pointer_cast<IPtrsGraph<int>>(
-            std::make_shared<PtrsGraph<int>>());
+    std::shared_ptr<IPtrsGraph<int>> ptrGr = 
+        std::dynamic_pointer_cast<IPtrsGraph<int>>(std::make_shared<PtrsGraph<int>>()); // )
+    
+    //IPtrsGraph<int>* ptrGr = new PtrsGraph<int>();
     Node<int> *first = new Node<int>;
     Node<int> *second = new Node<int>;
     Node<int> *third = new Node<int>;
+
     ptrGr->AddEdge(first, second, 10);
     ptrGr->AddEdge(second, third, 20);
     ptrGr->AddEdge(third, first, 30);
@@ -100,7 +178,7 @@ TEST(PtrsGraph, Cycled) {
 
     std::vector<Node<int> *> res2;
     ptrGr->GetPrevVertices(third, res2);
-    EXPECT_EQ(*res2[0], *second);
+    EXPECT_EQ(res2[0], second);
 
     // Возможно, лучше не удалять объекты вершин, а передавать владение сразу графу
     // Решите точно в реализации и удалите строки, если что
@@ -120,6 +198,34 @@ TEST(IGraph, Copying) {
     IGraph<int> *listGr = new ListGraph<int>(matGr);
     IGraph<int> *arcGr = new ArcGraph<int>(listGr);
     IGraph<int> *mat2Gr = new MatrixGraph<int>(arcGr);
+
+    std::vector<int> v1;
+    std::vector<int> v2;
+    listGr->GetNextVertices(1, v1);
+    arcGr->GetNextVertices(1, v2);
+    EXPECT_EQ(v1,v2);
+
+    v1.clear();
+    v2.clear();
+
+    matGr->GetNextVertices(1, v1);
+    arcGr->GetNextVertices(1, v2);
+    EXPECT_EQ(v1, v2);
+
+    v1.clear();
+    v2.clear();
+
+    listGr->GetNextVertices(2, v1);
+    mat2Gr->GetNextVertices(2, v2);
+    EXPECT_EQ(v1, v2);
+
+    v1.clear();
+    v2.clear();
+
+    listGr->GetNextVertices(3000, v1);
+    mat2Gr->GetNextVertices(3000, v2);
+    EXPECT_EQ(v1, v2);
+
 
     delete matGr;
     delete listGr;
