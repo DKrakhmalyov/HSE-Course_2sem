@@ -41,6 +41,7 @@ public:
 
   void GetNextVertices(int vertex, std::vector<int> &vertices) const override {
     if (vertex < 0 || vertex > matrix.size()) return;
+
     for (int i = 0; i < matrix[vertex].size(); i++) {
       if (matrix[vertex][i]) vertices.push_back(i);
     }
@@ -48,6 +49,7 @@ public:
 
   void GetPrevVertices(int vertex, std::vector<int> &vertices) const override {
     if (vertex < 0 || vertex > matrix.size()) return;
+
     for (int i = 0; i < matrix[vertex].size(); i++) {
       if (matrix[i][vertex]) vertices.push_back(i);
     }
@@ -68,6 +70,7 @@ public:
   const T *GetWeight(int from, int to) const override {
     if (from < 0 || from >= matrix.size()) return nullptr;
     if (to < 0 || to >= matrix.size()) return nullptr;
+
     return &matrix[from][to];
   }
 };

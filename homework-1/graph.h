@@ -85,7 +85,7 @@ public:
 
   virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) = 0;
 
-  virtual int VerticesCount() const = 0;
+  [[nodiscard]] virtual int VerticesCount() const = 0;
 
   virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
 

@@ -61,6 +61,7 @@ public:
 
   const T *GetWeight(int from, int to) const override {
     if (from < 0 || from >= upwards.size()) return nullptr;
+
     auto find = upwards[from].find(to);
     if (find == upwards[from].end()) return nullptr;
     return &find->second;
