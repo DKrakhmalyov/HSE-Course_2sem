@@ -5,7 +5,7 @@
 #include <vector>
 #include "src/node.h"
 
-template<typename T> class GraphTraveler;
+template<typename T, typename Vertex, typename GraphType> class GraphTraveler;
 
 template<typename T>
 class IGraph {
@@ -37,7 +37,7 @@ public:
     virtual T GetWeight(int from, int to) const = 0;
 
 private:
-    mutable GraphTraveler<T> graphTraveler = GraphTraveler(this);
+    mutable GraphTraveler<T, int, IGraph> graphTraveler = GraphTraveler<T, int, IGraph>(this);
 };
 
 template<typename T = void>
@@ -55,9 +55,16 @@ public:
 
     virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
 
-    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        graphTraveler.DeepFirstSearch(vertex, vertices);
+    }
 
-    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const  {
+        graphTraveler.BreadthFirstSearch(vertex, vertices);
+    }
+
+private:
+    mutable GraphTraveler<T, Node<T>*, IPtrsGraph> graphTraveler = GraphTraveler<T, Node<T>*, IPtrsGraph>(this);
 };
 
 #endif //HOMEWORK_1_GRAPH_H

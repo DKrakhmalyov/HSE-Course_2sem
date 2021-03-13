@@ -5,46 +5,46 @@
 #include <unordered_set>
 #include <deque>
 
-template<typename T>
+template<typename T, typename Vertex, typename GraphType>
 class GraphTraveler {
 public:
-    explicit GraphTraveler(IGraph<T> *graph) : graph(graph) {}
+    explicit GraphTraveler(GraphType *graph) : graph(graph) {}
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int>& vertices) {
+    virtual void DeepFirstSearch(Vertex vertex, std::vector<Vertex>& vertices) {
         usedVertices.clear();
         DeepFirstSearchInternal(vertex, vertices);
     }
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int>& vertices) {
+    virtual void BreadthFirstSearch(Vertex vertex, std::vector<Vertex>& vertices) {
         usedVertices.clear();
 
-        std::deque<int> q;
+        std::deque<Vertex> q;
         q.push_back(vertex);
         while (!q.empty()) {
-            int curVertex = q.front();
+            Vertex curVertex = q.front();
             q.pop_front();
             if (usedVertices.find(curVertex) == usedVertices.end()) {
                 usedVertices.insert(curVertex);
                 vertices.push_back(curVertex);
             }
-            std::vector<int> nextVertices;
+            std::vector<Vertex> nextVertices;
             graph->GetNextVertices(curVertex, nextVertices);
-            for (int nextVertex:nextVertices) {
+            for (Vertex nextVertex:nextVertices) {
                 q.push_back(nextVertex);
             }
         }
     }
 
 private:
-    IGraph<T> *graph;
-    std::unordered_set<int> usedVertices;
+    GraphType *graph;
+    std::unordered_set<Vertex> usedVertices;
 
-    void DeepFirstSearchInternal(int vertex, std::vector<int>& vertices) {
+    void DeepFirstSearchInternal(Vertex vertex, std::vector<Vertex>& vertices) {
         usedVertices.insert(vertex);
         vertices.push_back(vertex);
-        std::vector<int> nextVertices;
+        std::vector<Vertex> nextVertices;
         graph->GetNextVertices(vertex, nextVertices);
-        for (int nextVertex:nextVertices) {
+        for (Vertex nextVertex:nextVertices) {
             if (usedVertices.find(nextVertex) == usedVertices.end()) {
                 DeepFirstSearchInternal(nextVertex, vertices);
             }
