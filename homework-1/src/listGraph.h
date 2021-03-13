@@ -31,7 +31,7 @@ public:
         return *this;
     }
 
-    ListGraph<T>& operator=(ListGraph<T> &&other) {
+    ListGraph<T>& operator=(ListGraph<T> &&other) noexcept {
         if (this != &other) {
             toList = std::move(other.toList);
             fromList = std::move(other.fromList);
@@ -124,9 +124,9 @@ public:
 
 private:
 
-    mutable std::map<int, std::list<std::pair<int, T>>> toList;
+    mutable std::unordered_map<int, std::list<std::pair<int, T>>> toList;
 
-    mutable std::map<int, std::list<std::pair<int, T>>> fromList;
+    mutable std::unordered_map<int, std::list<std::pair<int, T>>> fromList;
 };
 
 

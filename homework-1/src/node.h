@@ -4,7 +4,6 @@
 
 template<typename T>
 struct Node {
-public:
 
     Node() = default;
 

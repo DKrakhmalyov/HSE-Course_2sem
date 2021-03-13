@@ -24,7 +24,7 @@ public:
         return *this;
     }
 
-    PtrsGraph<T>& operator=(PtrsGraph<T> &&other) {
+    PtrsGraph<T>& operator=(PtrsGraph<T> &&other) noexcept {
         if (this != &other) {
             have = std::move(other.have);
         }

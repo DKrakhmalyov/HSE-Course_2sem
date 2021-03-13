@@ -32,7 +32,7 @@ public:
         return *this;
     }
 
-    MatrixGraph<T>& operator=(MatrixGraph<T> &&other) {
+    MatrixGraph<T>& operator=(MatrixGraph<T> &&other) noexcept {
         if (this != &other) {
             toId = std::move(other.toId);
             toVertex = std::move(other.toVertex);

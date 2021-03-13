@@ -4,6 +4,8 @@
 
 #include "../graph.h"
 
+// этот класс использует std::multiset для хранения
+// шаблонных данных => шаблонный тип обязан быть сравнимым
 template<typename T = void>
 class ArcGraph : public IGraph<T> {
 public:
@@ -30,7 +32,7 @@ public:
         return *this;
     }
 
-    ArcGraph<T>& operator=(ArcGraph<T> &&other) {
+    ArcGraph<T>& operator=(ArcGraph<T> &&other) noexcept {
         if (this != &other) {
             verticeList = std::move(other.verticeList);
             edges = std::move(other.edges);
