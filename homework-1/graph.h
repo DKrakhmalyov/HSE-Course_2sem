@@ -1,4 +1,3 @@
-
 #ifndef HOMEWORK_1_GRAPH_H
 #define HOMEWORK_1_GRAPH_H
 
@@ -25,6 +24,8 @@ public:
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+
+    virtual void GetEdges(std::vector<std::pair<int, int>> &edges, std::vector<T> &weigths) const = 0;
 };
 
 template<typename T = void>
