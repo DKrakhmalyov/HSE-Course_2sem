@@ -1,0 +1,14 @@
+# Target labels
+ googletest
+# Source files and their labels
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/CMakeFiles/googletest
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/CMakeFiles/googletest.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/CMakeFiles/googletest-complete.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-build.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-configure.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-download.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-install.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-mkdir.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-patch.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-test.rule
+/home/eva/projects/HSE-Course_2sem/homework-1/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-update.rule

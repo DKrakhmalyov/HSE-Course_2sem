@@ -1,0 +1,1 @@
+/usr/bin/c++ -fsanitize=address CMakeFiles/homework_1.dir/tests.cpp.o -o homework_1  lib/libgtest_main.a lib/libgtest.a -lpthread 
