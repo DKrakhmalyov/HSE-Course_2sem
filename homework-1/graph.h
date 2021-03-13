@@ -10,9 +10,9 @@ class IGraph {
 public:
     virtual ~IGraph() {}
 
-    IGraph() {};
+    IGraph() {}
 
-    IGraph(IGraph *_oth) {};
+    IGraph(IGraph *_oth) {}
 
     virtual void AddEdge(int from, int to, T &&_obj) = 0;
 
@@ -25,6 +25,8 @@ public:
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+
+    virtual void GetEdges(std::vector<std::pair<std::pair<int,int>, T>> &edges) const = 0;
 };
 
 template<typename T = void>
@@ -32,7 +34,7 @@ class IPtrsGraph {
 public:
     virtual ~IPtrsGraph() {}
 
-    IPtrsGraph() {};
+    IPtrsGraph() {}
 
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) = 0;
 
