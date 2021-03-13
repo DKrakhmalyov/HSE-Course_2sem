@@ -21,7 +21,7 @@ public:
         _oth->Convert(this);
     };
 
-    virtual void AddEdge(int from, int to, T &&_obj) = 0;
+    virtual void AddEdge(int from, int to, T &&_obj) const = 0;
 
     virtual int VerticesCount() const = 0;
 
@@ -33,7 +33,7 @@ public:
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
-    virtual void Convert(IGraph<T> *Gr) {};
+    virtual void Convert(IGraph<T> *Gr) const = 0;
 };
 
 template<typename T = void>
@@ -43,7 +43,7 @@ public:
 
     IPtrsGraph() {};
 
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) = 0;
+    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) const = 0;
 
     virtual int VerticesCount() const = 0;
 
@@ -55,7 +55,7 @@ public:
 
     virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
 
-    virtual void Convert(IGraph<T> *Gr) {};
+    virtual void Convert(IGraph<T> *Gr) const = 0;
 
 };
 

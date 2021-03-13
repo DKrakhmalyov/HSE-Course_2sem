@@ -15,95 +15,135 @@ template<typename T = void>
 class MatrixGraph : public IGraph<T> {
 private:
     IGraph<T> * arcGr = new ArcGraph<T>;
-    int now_size = 0;
     T null_type;
     const static int size_graph = 1000; // max size of graph
     int real_vertices[size_graph]; // real names of vertices
     T matrix_graph[size_graph][size_graph];
 public:
-    virtual void AddEdge(int from, int to, T &&element) {
-        arcGr->AddEdge(from, to, std :: forward<T>(element));
-        int ph_from = -1;
-        int ph_to = -1;
-        for(int i = 0; i < now_size; i++) {
-            if(real_vertices[i] == from) {
-                ph_from = i;
-            }
-            if(real_vertices[i] == to) {
-                ph_to = i;
-            }
+    virtual void AddEdge(int from, int to, T &&element) const;
+
+    MatrixGraph();
+
+    MatrixGraph(IGraph<T> *_oth);
+
+    ~MatrixGraph();
+
+    virtual int VerticesCount() const;
+
+    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const;
+
+    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const;
+
+    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const;
+
+    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const;
+
+    virtual void Convert(IGraph<T> *Gr) const;
+};
+
+template<typename T>
+void MatrixGraph<T>::AddEdge(int from, int to, T &&element) const {
+    int ph_from = -1;
+    int ph_to = -1;
+    int now_size = arcGr->VerticesCount();
+    for(int i = 0; i < now_size; i++) {
+        if(real_vertices[i] == from) {
+            ph_from = i;
         }
-        if(ph_from == -1) {
-            real_vertices[now_size] = from;
-            ph_from = now_size;
-            now_size++;
+        if(real_vertices[i] == to) {
+            ph_to = i;
         }
-        if(ph_to == -1) {
-            real_vertices[now_size] = to;
-            ph_to = now_size;
-            now_size++;
-        }
-        matrix_graph[ph_from][ph_to] = element;
     }
+    if(ph_from == -1) {
+        const_cast<int&>(real_vertices[now_size]) = from;
+        ph_from = now_size;
+        now_size = now_size + 1;
+    }
+    if(ph_to == -1) {
+        const_cast<int&>(real_vertices[now_size]) = to;
+        ph_to = now_size;
+        now_size++;
+    }
+    const_cast<T&>(matrix_graph[ph_from][ph_to]) = element;
+    arcGr->AddEdge(from, to, std :: forward<T>(element));
+}
 
-    MatrixGraph() {
-        null_type = -1;
-        now_size = 0;
-        for(int i = 0; i < size_graph; i++) {
-            real_vertices[i] = -1;
-            for(int j = 0; j < size_graph; j++) {
-                matrix_graph[i][j] = null_type;
-            }
+template<typename T>
+MatrixGraph<T>::MatrixGraph() {
+    null_type = -1;
+    for(int i = 0; i < size_graph; i++) {
+        real_vertices[i] = -1;
+        for(int j = 0; j < size_graph; j++) {
+            matrix_graph[i][j] = null_type;
         }
     }
+}
 
-    MatrixGraph(IGraph<T> *_oth) {
-        _oth->Convert(this);
-    };
-
-    ~MatrixGraph() {
-        delete arcGr;
+template<typename T>
+MatrixGraph<T>::MatrixGraph(IGraph<T> *_oth) {
+    null_type = -1;
+    for(int i = 0; i < size_graph; i++) {
+        real_vertices[i] = -1;
+        for(int j = 0; j < size_graph; j++) {
+            matrix_graph[i][j] = null_type;
+        }
     }
+    _oth->Convert(this);
+};
 
-    virtual int VerticesCount() const { arcGr->VerticesCount(); };
+template<typename T>
+MatrixGraph<T>::~MatrixGraph() {
+    delete arcGr;
+}
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {
-        for(int i = 0; i < now_size; i++) {
-            if(real_vertices[i] == vertex) {
-                for(int j = 0; j < now_size; j++) {
-                    if(matrix_graph[i][j] != null_type) {
-                        vertices.push_back(real_vertices[j]);
-                    }
+template<typename T>
+int MatrixGraph<T>::VerticesCount() const {
+    return arcGr->VerticesCount();
+};
+
+template<typename T>
+void MatrixGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) const {
+    int now_size = arcGr->VerticesCount();
+    for(int i = 0; i < now_size; i++) {
+        if(real_vertices[i] == vertex) {
+            for(int j = 0; j < now_size; j++) {
+                if(matrix_graph[i][j] != null_type) {
+                    vertices.push_back(real_vertices[j]);
                 }
-                break;
             }
-        }
-    };
-
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {
-        for(int i = 0; i < now_size; i++) {
-            if(real_vertices[i] == vertex) {
-                for(int j = 0; j < now_size; j++) {
-                    if(matrix_graph[j][i] != null_type) {
-                        vertices.push_back(real_vertices[j]);
-                    }
-                }
-                break;
-            }
+            break;
         }
     }
+};
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
-        arcGr->DeepFirstSearch(vertex, vertices);
-    };
+template<typename T>
+void MatrixGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) const {
+    int now_size = arcGr->VerticesCount();
+    for(int i = 0; i < now_size; i++) {
+        if(real_vertices[i] == vertex) {
+            for(int j = 0; j < now_size; j++) {
+                if(matrix_graph[j][i] != null_type) {
+                    vertices.push_back(real_vertices[j]);
+                }
+            }
+            break;
+        }
+    }
+}
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
-        arcGr->BreadthFirstSearch(vertex, vertices);
-    };
+template<typename T>
+void MatrixGraph<T>::DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
+    arcGr->DeepFirstSearch(vertex, vertices);
+};
 
-    virtual void Convert(IGraph<T> *Gr) {
-        arcGr->Convert(Gr);
-    };
+template<typename T>
+void MatrixGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
+    arcGr->BreadthFirstSearch(vertex, vertices);
+};
+
+template<typename T>
+void MatrixGraph<T>::Convert(IGraph<T> *Gr) const {
+    arcGr->Convert(Gr);
 };
 
 #endif //HOMEWORK_1_MATRIXGRAPH_H
