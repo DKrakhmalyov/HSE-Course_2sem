@@ -1,28 +1,41 @@
-
-#ifndef HOMEWORK_1_MATRIXGRAPH_H
-#define HOMEWORK_1_MATRIXGRAPH_H
-
+#pragma once
 
 #include "../graph.h"
 
 template<typename T = void>
-class MatrixGraph : public IGraph<T> {
+class MatrixGraph final : public IGraph<T> {
 public:
-    virtual void AddEdge(int from, int to, T &&element) {};
 
-    MatrixGraph() {};
+    MatrixGraph();
 
-    MatrixGraph(IGraph<T> *_oth) {};
+    MatrixGraph(IGraph<T> *_oth);
 
-    virtual int VerticesCount() const { return 0; };
+    MatrixGraph(const MatrixGraph<T>& other);
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {};
+    ~MatrixGraph();
 
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {};
+    virtual void addEdge(const int32_t& from, const int32_t& to, T element) override;
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {};
+    virtual int verticesCount() override;
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {};
+    virtual void getNextVertices(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    virtual void getPrevVertices(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    virtual void deepFirstSearch(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    virtual void breadthFirstSearch(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    std::vector<std::map<int32_t, T>> getMatrix() const noexcept;
+
+private:
+
+    std::vector<std::map<int32_t, T>> matrix;
+
+    void clearValue();
+
+    bool valueIsEmpty() const noexcept;
+    bool valueIsNotEmpty() const noexcept;
+
+    MatrixGraph<T>* getCopy() const noexcept;
 };
-
-#endif //HOMEWORK_1_MATRIXGRAPH_H

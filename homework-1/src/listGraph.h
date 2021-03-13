@@ -1,29 +1,45 @@
-
-#ifndef HOMEWORK_1_LISTGRAPH_H
-#define HOMEWORK_1_LISTGRAPH_H
+#pragma once
 
 #include "../graph.h"
 
-
 template<typename T>
-class ListGraph : public IGraph<T> {
+class ListGraph final: public IGraph<T> {
 public:
-    virtual void AddEdge(int from, int to, T &&element) {};
 
-    ListGraph() {};
+    ListGraph() noexcept;
 
-    ListGraph(IGraph<T> *_oth) {};
+    ListGraph(IGraph<T> *_oth) noexcept;
 
-    virtual int VerticesCount() const { return 0; };
+    ListGraph(const ListGraph<T>& other) noexcept;
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {};
+    ~ListGraph() noexcept;
 
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {};
+    virtual void addEdge(const int32_t& from, const int32_t& to, T element) override;
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {};
+    virtual int verticesCount() override;
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {};
+    virtual void getNextVertices(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    virtual void getPrevVertices(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    virtual void deepFirstSearch(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    virtual void breadthFirstSearch(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    std::vector<std::vector<std::pair<int32_t, T*>>> getListOfEdges() const noexcept;
+
+private:
+
+    std::vector<std::vector<std::pair<int32_t, T*>>> listOfEdges;
+
+    bool valueIsEmpty() const noexcept;
+    bool valueIsNotEmpty() const noexcept;
+
+    void clearValue();
+
+    ListGraph<T>* getCopy() const noexcept;
+
+    void dfs(const int32_t currentVertice, std::vector<bool>& used, std::vector<int32_t>& resultVector) const noexcept;
+    void bfs(const int32_t startVertice, std::vector<int32_t>& resultVector) const noexcept;
 };
 
-
-#endif //HOMEWORK_1_LISTGRAPH_H

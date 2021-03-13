@@ -1,27 +1,40 @@
-
-#ifndef HOMEWORK_1_ARCGRAPH_H
-#define HOMEWORK_1_ARCGRAPH_H
+#pragma once
 
 #include "../graph.h"
 
-template<typename T = void>
-class ArcGraph : public IGraph<T> {
+template<typename T>
+class ArcGraph final: public IGraph<T> {
 public:
-    virtual void AddEdge(int from, int to, T &&element) {};
 
-    ArcGraph() {};
+    ArcGraph() = default;
+    ArcGraph(IGraph<T>* other);
+    ArcGraph(const ArcGraph& graph);
+    virtual ~ArcGraph();
 
-    ArcGraph(IGraph<T> *_oth) {};
+    virtual void addEdge(const int32_t& from, const int32_t& to, T element) override;
 
-    virtual int VerticesCount() const { return 0; };
+    virtual int verticesCount() override;
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {};
+    virtual void getNextVertices(const int32_t& vertex, std::vector<int32_t> &vertices) override;
 
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {};
+    virtual void getPrevVertices(const int32_t& vertex, std::vector<int32_t> &vertices) override;
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {};
+    virtual void deepFirstSearch(const int32_t& vertex, std::vector<int32_t> &vertices) override;
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {};
+    virtual void breadthFirstSearch(const int32_t& vertex, std::vector<int32_t> &vertices) override;
+
+    ArcGraph<T>& operator = (const ArcGraph<T>& other) noexcept;
+
+    std::vector<NodePair<T>*> getListOfEdges() const noexcept;
+
+private:
+    
+    std::vector<NodePair<T>*> pairsOfVertices;
+
+    void clearValue() noexcept;
+
+    bool isValueEmpty() const noexcept;
+    bool isValueNotEmpty() const noexcept;
+
+    ArcGraph<T>* getCopy() const noexcept;
 };
-
-#endif //HOMEWORK_1_ARCGRAPH_H

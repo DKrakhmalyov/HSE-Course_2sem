@@ -1,27 +1,32 @@
-
-#ifndef HOMEWORK_1_PTRSGRAPH_H
-#define HOMEWORK_1_PTRSGRAPH_H
+#pragma once
 
 #include "node.h"
 #include "../graph.h"
 
 template<typename T = void>
-class PtrsGraph : public IPtrsGraph<T> {
-
+class PtrsGraph final : public IPtrsGraph<T> {
 public:
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {};
 
-    PtrsGraph() {};
+    PtrsGraph();
+    ~PtrsGraph();
 
-    virtual int VerticesCount() const { return 0; };
+    virtual void addEdge(Node<T> *from, Node<T> *to, const T &_obj) override;
 
-    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual int verticesCount() override;
 
-    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual void getNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) override;
 
-    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual void getPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) override;
 
-    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {};
+    virtual void deepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) override;
+
+    virtual void breadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) override;
+
+private:
+
+    std::vector<std::pair<Node<T>*, std::pair<Node<T>*, T*>>> edges;
+
+    void clearValue();
+
+    ListGraph<T>* createListGraph() const noexcept;
 };
-
-#endif //HOMEWORK_1_PTRSGRAPH_H

@@ -1,30 +1,32 @@
-
-#ifndef HOMEWORK_1_GRAPH_H
-#define HOMEWORK_1_GRAPH_H
+#pragma once
 
 #include <vector>
+#include <utility>
+
+#include "src/nodePair.h"
 #include "src/node.h"
 
-template<typename T>
+template<typename T = void>
 class IGraph {
 public:
     virtual ~IGraph() {}
 
     IGraph() {};
 
-    IGraph(IGraph *_oth) {};
+    IGraph(IGraph* other) {};
 
-    virtual void AddEdge(int from, int to, T &&_obj) = 0;
+    virtual void addEdge(const int32_t& from, const int32_t& to, T _obj) = 0;
 
-    virtual int VerticesCount() const = 0;
+    virtual int verticesCount() = 0;
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const = 0;
+    virtual void getNextVertices(const int32_t& vertex, std::vector<int32_t> &vertices) = 0;
 
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const = 0;
+    virtual void getPrevVertices(const int32_t& vertex, std::vector<int32_t> &vertices) = 0;
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+    virtual void deepFirstSearch(const int32_t& vertex, std::vector<int32_t> &vertices) = 0;
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+    virtual void breadthFirstSearch(const int32_t& vertex, std::vector<int32_t> &vertices) = 0;
+
 };
 
 template<typename T = void>
@@ -34,17 +36,15 @@ public:
 
     IPtrsGraph() {};
 
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) = 0;
+    virtual void addEdge(Node<T> *from, Node<T> *to, const T &_obj) = 0;
 
-    virtual int VerticesCount() const = 0;
+    virtual int verticesCount() = 0;
 
-    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+    virtual void getNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) = 0;
 
-    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+    virtual void getPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) = 0;
 
-    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+    virtual void deepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) = 0;
 
-    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
+    virtual void breadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) = 0;
 };
-
-#endif //HOMEWORK_1_GRAPH_H

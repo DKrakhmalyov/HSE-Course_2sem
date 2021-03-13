@@ -1,9 +1,16 @@
-
-#ifndef HOMEWORK_1_NODE_H
-#define HOMEWORK_1_NODE_H
+#pragma once
 
 template<typename T>
-class Node {
-};
+class Node final {
+public:
+    Node() noexcept;
+    ~Node() noexcept;
 
-#endif //HOMEWORK_1_NODE_H
+    int32_t getIndex() const noexcept;
+private:
+
+    int32_t id;
+
+    static int32_t minAvailableId;
+
+};

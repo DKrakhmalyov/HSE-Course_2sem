@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 
 include(GoogleTest)
 project(homework_1)
@@ -34,7 +34,12 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
 endif ()
 
 add_subdirectory(src)
-add_executable(homework_1 tests.cpp)
+file(GLOB SOURCES
+    src/*.h
+    src/.cpp
+    tests.cpp
+)
+add_executable(homework_1 ${SOURCES})
 target_link_libraries(homework_1 LINK_PUBLIC graph gtest_main)
 
 if (UNIX OR APPLE)
