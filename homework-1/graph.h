@@ -71,6 +71,7 @@ class IGraph {
 
   void DeepFirstSearchImpl(int vertex, std::vector<int> &vertices,
                            std::set<int> &used) const {
+    vertices.push_back(vertex);
     used.insert(vertex);
 
     std::vector<int> next_vertices;
@@ -80,7 +81,6 @@ class IGraph {
         DeepFirstSearchImpl(to, vertices, used);
       }
     }
-    vertices.push_back(vertex);
   }
 };
 

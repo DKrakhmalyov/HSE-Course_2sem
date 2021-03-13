@@ -12,11 +12,7 @@ template <typename T = void>
 class PtrsGraph : public IPtrsGraph<T> {
  public:
   PtrsGraph() = default;
-  ~PtrsGraph() override {
-    for (auto node : m_nodes) {
-      delete node;
-    }
-  }
+  ~PtrsGraph() override {}
 
   void AddEdge(Node<T> *from, Node<T> *to, T &&weight) override {
     from->edges.emplace_back(to, weight);
@@ -63,6 +59,7 @@ class PtrsGraph : public IPtrsGraph<T> {
  private:
   void DeepFirstSearchImpl(Node<T> *vertex, std::vector<Node<T> *> &vertices,
                            std::set<Node<T> *> &used) const {
+    vertices.push_back(vertex);
     used.insert(vertex);
     for (auto &edge : vertex->edges) {
       if (used.find(edge.first) == used.end()) {
@@ -70,7 +67,6 @@ class PtrsGraph : public IPtrsGraph<T> {
       }
     }
 
-    vertices.push_back(vertex);
   }
 
   void BreadthFirstSearchImpl(Node<T> *vertex,
