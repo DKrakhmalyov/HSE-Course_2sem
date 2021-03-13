@@ -93,8 +93,10 @@ public:
   const T *GetWeight(int from, int to) const override {
     if (from < 0) return nullptr;
     if (to < 0) return nullptr;
+
     auto found = arcSetUp.template find({from, to});
     if (found == arcSetUp.end()) return nullptr;
+
     return &found->data;
   }
 };

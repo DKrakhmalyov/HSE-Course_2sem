@@ -14,7 +14,7 @@ public:
 
   IGraph() {};
 
-  IGraph(IGraph *oth) {};
+  explicit IGraph(IGraph *oth) {};
 
   virtual void AddEdge(int from, int to, T &&_obj) = 0;
 

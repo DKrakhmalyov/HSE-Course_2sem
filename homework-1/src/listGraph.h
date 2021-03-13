@@ -14,12 +14,8 @@ private:
 
 public:
   void AddEdge(int from, int to, T &&element) override {
-    if (upwards.size() <= from) {
-      upwards.resize(from + 1, std::map<int, T>());
-    }
-    if (downwards.size() <= to) {
-      downwards.resize(to + 1, std::map<int, T>());
-    }
+    if (upwards.size() <= from) upwards.resize(from + 1);
+    if (downwards.size() <= to) downwards.resize(to + 1);
 
     upwards[from][to] = downwards[to][from] = element;
     set.insert(from);
