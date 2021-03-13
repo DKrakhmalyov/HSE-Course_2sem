@@ -9,6 +9,8 @@
 #include <set>
 #include <functional>
 #include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 #include "src/node.h"
 
 template<typename T>
@@ -31,6 +33,10 @@ public:
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+
+    virtual void ConvertToArcGraph(std::multiset<std::tuple<int, int, T>>& _graph) = 0;
+
+    virtual void ConvertFromArcGraph(std::multiset<std::tuple<int, int, T>>& _graph) = 0;
 };
 
 template<typename T = void>

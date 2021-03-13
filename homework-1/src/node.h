@@ -3,17 +3,24 @@
 #define HOMEWORK_1_NODE_H
 
 template<typename T>
-class Node {
+struct Node {
 public:
 
-    Node() = delete;
+    Node() = default;
 
     ~Node() = default;
-private:
 
-    std::list<std::pair<Node<T>*, T>> to;
+    bool operator==(const Node<T>& rhs) const {
+        return this == &rhs;
+    }
 
-    std::list<std::pair<Node<T>*, T>> from;
+    bool operator!=(const Node<T>& rhs) const {
+        return !operator==(rhs);
+    }
+
+    std::list<std::pair<Node<T>*, T>> toList;
+
+    std::list<std::pair<Node<T>*, T>> fromList;
 };
 
 #endif //HOMEWORK_1_NODE_H
