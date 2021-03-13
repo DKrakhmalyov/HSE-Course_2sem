@@ -15,10 +15,9 @@ template<typename T = void>
 class MatrixGraph : public IGraph<T> {
 private:
     IGraph<T> * arcGr = new ArcGraph<T>;
-    T null_type;
     const static int size_graph = 1000; // max size of graph
     int real_vertices[size_graph]; // real names of vertices
-    T matrix_graph[size_graph][size_graph];
+    std :: pair<T, bool> matrix_graph[size_graph][size_graph];
 public:
     virtual void AddEdge(int from, int to, T &&element) const;
 
@@ -64,28 +63,27 @@ void MatrixGraph<T>::AddEdge(int from, int to, T &&element) const {
         ph_to = now_size;
         now_size++;
     }
-    const_cast<T&>(matrix_graph[ph_from][ph_to]) = element;
+    const_cast<T&>(matrix_graph[ph_from][ph_to].first) = element;
+    const_cast<bool&>(matrix_graph[ph_from][ph_to].second) = true;
     arcGr->AddEdge(from, to, std :: forward<T>(element));
 }
 
 template<typename T>
 MatrixGraph<T>::MatrixGraph() {
-    null_type = -1;
     for(int i = 0; i < size_graph; i++) {
         real_vertices[i] = -1;
         for(int j = 0; j < size_graph; j++) {
-            matrix_graph[i][j] = null_type;
+            matrix_graph[i][j].second = false;
         }
     }
 }
 
 template<typename T>
 MatrixGraph<T>::MatrixGraph(IGraph<T> *_oth) {
-    null_type = -1;
     for(int i = 0; i < size_graph; i++) {
         real_vertices[i] = -1;
         for(int j = 0; j < size_graph; j++) {
-            matrix_graph[i][j] = null_type;
+            matrix_graph[i][j].second = false;
         }
     }
     _oth->Convert(this);
@@ -107,7 +105,7 @@ void MatrixGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) con
     for(int i = 0; i < now_size; i++) {
         if(real_vertices[i] == vertex) {
             for(int j = 0; j < now_size; j++) {
-                if(matrix_graph[i][j] != null_type) {
+                if(matrix_graph[i][j].second) {
                     vertices.push_back(real_vertices[j]);
                 }
             }
@@ -122,7 +120,7 @@ void MatrixGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) con
     for(int i = 0; i < now_size; i++) {
         if(real_vertices[i] == vertex) {
             for(int j = 0; j < now_size; j++) {
-                if(matrix_graph[j][i] != null_type) {
+                if(matrix_graph[j][i].second) {
                     vertices.push_back(real_vertices[j]);
                 }
             }
