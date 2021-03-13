@@ -5,6 +5,8 @@
 #include <vector>
 #include "src/node.h"
 
+template<typename T> class GraphTraveler;
+
 template<typename T>
 class IGraph {
 public:
@@ -12,7 +14,7 @@ public:
 
     IGraph() {};
 
-    IGraph(IGraph *_oth) {};
+    IGraph(IGraph<T> *_oth) {};
 
     virtual void AddEdge(int from, int to, T &&_obj) = 0;
 
@@ -22,9 +24,20 @@ public:
 
     virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const = 0;
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
+        graphTraveler.DeepFirstSearch(vertex, vertices);
+    }
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
+        graphTraveler.BreadthFirstSearch(vertex, vertices);
+    }
+
+    virtual void GetAllVertices(std::vector<int> &vertices) const  = 0;
+
+    virtual T GetWeight(int from, int to) const = 0;
+
+private:
+    mutable GraphTraveler<T> graphTraveler = GraphTraveler(this);
 };
 
 template<typename T = void>
