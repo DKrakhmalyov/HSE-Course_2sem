@@ -3,7 +3,11 @@
 #define HOMEWORK_1_GRAPH_H
 
 #include <vector>
+#include <queue>
+#include <unordered_map>
+#include <unordered_set>
 #include "src/node.h"
+#include <set>
 
 template<typename T>
 class IGraph {
@@ -12,7 +16,18 @@ public:
 
     IGraph() {};
 
-    IGraph(IGraph *_oth) {};
+    IGraph(IGraph *_oth) {
+        std::vector<std::vector<std::pair<bool, T>>> matrixg;
+        std::unordered_map<int, int> bnum;
+        _oth->givegraph(matrixg, bnum);
+        this->getgraph(matrixg, bnum);
+    };
+
+    virtual void getgraph(std::vector<std::vector<std::pair<bool, T>>> &matrixg,
+     std::unordered_map<int, int> &bnum){};
+
+    virtual void givegraph(std::vector<std::vector<std::pair<bool, T>>> &matrixg,
+     std::unordered_map<int, int> &bnum){};
 
     virtual void AddEdge(int from, int to, T &&_obj) = 0;
 
