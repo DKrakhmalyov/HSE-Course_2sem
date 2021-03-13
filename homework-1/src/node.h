@@ -8,23 +8,50 @@ class Node {
 
 public:
 
-    Node();
+    Node() {
+        number = Node<T>::count++;
+    }
 
-    void Mark();
+    void Mark() {
+        used = true;
+    }
 
-    void Unmark();
+    void Unmark() {
+        used = false;
+    }
 
-    bool Marked() const;
+    bool Marked() const {
+        return used;
+    }
 
-    bool CheckEdgeTo(Node<T> *vertex) const;
+    bool CheckEdgeTo(Node<T> *vertex) const {
+        for (const std::pair<Node<T>*, T> &node : next)
+            if (node.first == vertex)
+                return true;
+        return false;  
+    }
 
-    void AddNextVertex(Node<T> *vertex, T&& element);
+    void AddNextVertex(Node<T> *vertex, T&& element) {
+        if (Node<T>::CheckEdgeTo(vertex))
+            return;
 
-    void GetNextVertices(std::vector<Node<T> *> &vertices) const;
+        next.emplace_back(vertex, element);
+    }
+
+    void GetNextVertices(std::vector<Node<T> *> &vertices) const {
+        for (const std::pair<Node<T>*, T> &node : next)
+            vertices.push_back(node.first);
+    }
 
     struct less {
-        bool operator() (Node<T> *l, Node<T> *r) const;
+        bool operator() (Node<T> *l, Node<T> *r) const {
+            return l->number < r->number;
+        }
     };
+
+    bool operator==(const Node<T> &other) const {
+        return (this == &other);
+    }
 
 private:
 
@@ -36,5 +63,8 @@ private:
 
     std::vector<std::pair<Node<T>*, T>> next; 
 };
+
+template<typename T>
+int Node<T>::count = 0;
 
 #endif //HOMEWORK_1_NODE_H

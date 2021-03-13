@@ -7,11 +7,6 @@
 #include "src/arcGraph.h"
 #include "src/ptrsGraph.h"
 
-#include "src/listGraph.cpp"
-#include "src/matrixGraph.cpp"
-#include "src/arcGraph.cpp"
-#include "src/ptrsGraph.cpp"
-
 TEST(IGraph, Creating) {
     IGraph<int> *listGr = new ListGraph<int>;
     IGraph<int> *arcGr = new ArcGraph<int>;
@@ -105,10 +100,8 @@ TEST(PtrsGraph, Cycled) {
 
     std::vector<Node<int> *> res2;
     ptrGr->GetPrevVertices(third, res2);
-    EXPECT_EQ(res2[0], second);
+    EXPECT_EQ(*res2.front(), *second);
 
-    // Возможно, лучше не удалять объекты вершин, а передавать владение сразу графу
-    // Решите точно в реализации и удалите строки, если что
     delete first;
     delete second;
     delete third;

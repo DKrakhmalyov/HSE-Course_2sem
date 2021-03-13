@@ -3,7 +3,6 @@
 #define HOMEWORK_1_PTRSGRAPH_H
 
 #include "node.h"
-#include "node.cpp"
 #include "../graph.h"
 
 template<typename T>
@@ -13,37 +12,124 @@ public:
 
     PtrsGraph() = default;    
 
+    virtual ~PtrsGraph() = default;
+
     PtrsGraph(const PtrsGraph<T> &other) = default;
 
     PtrsGraph(PtrsGraph<T> &&other) = default;
 
-    PtrsGraph<T>& operator=(const PtrsGraph<T> &other);
+    PtrsGraph<T>& operator=(const PtrsGraph<T> &other) {
+        if (&other == this)
+            return *this;
 
-    PtrsGraph<T>& operator=(PtrsGraph<T> &&other);
+        m_vertices = other.m_vertices;
+    }
 
-    virtual ~PtrsGraph() = default;
+    PtrsGraph<T>& operator=(PtrsGraph<T> &&other) {
+        if (&other == this)
+            return *this;
 
-    virtual int VerticesCount() const;
+        m_vertices = std::move(other.m_vertices);
+    }
 
-    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj);
+    virtual int VerticesCount() const {
+        return static_cast<int>(m_vertices.size());
+    }
 
-    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const;
 
-    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const;
+    virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
+        if (from->CheckEdgeTo(to))
+            return;
 
-    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const ;
+        if (m_vertices.find(from) == m_vertices.end())
+            PtrsGraph<T>::AddVertex(from);
 
-    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const ;
+        if (m_vertices.find(to) == m_vertices.end())
+            PtrsGraph<T>::AddVertex(to);
+
+
+        from->AddNextVertex(to, std::move(_obj));
+    }
+
+    virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        if (m_vertices.find(vertex) == m_vertices.end())
+            return;
+
+        vertex->GetNextVertices(vertices);
+    }
+
+    virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        if (m_vertices.find(vertex) == m_vertices.end())
+            return;
+
+        for (Node<T>* v : m_vertices)
+            if (v->CheckEdgeTo(vertex))
+                vertices.push_back(v);
+    }
+
+    virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        if (m_vertices.find(vertex) == m_vertices.end())
+            return;
+
+        PtrsGraph<T>::DoDFS(vertex, vertices);
+        PtrsGraph<T>::UnmarkVertices();
+    }
+
+    virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        if (m_vertices.find(vertex) == m_vertices.end())
+            return;
+
+        PtrsGraph<T>::DoBFS(vertex, vertices);
+        PtrsGraph<T>::UnmarkVertices();
+    }
 
 private:
 
-    void UnmarkVertices() const;
+    void UnmarkVertices() const {
+        for (Node<T> *vertex : m_vertices)
+            vertex->Unmark();
+    }
 
-    void AddVertex(Node<T> *vertex);
+    void AddVertex(Node<T> *vertex) {
+        if (m_vertices.find(vertex) != m_vertices.end())
+            return;
 
-    virtual void DoDFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) const;
+        m_vertices.insert(vertex);
+    }
 
-    virtual void DoBFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) const;
+    virtual void DoDFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        vertex->Mark();
+        vertices.push_back(vertex);
+
+        std::vector<Node<T> *> next_vertices;
+        vertex->GetNextVertices(next_vertices);
+
+        for (Node<T> *v : next_vertices)
+            if (!v->Marked())
+                DoDFS(v, vertices);
+    }
+
+    virtual void DoBFS(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
+        vertex->Mark();
+
+        std::queue<Node<T> *> q;
+        q.push(vertex);
+
+        while (q.size()) {
+            Node<T> *current_vertex = q.front();
+            vertices.push_back(current_vertex);
+            q.pop();
+
+            std::vector<Node<T> *> next_vertices;
+            PtrsGraph<T>::GetNextVertices(current_vertex, next_vertices);        
+
+            for (Node<T> *v : next_vertices)
+                if (!v->Marked()) {
+                    q.push(v);
+                    v->Mark();
+                }
+        }
+    }
 
 private:
 
