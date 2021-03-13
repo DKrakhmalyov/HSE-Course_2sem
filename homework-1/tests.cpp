@@ -84,8 +84,8 @@ TEST(ArcGraph, Cycled) {
 // Cycled graph
 // 1 --> 2 --> 3 --> 1
 TEST(PtrsGraph, Cycled) {
-    std::shared_ptr<IPtrsGraph<int>> ptrGr = std::dynamic_pointer_cast<IPtrsGraph<int>>(
-            std::make_shared<PtrsGraph<int>>());
+    IPtrsGraph<int> *ptrGr = new PtrsGraph<int>;
+
     Node<int> *first = new Node<int>;
     Node<int> *second = new Node<int>;
     Node<int> *third = new Node<int>;
@@ -102,9 +102,8 @@ TEST(PtrsGraph, Cycled) {
     ptrGr->GetPrevVertices(third, res2);
     EXPECT_EQ(res2.size(), 1);
 
-    delete first;
-    delete second;
-    delete third;
+    delete ptrGr;
+
 }
 
 // Cycled graph
