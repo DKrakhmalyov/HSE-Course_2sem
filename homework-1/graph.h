@@ -25,6 +25,8 @@ public:
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+
+    virtual void ToMatrixGraph(std::pair< std::vector <std::vector <T> >, T> & m) = 0;
 };
 
 template<typename T = void>
