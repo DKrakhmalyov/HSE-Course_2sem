@@ -22,28 +22,24 @@ public:
 
     void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) override {
 
-        nodes.insert(from);
-        nodes.insert(to);
+        vertices += from->IsEmpty();
+        vertices += to->IsEmpty();
 
         from->next.emplace_back(to, _obj);
+        to->prev.emplace_back(to, _obj);
     }
 
     PtrsGraph() : nodes(std::set< Node<T>* >())  {}
 
-    int VerticesCount() const override { return nodes.size(); };
+    int VerticesCount() const override { return vertices; };
 
     
 
     void GetPrevVertices(Node<T>* vertex, std::vector<Node<T>*>& vertices) const override  {
 
-        for (Node<T>* t : nodes)
+        for (Node<T>* t : vertex->prev)
         {
-            for (std::pair<Node<T>*, T>  z : t->next)
-            {
-                if (z.first == vertex) {
-                    vertices.emplace_back(t);
-                }
-            }
+            vertices.emplace_back(t);
         }
     }
 
@@ -96,7 +92,7 @@ public:
 
 
 private: 
-    std::set<Node<T>*> nodes;
+    int vertices;
 };
 
 #endif //HOMEWORK_1_PTRSGRAPH_H
