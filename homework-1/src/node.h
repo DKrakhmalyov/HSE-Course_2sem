@@ -9,6 +9,10 @@ class Node {
     std::unordered_map<Node*, T> data_;
     std::unordered_set<Node*> prev_data_;
 public:
+    bool Empty() {
+        return data_.empty() && prev_data_.empty();
+    }
+
     void AddNode(Node* node, T&& weight) {
         data_[node] = std::forward<T>(weight);
     }

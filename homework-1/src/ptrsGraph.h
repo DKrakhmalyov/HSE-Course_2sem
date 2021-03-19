@@ -7,19 +7,21 @@
 
 template<typename T = void>
 class PtrsGraph : public IPtrsGraph<T> {
-    std::unordered_set<Node<T> *> nodes_;
+    int size_ = 0;
 
 public:
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) override {
+        if (from->Empty())
+            ++size_;
+        if (to->Empty())
+            ++size_;
         from->AddNode(to, std::forward<T>(_obj));
         to->AddPrevNode(from);
-        nodes_.insert(from);
-        nodes_.insert(to);
     };
 
     PtrsGraph() {};
 
-    virtual int VerticesCount() const override { return nodes_.size(); };
+    virtual int VerticesCount() const override { return size_; };
 
     virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
         vertex->GetNextNodes(vertices);
