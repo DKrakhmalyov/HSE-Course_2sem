@@ -9,13 +9,26 @@ template <typename T = void>
 class PtrsGraph : public IPtrsGraph<T>
 {
 private:
-    std::set<Node<T> *> ptrs;
+    std::vector<Node<T> *> ptrs;
 
 public:
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj)
     {
-        ptrs.insert(from);
-        ptrs.insert(to);
+        bool ok1 = true, ok2 = true;
+        for (auto x: ptrs) {
+            if (x->_id == from->_id) {
+                ok1 = false;
+            }
+            if (x->_id == to->_id) {
+                ok2 = false;
+            }
+        }
+        if (ok1) {
+            ptrs.push_back(from);
+        }
+        if (ok2) {
+            ptrs.push_back(to);
+        }
         from->addVert(to, std::move(_obj));
     };
 

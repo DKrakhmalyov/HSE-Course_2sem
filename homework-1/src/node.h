@@ -31,11 +31,11 @@ public:
         verts.push_back(node);
         weights[node] = obj;
     }
+    int _id;
 private:
     T weightOwn;
     std::vector<Node<T>*> verts;
     std::map<Node<T>*, T> weights;
-    int _id;
 };
 
 #endif //HOMEWORK_1_NODE_H
