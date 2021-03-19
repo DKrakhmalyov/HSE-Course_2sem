@@ -13,31 +13,34 @@ public:
 
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&weight)
     {
-        nodes.insert(from);
-        nodes.insert(to);
+        if (from->empty())
+            verticesCount++;
+
+        if (to->empty())
+            verticesCount++;
+
         from->addEgde(to, std::forward<T>(weight));
     };
 
     virtual int VerticesCount() const
     {
-        return nodes.size();
+        return verticesCount;
     };
 
     virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const
     {
-        vertices = vertex->getEdges();
+        for (auto nextVertex : vertex->getNextVertices())
+            vertices.push_back(nextVertex.first);
     };
 
     virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const
     {
-        for (auto node : nodes)
-            for (auto edge : node->getEdges())
-                if (edge == vertex)
-                    vertices.push_back(node);
+        for (auto prevVertices : vertex->getPrevVertices())
+            vertices.push_back(prevVertices.first);
     };
 
 private:
-    std::unordered_set<Node<T> *> nodes;
+    int verticesCount = 0;
 };
 
 #endif //HOMEWORK_1_PTRSGRAPH_H

@@ -8,18 +8,27 @@ class Node
 public:
     void addEgde(Node<T> *node, T &&weight)
     {
-        edges.push_back(node);
-        weights.push_back(std::forward<T>(weight));
+        node->prevVertices.push_back({this, weight});
+        nextVertices.push_back({node, std::forward<T>(weight)});
     }
 
-    const std::vector<Node<T> *> &getEdges() const
+    const std::vector<std::pair<Node<T> *, T>> &getNextVertices() const
     {
-        return edges;
+        return nextVertices;
+    }
+
+    const std::vector<std::pair<Node<T> *, T>> &getPrevVertices() const
+    {
+        return prevVertices;
+    }
+
+    bool empty() const
+    {
+        return nextVertices.size() == 0 && prevVertices.size() == 0;
     }
 
 private:
-    std::vector<Node<T> *> edges;
-    std::vector<T> weights;
+    std::vector<std::pair<Node<T> *, T>> nextVertices, prevVertices;
 };
 
 #endif //HOMEWORK_1_NODE_H
