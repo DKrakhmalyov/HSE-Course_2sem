@@ -7,21 +7,24 @@ template<typename T>
 class Node {
 
 public:
-
-    Node() {
-        number = Node<T>::count++;
-    }
-
     void Mark() {
-        used = true;
+        m_used = true;
     }
 
     void Unmark() {
-        used = false;
+        m_used = false;
     }
 
     bool Marked() const {
-        return used;
+        return m_used;
+    }
+
+    bool Added() const {
+        return m_added;
+    }
+
+    void AddVertex() {
+        m_added = true;
     }
 
     bool CheckEdgeTo(Node<T> *vertex) const {
@@ -32,10 +35,11 @@ public:
     }
 
     void AddNextVertex(Node<T> *vertex, T&& element) {
-        if (Node<T>::CheckEdgeTo(vertex))
-            return;
-
         next.emplace_back(vertex, element);
+    }
+
+    void AddPrevVertex(Node<T> *vertex, T&& element) {
+        prev.emplace_back(vertex, element);
     }
 
     void GetNextVertices(std::vector<Node<T> *> &vertices) const {
@@ -43,11 +47,10 @@ public:
             vertices.push_back(node.first);
     }
 
-    struct less {
-        bool operator() (Node<T> *l, Node<T> *r) const {
-            return l->number < r->number;
-        }
-    };
+    void GetPrevVertices(std::vector<Node<T> *> &vertices) const {
+        for (const std::pair<Node<T>*, T> &node : prev)
+            vertices.push_back(node.first);
+    }    
 
     bool operator==(const Node<T> &other) const {
         return (this == &other);
@@ -55,16 +58,9 @@ public:
 
 private:
 
-    bool used;
+    bool m_used, m_added;
 
-    int number;
-
-    static int count;
-
-    std::vector<std::pair<Node<T>*, T>> next; 
+    std::vector<std::pair<Node<T>*, T>> next, prev; 
 };
-
-template<typename T>
-int Node<T>::count = 0;
 
 #endif //HOMEWORK_1_NODE_H
