@@ -24,31 +24,45 @@ public:
     Node<T>* getobj(int i){
         return tops[i].first;
     }
-    void dfs(std::vector<Node<T>*> &vertices, std::unordered_map<Node<T>*, bool> &used) {
-        used[this] = true;
+    void dfs(std::vector<Node<T>*> &vertices, std::vector<bool> &used) {
+        used[this->num()] = true;
         vertices.push_back(this);
         for (int i = 0; i < tops.size(); i++)
-            if (!used[tops[i].first])
+            if (!used[tops[i].first->num()])
                 tops[i].first->dfs(vertices, used);
     };
-    void bfs(std::vector<Node<T>*> &vertices, std::unordered_map<Node<T>*, bool> &used, std::queue<Node<T>*> &q){
+    void bfs(std::vector<Node<T>*> &vertices, std::vector<bool> &used, std::queue<Node<T>*> &q){
         q.push(this);
-        used[this] = true;
+        used[this->num()] = true;
         while (!q.empty()) {
             Node* v = q.front();
             q.pop();
             vertices.push_back(v);
             for (int i=0; i<v->tops.size(); ++i) {
                 Node* to = v->tops[i].first;
-                if (!used[to]) {
-                    used[to] = true;
+                if (!used[to->num()]) {
+                    used[to->num()] = true;
                     q.push (to);
                 }
             }
         }
     };
+    void reflag(){
+        flagm = !flagm;
+    }
+    bool flag(){
+        return flagm;
+    }
+    void renum(int a){
+        numm = a;
+    }
+    int num(){
+        return numm;
+    }
 private:
     std::vector<std::pair<Node<T>*, T>> tops, topsb;
+    bool flagm = false;
+    int numm = -1;
 };
 
 #endif //HOMEWORK_1_NODE_H

@@ -12,14 +12,24 @@ public:
 
     PtrsGraph() {};
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
-        ptrsg.insert(from);
-        ptrsg.insert(to);
+        if (!from->flag()){
+            ptrsg++;
+            from->reflag();
+            from->renum(sch);
+            sch++;
+        }
+        if (to->flag()){
+            ptrsg++;
+            to->reflag();
+            to->renum(sch);
+            sch++;
+        }
         from->AddEdge(to, std::forward<T>(_obj));
         to->AddEdgeb(from, std::forward<T>(_obj));
     };
 
     virtual int VerticesCount() const {     
-        return ptrsg.size();
+        return ptrsg;
     };
 
     virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
@@ -31,24 +41,19 @@ public:
     };
 
     virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
-        std::unordered_map<Node<T>*, bool> used;
-        for(auto i: ptrsg){
-            used.insert({i, false});
-        }
+        std::vector<bool> used(ptrsg, false);
         vertex->dfs(vertices, used);
     };
 
     virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
-        std::unordered_map<Node<T>*, bool> used;
+        std::vector<bool> used(ptrsg, false);
         std::queue<Node<T>*> qu;
-        for(auto iter = ptrsg.begin(); iter != ptrsg.end(); ++iter){
-            used[*iter] = false;
-        }
         vertex->bfs(vertices, used, qu);
     };
 
 private:
-    std::unordered_set<Node<T>*> ptrsg;
+    int ptrsg = 0;
+    int sch = 0;
 };
 
 #endif //HOMEWORK_1_PTRSGRAPH_H
