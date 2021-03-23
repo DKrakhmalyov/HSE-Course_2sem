@@ -12,18 +12,24 @@ class PtrsGraph : public IPtrsGraph<T> {
 
 public:
     virtual void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
-        if(std::find(graph.begin(), graph.end(), from) == graph.end()){
-            graph.push_back(from);
+        /*
+         * будем проверять, есть ли у вершины соседи - если их нет, то это новая вершина в графе -> vertices_count++
+         */
+        if(from->next.size() == 0 && from->prev.size() == 0){
+            vertices_count++;
         }
-        if(std::find(graph.begin(), graph.end(), to) == graph.end()){
-            graph.push_back(to);
+        if(from->next.size() == 0 && from->prev.size() == 0){
+            vertices_count++;
         }
         from->next.emplace_back(std::pair<Node<T>*, T>(to, std::move(_obj)));
+        to->prev.emplace_back(from);
     }
 
-    PtrsGraph() = default;
+    PtrsGraph(){
+        vertices_count = 0;
+    };
 
-    virtual int VerticesCount() const { return graph.size(); }
+    virtual int VerticesCount() const { return vertices_count; }
 
     virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
         for(const std::pair<Node<T>*, T>& edge: vertex->next){
@@ -32,19 +38,14 @@ public:
     }
 
     virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
-        for(Node<T>* i : graph){
-            for(const std::pair<Node<T>*, T>& edge : i->next){
-                if (edge.first == vertex){
-                    vertices.push_back(i);
-                    break;
-                }
-            }
+        for(Node<T>* i : vertex->prev) {
+            vertices.push_back(i);
         }
     }
 
     virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
         __dfs__(vertex, vertices);
-        for(Node<T>* i: graph){
+        for(Node<T>* i: vertices){
             i->used = false;
         }
     }
@@ -64,11 +65,14 @@ public:
                 }
             }
         }
-        for(Node<T>* i : graph){
+        for(Node<T>* i : vertices){
             i->used = false;
         }
     }
+
 protected:
+    int vertices_count;
+
     void __dfs__(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
         vertex->used = true;
         vertices.push_back(vertex);
@@ -78,7 +82,6 @@ protected:
             }
         }
     }
-    std::vector<Node<T>*> graph;
 };
 
 #endif //HOMEWORK_1_PTRSGRAPH_H

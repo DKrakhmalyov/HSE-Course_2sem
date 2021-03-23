@@ -16,13 +16,14 @@ public:
     ArcGraph(IGraph<T> *_oth) {
         int count = _oth->VerticesCount();
         for(int i = 0; i < count; i++){
-            for (std::pair<int, T>& edge : _oth->__get__next__(i)){
-                graph.emplace_back(std::pair<std::pair<int, int>, T>(std::pair<int, int>(i, edge.first), std::move(edge.second)));
+            for (std::pair<int, T>& edge : this->__call__get__next__(_oth, i)){
+                graph.emplace_back(std::pair<std::pair<int, int>, T>(std::pair<int, int>(i, edge.first),
+                        std::move(edge.second)));
             }
         }
     }
 
-    virtual int VerticesCount() const { 
+    virtual int VerticesCount() const {
         int answer = 0;
         for(const std::pair<std::pair<int, int>, T>& edge : graph){
             answer = std::max(answer, std::max(edge.first.first, edge.first.second));
@@ -47,7 +48,8 @@ public:
     }
 
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
-        __dfs__(vertex, vertices, std::vector<bool>(VerticesCount()));
+        std::vector<bool> used = std::vector<bool>(VerticesCount());
+        __dfs__(vertex, vertices, used);
     }
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
@@ -70,6 +72,9 @@ public:
         }
     }
 
+protected:
+    std::vector<std::pair<std::pair<int, int>, T>> graph;
+
     virtual std::list<std::pair<int, T>> __get__next__(int vertex) const {
         std::list<std::pair<int, T>> answer;
         for(const std::pair<std::pair<int, int>, T>& edge : graph){
@@ -80,9 +85,6 @@ public:
         return answer;
     }
 
-protected:
-    std::vector<std::pair<std::pair<int, int>, T>> graph;
-    
     virtual void __dfs__(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const {
         used[vertex] = 1;
         vertices.push_back(vertex);

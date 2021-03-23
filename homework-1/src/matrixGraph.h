@@ -14,7 +14,8 @@ public:
             for (std::vector<std::pair<bool, T>>& i : graph){
                 i.resize(max_from_to + 1, std::pair<bool, T>(false, T()));
             }
-            graph.resize(std::max(from, to) + 1, std::vector<std::pair<bool, T>>(max_from_to + 1, std::pair<bool, T>(false, T())));
+            graph.resize(std::max(from, to) + 1, std::vector<std::pair<bool, T>>(max_from_to + 1,
+                    std::pair<bool, T>(false, T())));
         }
         graph[from][to] = std::pair<bool, T>(true, std::move(element));
     }
@@ -24,9 +25,11 @@ public:
     }
 
     MatrixGraph(IGraph<T> *_oth) {
-        graph = std::vector<std::vector<std::pair<bool, T>>>(_oth->VerticesCount(), std::vector<std::pair<bool, T>>(_oth->VerticesCount(), std::pair<bool, T>(false, T())));
+        graph = std::vector<std::vector<std::pair<bool, T>>>(_oth->VerticesCount(),
+                                                             std::vector<std::pair<bool, T>>(_oth->VerticesCount(),
+                                                                     std::pair<bool, T>(false, T())));
         for(int i = 0; i < _oth->VerticesCount(); i++){
-            for (std::pair<int, T>& edge : _oth->__get__next__(i)){
+            for (std::pair<int, T>& edge : this->__call__get__next__(_oth, i)){
                 graph[i][edge.first] = std::pair<bool, T>(true, std::move(edge.second));
             }
         }
@@ -51,7 +54,8 @@ public:
     }
 
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
-        __dfs__(vertex, vertices, std::vector<bool>(VerticesCount(), 0));
+        std::vector<bool> used = std::vector<bool>(VerticesCount());
+        __dfs__(vertex, vertices, used);
     }
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
@@ -74,6 +78,10 @@ public:
         }
     }
 
+
+protected:
+    std::vector<std::vector<std::pair<bool, T>>> graph;
+
     virtual std::list<std::pair<int, T>> __get__next__(int vertex) const {
         std::list<std::pair<int, T>> answer;
         for(int i = 0; i < VerticesCount(); i++){
@@ -84,9 +92,6 @@ public:
         return answer;
     }
 
-protected:
-    std::vector<std::vector<std::pair<bool, T>>> graph;
-    
     virtual void __dfs__(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const {
         used[vertex] = true;
         vertices.push_back(vertex);
