@@ -34,7 +34,7 @@ public:
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const;
 protected:
-    std::vector<std::vector<std::pair<bool, T>>> _g;
+    std::vector<std::vector<T*>> _g;
 
     std::unordered_set<int> _vertices;
 
@@ -53,11 +53,10 @@ void MatrixGraph<T>::AddEdge(int from, int to, T &&element) {
         need_size += 1;
         _g.resize(need_size);
         for (size_t i = 0; i < need_size; ++i) {
-            _g[i].resize(need_size, {false, T()});
+            _g[i].resize(need_size, nullptr);
         }
     }
-    _g[from][to].first = true;
-    _g[from][to].second = element;
+    _g[from][to] = new T(element);
 }
 template<typename T>
 void MatrixGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) const {
@@ -65,7 +64,7 @@ void MatrixGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) con
     assert(_vertices.contains(vertex));
 
     for (int to : _vertices) {
-        if (_g[vertex][to].first) {
+        if (_g[vertex][to] != nullptr) {
             vertices.push_back(to);
         }
     }
@@ -77,7 +76,7 @@ void MatrixGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) con
     assert(_vertices.contains(vertex));
 
     for (int from : _vertices) {
-        if (_g[from][vertex].first) {
+        if (_g[from][vertex] != nullptr) {
             vertices.push_back(from);
         }
     }
@@ -97,7 +96,7 @@ void MatrixGraph<T>::_dfs(int vertex, std::unordered_set<int> &used, std::vector
     used.insert(vertex);
     vertices.push_back(vertex);
     for (int to : _vertices) {
-        if (_g[vertex][to].first && !used.contains(to)) {
+        if (_g[vertex][to] != nullptr && !used.contains(to)) {
             _dfs(to, used, vertices);
         }
     }
@@ -116,7 +115,7 @@ void MatrixGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) 
         vertices.push_back(cur_vertex);
         q.pop();
         for (int to : _vertices) {
-            if (_g[vertex][to].first && !used.contains(to)) {
+            if (_g[vertex][to] != nullptr && !used.contains(to)) {
                 used.insert(to);
                 q.push(to);
             }
@@ -133,17 +132,17 @@ void MatrixGraph<T>::GetVertices(std::vector<int> &vertices) const {
 template<typename T>
 T MatrixGraph<T>::GetEdgeWeight(int from, int to) const {
 //    нельзя получить вес ребра, которое не существует
-    assert(from >= 0 && from < _g.size() && to >= 0 && to < _g.size() && _g[from][to].first);
+    assert(from >= 0 && from < _g.size() && to >= 0 && to < _g.size() && _g[from][to] != nullptr);
 
-    return _g[from][to].second;
+    return *_g[from][to];
 }
 
 template<typename T>
 void MatrixGraph<T>::GetEdges(std::vector<std::tuple<int, int, T>> &edges) const {
     for (const auto &from : _vertices) {
         for (const auto &to : _vertices) {
-            if (_g[from][to].first) {
-                edges.emplace_back(from, to, _g[from][to].second);
+            if (_g[from][to] != nullptr) {
+                edges.emplace_back(from, to, *_g[from][to]);
             }
         }
     }
