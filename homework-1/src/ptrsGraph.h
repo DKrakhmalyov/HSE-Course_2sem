@@ -9,30 +9,16 @@ template<typename T = void>
 class PtrsGraph : public IPtrsGraph<T> {
 
 private:
-  std::set<Node<T> *> nodes;
+  std::size_t m_vertices_count{0};
 
-public:
-  void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) override {
-    nodes.insert(from);
-    nodes.insert(to);
-    from->addChild(to, _obj);
-  };
+  void ClearNodeMarks(std::vector<Node<T> *> &vertices) const {
+    // Unmark nodes to avoid side effects.
+    for (auto &vtx: vertices) {
+      vtx->SetUsed(false);
+    }
+  }
 
-  PtrsGraph() {};
-
-  [[nodiscard]] int VerticesCount() const override { return nodes.size(); };
-
-  void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
-    vertices = vertex->getChildren();
-  };
-
-  void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
-    vertices = vertex->getParents();
-  };
-
-  void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
-    std::set<Node<T> *> visited;
-
+  void InnerDeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     std::stack<Node<T> *> stack;
     stack.push(vertex);
 
@@ -40,24 +26,23 @@ public:
       auto top = stack.top();
       stack.pop();
 
-      if (!visited.contains(top)) {
-        visited.insert(top);
+      if (!top->IsUsed()) {
         vertices.push_back(top);
+
+        // Mark node to make sure we use it once.
+        top->SetUsed(true);
       }
 
       std::vector<Node<T> *> next;
       GetNextVertices(top, next);
 
       for (auto adjacent: next) {
-        if (!visited.contains(adjacent)) stack.push(adjacent);
+        if (!adjacent->IsUsed()) stack.push(adjacent);
       }
     }
+  }
 
-  };
-
-  void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
-    std::set<Node<T> *> visited;
-
+  void InnerBreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     std::queue<Node<T> *> queue;
     queue.push(vertex);
 
@@ -71,14 +56,55 @@ public:
       GetNextVertices(front, next);
 
       for (auto adjacent: next) {
-        if (!visited.contains(adjacent)) {
+        if (!adjacent->IsUsed()) {
           queue.push(adjacent);
-          visited.insert(adjacent);
+
+          // Mark node to make sure we use it once.
+          adjacent->SetUsed(true);
         }
       }
-
     }
   }
+
+public:
+  void AddEdge(Node<T> *from, Node<T> *to, T &&_obj) override {
+    // If 'from' vertex is new for the graph.
+    if (from->GetChildren().size() == 0 && from->GetParents().size() == 0) {
+      m_vertices_count++;
+    }
+
+    // If 'to' vertex is new for the graph.
+    if (to->GetChildren().size() == 0 && to->GetParents().size() == 0) {
+      m_vertices_count++;
+    }
+
+    from->AddChild(to, _obj);
+  };
+
+  PtrsGraph() {};
+
+  [[nodiscard]] int VerticesCount() const override {
+    return m_vertices_count;
+  };
+
+  void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
+    vertices = vertex->GetChildren();
+  };
+
+  void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
+    vertices = vertex->GetParents();
+  };
+
+  void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
+    InnerDeepFirstSearch(vertex, vertices);
+    ClearNodeMarks(vertices);
+  }
+
+  void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override {
+    InnerBreadthFirstSearch(vertex, vertices);
+    ClearNodeMarks(vertices);
+  }
+
 };
 
 #endif //HOMEWORK_1_PTRSGRAPH_H

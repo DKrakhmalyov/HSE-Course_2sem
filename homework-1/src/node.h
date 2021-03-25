@@ -7,17 +7,18 @@
 template<typename T>
 class Node {
 private:
-  T data;
-  std::vector<std::pair<Node<T> *, T>> children;
-  std::vector<Node<T> *> parents;
+  T m_data;
+  std::vector<std::pair<Node<T> *, T>> m_children;
+  std::vector<Node<T> *> m_parents;
+  bool m_used;
 
 public:
   Node() {}
 
-  explicit Node(T data) : data(data) {}
+  explicit Node(T data) : m_data(data) {}
 
   bool operator<(const Node &rhs) const {
-    return data < rhs.data;
+    return m_data < rhs.m_data;
   }
 
   bool operator>(const Node &rhs) const {
@@ -33,28 +34,36 @@ public:
   }
 
   bool operator==(const Node &rhs) const {
-    return data == rhs.data;
+    return m_data == rhs.m_data;
   }
 
   bool operator!=(const Node &rhs) const {
     return !(rhs == *this);
   }
 
-  void addChild(Node *rhs, T weight) {
-    rhs->parents.push_back(this);
-    children.push_back({rhs, weight});
+  void AddChild(Node *rhs, T weight) {
+    rhs->m_parents.push_back(this);
+    m_children.push_back({rhs, weight});
   }
 
-  std::vector<Node<T> *> getChildren() {
+  std::vector<Node<T> *> GetChildren() {
     auto result = std::vector<Node<T> *>();
-    for (auto pair: children) {
+    for (auto pair: m_children) {
       result.push_back(pair.first);
     }
     return result;
   }
 
-  std::vector<Node<T> *> getParents() {
-    return parents;
+  std::vector<Node<T> *> GetParents() {
+    return m_parents;
+  }
+
+  void SetUsed(bool used) {
+    m_used = used;
+  }
+
+  bool IsUsed() {
+    return m_used;
   }
 };
 
