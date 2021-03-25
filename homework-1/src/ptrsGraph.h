@@ -42,6 +42,9 @@ int PtrsGraph<T>::VerticesCount() const {
 
 template<typename T>
 void PtrsGraph<T>::AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
+    // нельзя добавлять ребра между несуществующими вершинами
+    assert(from != nullptr && to != nullptr);
+
     _vertices.insert(from);
     _vertices.insert(to);
     from->outgoing.emplace_back(to, _obj);
@@ -111,7 +114,7 @@ void PtrsGraph<T>::BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &v
 
 template<typename T>
 void PtrsGraph<T>::GetVertices(std::vector<Node<T> *> &vertices) const {
-
+    vertices = _vertices;
 }
 
 template<typename T>

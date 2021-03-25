@@ -51,8 +51,6 @@ public:
 
     virtual void GetEdges(std::vector<std::tuple<Node<T> *, Node<T> *, T>> &edges) const = 0;
 
-    virtual void GetVertices(std::vector<Node<T> *> &vertices) const = 0;
-
     virtual T GetEdgeWeight(Node<T> *from, Node<T> *to) const = 0;
 
     virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const = 0;
