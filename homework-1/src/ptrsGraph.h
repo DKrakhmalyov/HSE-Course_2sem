@@ -114,7 +114,9 @@ void PtrsGraph<T>::BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &v
 
 template<typename T>
 void PtrsGraph<T>::GetVertices(std::vector<Node<T> *> &vertices) const {
-    vertices = _vertices;
+    for (auto vertex : _vertices) {
+        vertices.push_back(vertex);
+    }
 }
 
 template<typename T>
