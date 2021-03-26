@@ -3,6 +3,9 @@
 #define HOMEWORK_1_GRAPH_H
 
 #include <vector>
+#include <list>
+#include <queue>
+#include <map>
 #include "src/node.h"
 
 template<typename T>
@@ -25,6 +28,9 @@ public:
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const = 0;
+
+    virtual void GetEdges(std::vector<std::tuple<int, int, T>>& edges) const = 0;
+
 };
 
 template<typename T = void>
