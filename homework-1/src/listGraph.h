@@ -18,17 +18,14 @@ public:
         }
         graph[from][to] = element;
         reversed_graph[to][from] = graph[from][to];
-        vertexes.insert(from);
-        vertexes.insert(to);
+        vertices_.insert(from);
+        vertices_.insert(to);
     };
 
-    ListGraph() {
-        graph = std::vector<std::map<int, T>>();
-        reversed_graph = std::vector<std::map<int, T>>();
-    };
+    ListGraph() = default;
 
     virtual void GetEdges(std::vector<std::tuple<int, int, T>>& edges) const {
-        for(size_t i = 0; i < VerticesCount(); ++i){
+        for(size_t i = 0; i < graph.size(); ++i){
             for(std::pair<int, T> t : graph[i]){
                 edges.emplace_back(i,t.first, t.second);
             }
@@ -41,8 +38,8 @@ public:
         int maxi = 0;
         for(std::tuple<int, int, T> t : edges){
             maxi = std::max(get<0>(t), get<1>(t)) + 1;
-            vertexes.insert(std::get<0>(t));
-            vertexes.insert(std::get<1>(t));
+            vertices_.insert(std::get<0>(t));
+            vertices_.insert(std::get<1>(t));
         }
         graph = std::vector<std::map<int, T>>(maxi);
         reversed_graph = std::vector<std::map<int, T>>(maxi);
@@ -52,7 +49,7 @@ public:
         }
     };
 
-    virtual int VerticesCount() const { return static_cast<int>(vertexes.size()); };
+    virtual int VerticesCount() const { return static_cast<int>(vertices_.size()); };
 
     virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {
         for(std::pair<int, T> t : graph[vertex]){
@@ -67,13 +64,13 @@ public:
     };
 
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
-        std::vector<bool> used(VerticesCount(), false);
+        std::vector<bool> used(graph.size(), false);
         _dfs(vertex, vertices, used);
     };
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
         std::queue<int> order;
-        std::vector<bool> used(VerticesCount(), false);
+        std::vector<bool> used(graph.size(), false);
         used[vertex] = true;
         order.push(vertex);
         int current = 0;
@@ -82,6 +79,7 @@ public:
             order.pop();
             for(std::pair<int, T> t : graph[current]){
                 if(!used[t.first]){
+                    used[t.first] = true;
                     vertices.push_back(t.first);
                     order.push(t.first);
                 }
@@ -92,7 +90,7 @@ public:
 protected:
     std::vector<std::map<int, T>> graph;
     std::vector<std::map<int, T>> reversed_graph;
-    std::set<int> vertexes;
+    std::set<int> vertices_;
 
     void _dfs(int vertex, std::vector<int>& vertices, std::vector<bool>& used) const{
         used[vertex] = true;
@@ -106,4 +104,4 @@ protected:
 };
 
 
-#endif HOMEWORK_1_LISTGRAPH_H
+#endif //HOMEWORK_1_LISTGRAPH_H

@@ -24,13 +24,15 @@ public:
                 graph[i].resize(maxi, nullptr);
             }
         }
+        vertices_.insert(from);
+        vertices_.insert(to);
         graph[from][to] = new T(element);
 
     };
 
     virtual void GetEdges(std::vector<std::tuple<int, int, T>>& edges) const{
-        for(size_t i = 0; i < VerticesCount(); ++i){
-            for(size_t j = 0; j < VerticesCount(); ++j){
+        for(size_t i = 0; i < graph.size(); ++i){
+            for(size_t j = 0; j < graph.size(); ++j){
                 if(graph[i][j] != nullptr){
                     edges.push_back({i,j, *graph[i][j]});
                 }
@@ -50,10 +52,10 @@ public:
         }
     };
 
-    virtual int VerticesCount() const { return graph.size(); };
+    virtual int VerticesCount() const { return vertices_.size(); };
 
     virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {
-        for(size_t i = 0; i < VerticesCount(); ++i){
+        for(size_t i = 0; i < graph.size(); ++i){
             if(graph[vertex][i] != nullptr) {
                 vertices.push_back(i);
             }
@@ -61,7 +63,7 @@ public:
     };
 
     virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const {
-        for(size_t i = 0; i < VerticesCount(); ++i){
+        for(size_t i = 0; i < graph.size(); ++i){
             if(graph[i][vertex] != nullptr) {
                 vertices.push_back(i);
             }
@@ -75,14 +77,15 @@ public:
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
         std::queue<int> order;
-        std::vector<bool> used(VerticesCount(), false);
+        std::vector<bool> used(graph.size(), false);
         used[vertex] = true;
+        vertices.push_back(vertex);
         order.push(vertex);
         int current = 0;
         while(!order.empty()){
             current = order.front();
             order.pop();
-            for(size_t i = 0; i < VerticesCount(); ++i){
+            for(size_t i = 0; i < graph.size(); ++i){
                 if(!used[i] && graph[current][i] != nullptr){
                     vertices.push_back(i);
                     order.push(i);
@@ -94,12 +97,12 @@ public:
 
 protected:
     std::vector<std::vector<T*>> graph;
+    std::set<int> vertices_;
 
     void _dfs(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const {
         used[vertex] = true;
         vertices.push_back(vertex);
-        std::cout << vertex << std::endl;
-        for(int i = 0; i < VerticesCount(); ++i){
+        for(int i = 0; i < graph.size(); ++i){
             if(!used[i] && graph[vertex][i] != nullptr){
                 _dfs(i, vertices, used);
             }

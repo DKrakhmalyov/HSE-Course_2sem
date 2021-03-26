@@ -9,8 +9,8 @@ class ArcGraph : public IGraph<T> {
 public:
     virtual void AddEdge(int from, int to, T &&element) {
         edges.push_back({from, to, std::move(element)});
-        vertexes.insert(from);
-        vertexes.insert(to);
+        vertices_.insert(from);
+        vertices_.insert(to);
     };
 
     ArcGraph() {
@@ -27,7 +27,7 @@ public:
         edges = _edges;
     };
 
-    virtual int VerticesCount() const { return static_cast<int>(vertexes.size()); };
+    virtual int VerticesCount() const { return static_cast<int>(vertices_.size()); };
 
     virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const {
         for(std::tuple<int, int, T> edge : edges){
@@ -46,8 +46,12 @@ public:
     };
 
     virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
-        std::vector<bool> used(VerticesCount(), false);
-        std::vector<std::map<int, T>> graph(VerticesCount());
+        std::set<int> used;
+        int maxi = 0;
+        for(auto t : vertices_){
+            maxi = std::max(t, maxi);
+        }
+        std::vector<std::map<int, T>> graph(maxi + 1);
         for(std::tuple<int, int, T> t : edges){
             graph[std::get<0>(t)][std::get<1>(t)] = std::get<2>(t);
         }
@@ -56,7 +60,7 @@ public:
     };
 
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
-        std::vector<bool> used(VerticesCount(), false);
+        std::set<int> used;
         int maxi = 0;
         for(int i = 0; i < edges.size(); ++i){
             maxi = std::max(std::get<0>(edges[i]), std::get<1>(edges[i])) + 1;
@@ -66,7 +70,7 @@ public:
             graph[std::get<0>(t)][std::get<1>(t)] = std::get<2>(t);
         }
         std::queue<int> order;
-        used[vertex] = true;
+        used.insert(vertex);
         vertices.push_back(vertex);
         order.push(vertex);
         int current = 0;
@@ -74,7 +78,8 @@ public:
             current = order.front();
             order.pop();
             for(std::pair<int, T> t : graph[current]){
-                if(!used[t.first]){
+                if(used.find(t.first) == used.end()){
+                    used.insert(t.first);
                     vertices.push_back(t.first);
                     order.push(t.first);
                 }
@@ -84,18 +89,19 @@ public:
 
 protected:
     std::vector<std::tuple<int, int, T>> edges;
-    std::set<int> vertexes;
+    std::set<int> vertices_;
 
-    void _dfs(int vertex, std::vector<int> &vertices, std::vector<bool> &used,
+    void _dfs(int vertex, std::vector<int> &vertices, std::set<int> &used,
               std::vector<std::map<int, T>>& graph) const {
-        used[vertex] = true;
+        used.insert(vertex);
         vertices.push_back(vertex);
-        for(size_t i = 0; i < VerticesCount(); ++i){
-            if(!used[i]){
-                _dfs(vertex, vertices, used, graph);
+        for(std::pair<int, T> t : graph[vertex]){
+            if(used.find(t.first) == used.end()){
+                used.insert(t.first);
+                _dfs(t.first, vertices, used, graph);
             }
         }
     }
 };
 
-#endif HOMEWORK_1_ARCGRAPH_H
+#endif //HOMEWORK_1_ARCGRAPH_H

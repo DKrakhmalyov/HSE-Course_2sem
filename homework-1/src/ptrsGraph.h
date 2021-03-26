@@ -46,8 +46,10 @@ public:
             used.insert(vertex);
             vertices.push_back(vertex);
             for(std::pair<Node<T>*, T> edge : vertex->next){
-                if(used.find(edge.first) == used.end())
+                if(used.find(edge.first) == used.end()) {
                     order.push(edge.first);
+                    used.insert(edge.first);
+                }
             }
         }
 
@@ -60,8 +62,10 @@ protected:
         used.insert(vertex);
         vertices.push_back(vertex);
         for(std::pair<Node<T>*, T> edge : vertex->next){
-            if(used.find(edge.first) == used.end())
+            if(used.find(edge.first) == used.end()) {
                 _dfs(edge.first, vertices, used);
+                used.insert(edge.first);
+            }
         }
     }
 };
