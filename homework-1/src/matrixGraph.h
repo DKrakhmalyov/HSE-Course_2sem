@@ -11,7 +11,7 @@ public:
 
     MatrixGraph(unsigned int vertices_count){
         graph.resize(vertices_count);
-        for(int i = 0; i < graph.size(); ++i){
+        for(size_t i = 0; i < graph.size(); ++i){
             graph[i].resize(vertices_count);
         }
     }
@@ -20,7 +20,7 @@ public:
         int maxi = std::max(from, to) + 1;
         if(graph.size() <= maxi){
             graph.resize(maxi);
-            for(int i = 0; i < graph.size(); ++i){
+            for(size_t i = 0; i < graph.size(); ++i){
                 graph[i].resize(maxi, nullptr);
             }
         }
@@ -102,7 +102,7 @@ protected:
     void _dfs(int vertex, std::vector<int> &vertices, std::vector<bool> &used) const {
         used[vertex] = true;
         vertices.push_back(vertex);
-        for(int i = 0; i < graph.size(); ++i){
+        for(size_t i = 0; i < graph.size(); ++i){
             if(!used[i] && graph[vertex][i] != nullptr){
                 _dfs(i, vertices, used);
             }

@@ -62,7 +62,7 @@ public:
     virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
         std::set<int> used;
         int maxi = 0;
-        for(int i = 0; i < edges.size(); ++i){
+        for(size_t i = 0; i < edges.size(); ++i){
             maxi = std::max(std::get<0>(edges[i]), std::get<1>(edges[i])) + 1;
         }
         std::vector<std::map<int, T>> graph(maxi);

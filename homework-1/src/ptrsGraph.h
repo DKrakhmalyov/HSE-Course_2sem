@@ -16,7 +16,7 @@ public:
 
     PtrsGraph() = default;
 
-    virtual int VerticesCount() const { return static_cast<int>(nodes.size()); };
+    virtual int VerticesCount() const { return nodes.size(); };
 
     virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
         for(std::pair<Node<T>*, T> t : vertex->next){

@@ -9,6 +9,7 @@ class Node {
 public:
     Node(){
         next = std::vector<std::pair<Node<T>*, T>>();
+        prev = std::vector<std::pair<Node<T>*, T>>();
     }
 
     bool operator ==(const Node& right){
