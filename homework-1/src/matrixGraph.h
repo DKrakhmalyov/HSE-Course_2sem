@@ -21,7 +21,7 @@ public:
         if(graph.size() <= maxi){
             graph.resize(maxi);
             for(int i = 0; i < graph.size(); ++i){
-                graph[i].resize(maxi);
+                graph[i].resize(maxi, nullptr);
             }
         }
         graph[from][to] = new T(element);
@@ -45,18 +45,8 @@ public:
     MatrixGraph(IGraph<T> *_oth) {
         std::vector<std::tuple<int, int, T>> edges;
         _oth->GetEdges(edges);
-        int maxi = 0;
-        for(std::tuple<int, int, T> edge: edges){
-            maxi = std::max(get<0>(edge), get<1>(edge));
-        }
-        if(graph.size() <= maxi){
-            graph.resize(maxi);
-            for(int i = 0; i < graph.size(); ++i){
-                graph[i].resize(maxi);
-            }
-        }
-        for(std::tuple<int, int, T> edge : edges){
-            graph[std::get<0>(edge)][std::get<1>(edge)]= new T(std::get<2>(edge));
+        for(auto edge : edges){
+            AddEdge(get<0>(edge), get<1>(edge), std::move(get<2>(edge)));
         }
     };
 
@@ -119,4 +109,4 @@ protected:
 
 };
 
-#endif HOMEWORK_1_MATRIXGRAPH_H
+#endif //HOMEWORK_1_MATRIXGRAPH_H
