@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <deque>
+#include <vector>
 #include <memory>
 #include <utility>
 #include "../graph.h"
@@ -12,6 +13,16 @@
 template<typename T = void>
 class MatrixGraph : public IGraph<T> {
  public:
+  MatrixGraph() = default;
+  ~MatrixGraph() override = default;
+
+  MatrixGraph(IGraph<T> *_oth) {
+    std::vector<std::tuple<int, int, T>> edges;
+    _oth->GetEdges(edges);
+    for (auto edge : edges)
+      AddEdge(std::get<0>(edge), std::get<1>(edge), std::move(std::get<2>(edge)));
+  };
+
   virtual void AddEdge(int from, int to, T &&element) override {
     if (int max_vert = std::max(from, to) + 1; edges_matrix.size() < max_vert) {
       edges_matrix.resize(max_vert);
@@ -21,10 +32,12 @@ class MatrixGraph : public IGraph<T> {
     edges_matrix[from][to] = std::make_pair(true, std::forward<T>(element));;
   };
 
-  MatrixGraph() = default;
-  ~MatrixGraph() override = default;
-
-  MatrixGraph(IGraph<T> *_oth) {};
+  virtual void GetEdges(std::vector<std::tuple<int, int, T>>& edges) const {
+    for (int i = 0; i < edges_matrix.size(); ++i) 
+      for (int j = 0; j < edges_matrix.size(); ++j) 
+        if (edges_matrix[i][j].first) 
+          edges.emplace_back(i, j, edges_matrix[i][j].second);
+  };
 
   virtual int VerticesCount() const override {
     std::set<int> found_vertices;

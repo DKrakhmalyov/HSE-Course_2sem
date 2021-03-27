@@ -5,6 +5,8 @@
 #include <vector>
 #include <set>
 #include <queue>
+#include <memory>
+#include <utility>
 #include "src/node.h"
 
 template<typename T>
@@ -14,9 +16,11 @@ class IGraph {
 
   IGraph(IGraph *_oth) {};
 
-  virtual ~IGraph() {}
+  virtual ~IGraph() {};
 
   virtual void AddEdge(int from, int to, T &&_obj) = 0;
+
+  virtual void GetEdges(std::vector<std::tuple<int, int, T>>& edges) const = 0;
 
   virtual int VerticesCount() const = 0;
 
