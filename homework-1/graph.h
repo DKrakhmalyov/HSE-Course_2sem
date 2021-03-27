@@ -10,11 +10,11 @@
 template<typename T>
 class IGraph {
  public:
-  virtual ~IGraph() {}
-
   IGraph() {};
 
   IGraph(IGraph *_oth) {};
+
+  virtual ~IGraph() {}
 
   virtual void AddEdge(int from, int to, T &&_obj) = 0;
 

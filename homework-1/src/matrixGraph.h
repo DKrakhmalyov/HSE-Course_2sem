@@ -18,13 +18,10 @@ class MatrixGraph : public IGraph<T> {
       for (auto &row : edges_matrix)
         row.resize(max_vert);
     }
-    if (!edges_matrix[from][to].first) {
-      edges_matrix[from][to].first = true;
-      edges_matrix[from][to].second = std::make_shared<T>(std::forward<T>(element));
-    }
+    edges_matrix[from][to] = std::make_pair(true, std::forward<T>(element));;
   };
 
-  MatrixGraph() {};
+  MatrixGraph() = default;
   ~MatrixGraph() override = default;
 
   MatrixGraph(IGraph<T> *_oth) {};
@@ -57,7 +54,7 @@ class MatrixGraph : public IGraph<T> {
   };
 
  private:
-  std::deque<std::deque<std::pair<bool, std::shared_ptr<T>>>> edges_matrix;
+  std::deque<std::deque<std::pair<bool, T>>> edges_matrix;
 };
 
 #endif //HOMEWORK_1_MATRIXGRAPH_H
