@@ -2,12 +2,11 @@
 #ifndef HOMEWORK_1_LISTGRAPH_H
 #define HOMEWORK_1_LISTGRAPH_H
 
-#include "../graph.h"
-
 #include <map>
 #include <list>
 #include <memory>
 #include <utility>
+#include "../graph.h"
 
 
 template<typename T>
