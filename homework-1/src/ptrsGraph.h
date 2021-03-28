@@ -35,7 +35,7 @@ class PtrsGraph : public IPtrsGraph<T> {
       vertices.push_back(node);
   };
 
- private:
+ protected:
   size_t vertices_counter;
 };
 

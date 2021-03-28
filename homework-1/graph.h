@@ -30,7 +30,7 @@ class IGraph {
 
   virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
     std::set<int> visited_vertices;
-    recursive_dfs(vertex, vertices, visited_vertices);
+    this->recursive_dfs(vertex, vertices, visited_vertices);
   };
 
   virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
@@ -47,7 +47,7 @@ class IGraph {
       vertices.push_back(cur_v);
 
       std::vector<int> next_vertices;
-      GetNextVertices(cur_v, next_vertices);
+      this->GetNextVertices(cur_v, next_vertices);
 
       for (auto neighbor : next_vertices) {
         if (visited_vertices.find(neighbor) == visited_vertices.end()) {
@@ -64,11 +64,18 @@ class IGraph {
     visited_vertices.insert(vertex);
 
     std::vector<int> next_vertices;
-    GetNextVertices(vertex, next_vertices);
+    this->GetNextVertices(vertex, next_vertices);
 
     for (auto next_vertex : next_vertices)
       if (visited_vertices.find(next_vertex) == visited_vertices.end())
-        recursive_dfs(next_vertex, vertices, visited_vertices);
+        this->recursive_dfs(next_vertex, vertices, visited_vertices);
+  }
+ protected:
+  void simple_copy_build(IGraph<T> *_oth) {
+    std::vector<std::tuple<int, int, T>> edges;
+    _oth->GetEdges(edges);
+    for (auto edge : edges)
+      this->AddEdge(std::get<0>(edge), std::get<1>(edge), std::move(std::get<2>(edge)));
   }
 };
 
@@ -89,7 +96,7 @@ class IPtrsGraph {
 
   virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
     std::set<Node<T> *> visited_vertices;
-    recursive_dfs(vertex, vertices, visited_vertices);
+    this->recursive_dfs(vertex, vertices, visited_vertices);
   };
 
   virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
@@ -106,7 +113,7 @@ class IPtrsGraph {
       vertices.push_back(cur_v);
 
       std::vector<Node<T> *> next_vertices;
-      GetNextVertices(cur_v, next_vertices);
+      this->GetNextVertices(cur_v, next_vertices);
 
       for (auto neighbor : next_vertices) {
         if (visited_vertices.find(neighbor) == visited_vertices.end()) {
@@ -123,11 +130,11 @@ class IPtrsGraph {
     visited_vertices.insert(vertex);
 
     std::vector<Node<T> *> next_vertices;
-    GetNextVertices(vertex, next_vertices);
+    this->GetNextVertices(vertex, next_vertices);
 
     for (auto next_vertex : next_vertices)
       if (visited_vertices.find(next_vertex) == visited_vertices.end())
-        recursive_dfs(next_vertex, vertices, visited_vertices);
+        this->recursive_dfs(next_vertex, vertices, visited_vertices);
   }
 };
 

@@ -17,10 +17,7 @@ class ArcGraph : public IGraph<T> {
   ~ArcGraph() override = default;
 
   ArcGraph(IGraph<T> *_oth) {
-    std::vector<std::tuple<int, int, T>> edges;
-    _oth->GetEdges(edges);
-    for (auto edge : edges)
-      AddEdge(std::get<0>(edge), std::get<1>(edge), std::move(std::get<2>(edge)));
+    this->simple_copy_build(_oth);
   };
 
   virtual void AddEdge(int from, int to, T &&element) override {
@@ -55,7 +52,7 @@ class ArcGraph : public IGraph<T> {
         vertices.push_back(std::get<0>(edge));
   };
 
-private:
+protected:
   std::deque<std::tuple<int, int, T>> edges_;
 };
 

@@ -17,10 +17,7 @@ class ListGraph : public IGraph<T> {
   ~ListGraph() override = default;
 
   ListGraph(IGraph<T> *_oth) {
-    std::vector<std::tuple<int, int, T>> edges;
-    _oth->GetEdges(edges);
-    for (auto edge : edges)
-      AddEdge(std::get<0>(edge), std::get<1>(edge), std::move(std::get<2>(edge)));
+    this->simple_copy_build(_oth);
   };
   
   virtual void AddEdge(int from, int to, T &&element) override {
@@ -53,7 +50,7 @@ class ListGraph : public IGraph<T> {
           vertices.push_back(node.first);
   };
 
- private:
+ protected:
   std::map<int, std::list<std::pair<int, T>>> edges_;
 };
 
