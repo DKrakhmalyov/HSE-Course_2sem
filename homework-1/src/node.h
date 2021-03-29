@@ -5,7 +5,7 @@
 template<typename T>
 struct Node {
 
-    Node() = default;
+    Node() : is_checked(false) {};
 
     ~Node() = default;
 
@@ -16,6 +16,8 @@ struct Node {
     bool operator!=(const Node<T>& rhs) const {
         return !operator==(rhs);
     }
+
+    bool is_checked;
 
     std::list<std::pair<Node<T>*, T>> toList;
 

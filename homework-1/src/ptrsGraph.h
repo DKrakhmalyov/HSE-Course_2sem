@@ -9,7 +9,7 @@ template<typename T = void>
 class PtrsGraph : public IPtrsGraph<T> {
 public:
 
-    PtrsGraph() = default;    
+    PtrsGraph() : vertice_count(0) {};    
 
     virtual ~PtrsGraph() = default;
 
@@ -19,14 +19,14 @@ public:
 
     PtrsGraph<T>& operator=(const PtrsGraph<T> &other) {
         if (this != &other) {
-            have = other.have;
+            vertice_count = other.vertice_count;
         }
         return *this;
     }
 
     PtrsGraph<T>& operator=(PtrsGraph<T> &&other) noexcept {
         if (this != &other) {
-            have = std::move(other.have);
+            vertice_count = std::move(other.vertice_count);
         }
         return *this;
     }
@@ -39,7 +39,7 @@ public:
     }
 
     virtual int VerticesCount() const override final { 
-        return static_cast<int>(have.size());
+        return static_cast<int>(vertice_count);
     }
 
     virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override final {
@@ -58,7 +58,7 @@ public:
 
     virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override final {
         vertices.clear();
-        if (have.find(vertex) == have.end()) {
+        if (!vertex->is_checked) {
             return;
         }
         std::unordered_map<Node<T>*, bool> used;
@@ -76,7 +76,7 @@ public:
 
     virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override final {
         vertices.clear();
-        if (have.find(vertex) == have.end()) {
+        if (!vertex->is_checked) {
             return;
         }
         std::unordered_map<Node<T>*, bool> used;
@@ -99,13 +99,14 @@ public:
 
 private:
 
-    std::unordered_set<Node<T>*> have;
+    int vertice_count;
 
     void AddVertex(Node<T> *vertex) {
-        if (have.find(vertex) != have.end()) {
+        if (vertex->is_checked) {
             return;
         }
-        have.insert(vertex);
+        vertex->is_checked = true;
+        vertice_count++;
     }
 };
 
