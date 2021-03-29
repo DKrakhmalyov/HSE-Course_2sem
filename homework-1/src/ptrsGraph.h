@@ -38,8 +38,8 @@ public:
         to->fromList.push_back(std::make_pair(from, _obj));
     }
 
-    virtual int VerticesCount() const override final { 
-        return static_cast<int>(vertice_count);
+    virtual int VerticesCount() const override final {
+        return vertice_count;
     }
 
     virtual void GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const override final {
