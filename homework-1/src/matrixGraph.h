@@ -64,7 +64,7 @@ class MatrixGraph : public IGraph<T> {
   };
 
  protected:
-  std::deque<std::deque<std::pair<bool, T>>> edges_matrix;
+  std::vector<std::vector<std::pair<bool, T>>> edges_matrix;
 };
 
 #endif //HOMEWORK_1_MATRIXGRAPH_H
