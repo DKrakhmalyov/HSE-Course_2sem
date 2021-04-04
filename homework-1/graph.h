@@ -1,7 +1,3 @@
-//
-// Created by dikson on 02.03.2021.
-//
-
 #ifndef HOMEWORK_1_GRAPH_H
 #define HOMEWORK_1_GRAPH_H
 
