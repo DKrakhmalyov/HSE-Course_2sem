@@ -6,134 +6,133 @@
 #define HOMEWORK_1_LISTGRAPH_H
 
 #include "../graph.h"
-#include "arcGraph.h"
+#include <map>
+#include <vector>
+#include <set>
 
 
 template<typename T = void>
 class ListGraph : public IGraph<T> {
 private:
-    IGraph<T> * arcGr = new ArcGraph<T>;
-    int now_size = 0;
-    const static int size_graph = 1000; // max size of graph
-    int real_vertices[size_graph]; // real names of vertices
-    int counter_vertices[size_graph];
-    std :: pair<int, T> list_graph[size_graph][size_graph];
+    std::map<int, std::vector<std :: pair<int, T> > > list_graph;
+    std::set<int> all_vertices;
 public:
-    virtual void AddEdge(int from, int to, T &&element) const;
+    virtual void AddEdge(int from, int to, T&& _obj);
 
     ListGraph();
 
-    ListGraph(IGraph<T> *_oth);
+    ListGraph(IGraph<T>* _oth);
 
     ~ListGraph();
 
     virtual int VerticesCount() const;
 
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) const;
+    virtual void GetNextVertices(int vertex, std::vector<int>& vertices);
 
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const;
+    virtual void GetPrevVertices(int vertex, std::vector<int>& vertices);
 
-    virtual void DeepFirstSearch(int vertex, std::vector<int> &vertices) const;
+    virtual void DeepFirstSearch(int vertex, std::vector<int>& vertices);
 
-    virtual void BreadthFirstSearch(int vertex, std::vector<int> &vertices) const;
+    virtual void BreadthFirstSearch(int vertex, std::vector<int>& vertices);
 
-    virtual void Convert(IGraph<T> *Gr) const;
+    virtual void CopyEdges(std::vector<std::pair<int, std::pair<int, T> > >& edges);
 };
 
 
 template<typename T>
-void ListGraph<T>::AddEdge(int from, int to, T &&element) const {
-    arcGr->AddEdge(from, to, std :: forward<T>(element));
-    int ph_from = -1;
-    int ph_to = -1;
-    for(int i = 0; i < now_size; i++) {
-        if(real_vertices[i] == from) {
-            ph_from = i;
-        }
-        if(real_vertices[i] == to) {
-            ph_to = i;
-        }
-    }
-    if(ph_from == -1) {
-        const_cast<int&>(real_vertices[now_size]) = from;
-        ph_from = now_size;
-        const_cast<int&>(now_size)++;
-    }
-    if(ph_to == -1) {
-        const_cast<int&>(real_vertices[now_size]) = to;
-        ph_to = now_size;
-        const_cast<int&>(now_size)++;
-    }
-    const_cast<int&>(list_graph[ph_from][counter_vertices[ph_from]].first) = ph_to;
-    const_cast<T&>(list_graph[ph_from][counter_vertices[ph_from]].second) = element;
-    const_cast<int&>(counter_vertices[ph_from])++;
+void ListGraph<T>::AddEdge(int from, int to, T&& element) {
+    list_graph[from].push_back(std::make_pair(to, element));
+    all_vertices.insert(from);
+    all_vertices.insert(to);
 };
 
 template<typename T>
-ListGraph<T>::ListGraph() {
-    for(int i = 0; i < size_graph; i++) {
-        counter_vertices[i] = 0;
-        real_vertices[i] = -1;
-    }
-};
+ListGraph<T>::ListGraph() {};
 
 template<typename T>
-ListGraph<T>::ListGraph(IGraph<T> *_oth) {
-    for(int i = 0; i < size_graph; i++) {
-        counter_vertices[i] = 0;
-        real_vertices[i] = -1;
+ListGraph<T>::ListGraph(IGraph<T>* _oth) {
+    std::vector<std::pair<int, std::pair<int, T> > > edgescopy;
+    _oth->CopyEdges(edgescopy);
+    for (int i = 0; i < edgescopy.size(); i++) {
+        this->AddEdge(edgescopy[i].first, edgescopy[i].second.first, std::forward<T>(const_cast<T&>(edgescopy[i].second.second)));
     }
-    _oth->Convert(this);
 };
 
 template<typename T>
 ListGraph<T>::~ListGraph() {
-    delete arcGr;
-}
+    all_vertices.clear();
+    list_graph.clear();
+};
 
 template<typename T>
-int ListGraph<T>::VerticesCount() const { return arcGr->VerticesCount(); };
+int ListGraph<T>::VerticesCount() const { 
+    return all_vertices.size();
+};
 
 template<typename T>
-void ListGraph<T>::GetNextVertices(int vertex, std::vector<int> &vertices) const {
-    for(int i = 0; i < now_size; i++) {
-        if(real_vertices[i] == vertex) {
-            for(int j = 0; j < counter_vertices[i]; j++) {
-                vertices.push_back(real_vertices[list_graph[i][j].first]);
+void ListGraph<T>::GetNextVertices(int vertex, std::vector<int>& vertices) {
+    for (int i = 0; i < list_graph[vertex].size(); i++) {
+        vertices.push_back(list_graph[vertex][i].first);
+    }
+};
+
+template<typename T>
+void ListGraph<T>::GetPrevVertices(int vertex, std::vector<int>& vertices) {
+    for (auto it : all_vertices) {
+        for (int i = 0; i < list_graph[it].size(); i++) {
+            if (list_graph[it][i].first == vertex) {
+                vertices.push_back(it);
             }
-            break;
         }
     }
 };
 
 template<typename T>
-void ListGraph<T>::GetPrevVertices(int vertex, std::vector<int> &vertices) const {
-    for(int i = 0; i < now_size; i++) {
-        if(real_vertices[i] == vertex) {
-            for(int j = 0; j < now_size; j++) {
-                for(int k = 0; k < counter_vertices[j]; k++) {
-                    if(list_graph[j][k].first == i) {
-                        vertices.push_back(real_vertices[j]);
-                    }
+void ListGraph<T>::DeepFirstSearch(int vertex, std::vector<int>& vertices) {
+    vertices.push_back(vertex);
+    for (int i = 0; i < list_graph[vertex].size(); i++) {
+        bool was_vertex = false;
+        for (int j = 0; j < vertices.size(); j++) {
+            if (vertices[j] == list_graph[vertex][i].first) {
+                was_vertex = true;
+                break;
+            }
+        }
+        if (!was_vertex) {
+            DeepFirstSearch(list_graph[vertex][i].first, vertices);
+        }
+    }
+};
+
+template<typename T>
+void ListGraph<T>::BreadthFirstSearch(int vertex, std::vector<int>& vertices) {
+    std::queue<int> q;
+    q.push(vertex);
+    while (q.size() != 0) {
+        int v = q.front();
+        q.pop();
+        vertices.push_back(v);
+        for (int i = 0; i < list_graph[v].size(); i++) {
+            bool was_vertex = false;
+            for (int j = 0; j < vertices.size(); j++) {
+                if (vertices[j] == list_graph[v][i].first) {
+                    was_vertex = true;
+                    break;
                 }
             }
-            break;
+            if (!was_vertex) {
+                q.push(list_graph[v][i].first);
+            }
         }
     }
 };
 
 template<typename T>
-void ListGraph<T>::DeepFirstSearch(int vertex, std::vector<int> &vertices) const {
-    arcGr->DeepFirstSearch(vertex, vertices);
-};
-
-template<typename T>
-void ListGraph<T>::BreadthFirstSearch(int vertex, std::vector<int> &vertices) const {
-    arcGr->BreadthFirstSearch(vertex, vertices);
-};
-
-template<typename T>
-void ListGraph<T>::Convert(IGraph<T> *Gr) const{
-    arcGr->Convert(Gr);
+void ListGraph<T>::CopyEdges(std::vector<std::pair<int, std::pair<int, T> > >& edges) {
+   for (auto it : list_graph) {
+       for (int i = 0; i < it.second.size(); i++) {
+           edges.push_back(std::make_pair(it.first, std::make_pair(it.second[i].first, it.second[i].second)));
+       }
+   }
 };
 #endif //HOMEWORK_1_LISTGRAPH_H
