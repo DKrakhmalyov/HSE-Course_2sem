@@ -21,23 +21,19 @@ public:
 
     virtual void GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const;
 
-    virtual void GetEdges(std::vector<std::tuple<Node<T> *, Node<T> *, T>> &edges) const;
-
-    virtual void GetVertices(std::vector<Node<T> *> &vertices) const;
-
     virtual T GetEdgeWeight(Node<T> *from, Node<T> *to) const;
 
     virtual void DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const;
 
     virtual void BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const;
 protected:
-    std::unordered_set<Node<T>*> _vertices;
+    int vertices_count = 0;
     void _dfs(Node<T> *vertex, std::unordered_set<Node<T> *> &used, std::vector<Node<T> *> &vertices) const;
 };
 
 template<typename T>
 int PtrsGraph<T>::VerticesCount() const {
-    return _vertices.size();
+    return vertices_count;
 }
 
 template<typename T>
@@ -45,17 +41,20 @@ void PtrsGraph<T>::AddEdge(Node<T> *from, Node<T> *to, T &&_obj) {
     // нельзя добавлять ребра между несуществующими вершинами
     assert(from != nullptr && to != nullptr);
 
-    _vertices.insert(from);
-    _vertices.insert(to);
+    if (!from->in_graph) {
+        from->in_graph = true;
+        vertices_count++;
+    }
+    if (!to->in_graph) {
+        to->in_graph = true;
+        vertices_count++;
+    }
     from->outgoing.emplace_back(to, _obj);
     to->incoming.emplace_back(from, _obj);
 }
 
 template<typename T>
 void PtrsGraph<T>::GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
-    // нельзя получить список выходящих ребер несуществующей вершины
-    assert(_vertices.contains(vertex));
-
     for (auto x : vertex->outgoing) {
         vertices.push_back(x.first);
     }
@@ -63,9 +62,6 @@ void PtrsGraph<T>::GetNextVertices(Node<T> *vertex, std::vector<Node<T> *> &vert
 
 template<typename T>
 void PtrsGraph<T>::GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
-    // нельзя получить список входящих ребер несуществующей вершины
-    assert(_vertices.contains(vertex));
-
     for (auto x : vertex->incoming) {
         vertices.push_back(x.first);
     }
@@ -73,9 +69,6 @@ void PtrsGraph<T>::GetPrevVertices(Node<T> *vertex, std::vector<Node<T> *> &vert
 
 template<typename T>
 void PtrsGraph<T>::DeepFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
-    // нельзя обходить граф от несуществующей вершины
-    assert(_vertices.contains(vertex));
-
     std::unordered_set<Node<T>*> used;
     _dfs(vertex, used, vertices);
 }
@@ -93,9 +86,6 @@ void PtrsGraph<T>::_dfs(Node<T> *vertex, std::unordered_set<Node<T> *> &used, st
 
 template<typename T>
 void PtrsGraph<T>::BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &vertices) const {
-    // нельзя обходить граф от несуществующей вершины
-    assert(_vertices.contains(vertex));
-
     std::queue<Node<T> *> q;
     q.push(vertex);
     std::unordered_set<Node<T> *> used;
@@ -113,13 +103,6 @@ void PtrsGraph<T>::BreadthFirstSearch(Node<T> *vertex, std::vector<Node<T> *> &v
 }
 
 template<typename T>
-void PtrsGraph<T>::GetVertices(std::vector<Node<T> *> &vertices) const {
-    for (auto vertex : _vertices) {
-        vertices.push_back(vertex);
-    }
-}
-
-template<typename T>
 T PtrsGraph<T>::GetEdgeWeight(Node<T> *from, Node<T> *to) const {
     T weight = 0;
     for (auto now : from->outgoing) {
@@ -129,15 +112,6 @@ T PtrsGraph<T>::GetEdgeWeight(Node<T> *from, Node<T> *to) const {
     }
 //    нельзя получить вес ребра, которое не существует
     assert(false);
-}
-
-template<typename T>
-void PtrsGraph<T>::GetEdges(std::vector<std::tuple<Node<T> *, Node<T> *, T>> &edges) const {
-    for (auto from : _vertices) {
-        for (auto to : from->outgoing) {
-            edges.emplace_back(from, to.first, to.second);
-        }
-    }
 }
 
 #endif //HOMEWORK_1_PTRSGRAPH_H

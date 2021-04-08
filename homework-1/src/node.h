@@ -9,6 +9,7 @@ class Node {
 public:
     std::vector<std::pair<Node<T>*, T>> incoming;
     std::vector<std::pair<Node<T>*, T>> outgoing;
+    bool in_graph = false;
 
     bool operator== (const Node &rhs) const {
         return incoming == rhs.incoming && outgoing == rhs.outgoing;
