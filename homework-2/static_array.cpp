@@ -61,8 +61,7 @@ inline size_t static_array<T, size_>::size() const
 template<typename T, size_t size_>
 inline bool static_array<T, size_>::valid(size_t index) const
 {
-    assert(index < this->total_capacity);
-    return this->allocated[index];
+    return index < this->total_capacity && this->allocated[index];
 }
 
 template<typename T, size_t size_>
