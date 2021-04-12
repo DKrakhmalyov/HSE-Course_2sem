@@ -68,9 +68,12 @@ inline bool static_array<T, size_>::valid(size_t index) const
 template<typename T, size_t size_>
 inline void static_array<T, size_>::clear()
 {
-    for (size_t i = 0; i < this->total_capacity; i++)
+    if (this->data != nullptr)
     {
-        this->erase_if_exists(i);
+        for (size_t i = 0; i < this->total_capacity; i++)
+        {
+            this->erase_if_exists(i);
+        }
     }
 }
 

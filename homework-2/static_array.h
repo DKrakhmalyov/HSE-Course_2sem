@@ -41,6 +41,10 @@ public:
 
     static_array();
     ~static_array();
+    static_array(static_array&&) = default;
+    static_array& operator=(static_array&&) = default;
+    static_array(const static_array&) = delete;
+    static_array& operator=(const static_array&) = delete;
     static_array(size_t capacity);
 
     size_t current_size() const;
