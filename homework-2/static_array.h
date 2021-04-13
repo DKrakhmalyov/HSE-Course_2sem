@@ -16,8 +16,8 @@ class static_array {
    protected:
     friend class static_array;
     T* _item;
-
-    iterator(T* item) : _item(item) { };
+    static_array<T, sz>* _owner;
+    iterator(T* item, static_array<T, sz>* owner) : _item(item), _owner(owner) { };
 
    public:
     iterator(const iterator& other) : _item(other._item) { };
@@ -30,11 +30,17 @@ class static_array {
     };
 
     iterator& operator++() {
-      _item = reinterpret_cast<T*>(_data) + _get_mext_avaliable_index(_item - _data);
+      _item = reinterpret_cast<T*>(_owner->_data) +
+              _owner->_get_mext_avaliable_index(_item - reinterpret_cast<T*>(_owner->_data));
       return *this;
     };
 
     iterator& operator--() {
+      auto prev_index = _owner->_get_prev_avaliable_index(_item - _owner->_data);
+      if (prev_index == -1) {
+        _item = reinterpret_cast<T*>(_owner->_data) + _copacity;
+      }
+      _item = reinterpret_cast<T*>(_owner->_data) + prev_index;
       return *this;
     };
 
@@ -62,6 +68,11 @@ class static_array {
     _initialized.resize(copacity);
   };
 
+  ~static_array() {
+    clear();
+    delete [] _data;
+  }
+
   size_t current_size() {
     return _current_size;
   };
@@ -78,13 +89,13 @@ class static_array {
   static_array::iterator emplace(size_t ind, T &&obj) {
     _check_bounds(ind);
     if (_initialized[ind]) {
-      reinterpret_cast<T*>(_data + sizeof(T) * ind)->~T();
+      (reinterpret_cast<T*>(_data) + ind)->~T();
       --_current_size;
     }
     new (_data + sizeof(T) * ind) T(std::forward<T>(obj));
     _initialized[ind] = true;
     ++_current_size;
-    return static_array::iterator(reinterpret_cast<T*>(_data + sizeof(T) * ind));
+    return static_array::iterator(reinterpret_cast<T*>(_data) + ind, this);
   };
 
   template<class... Args>
@@ -97,27 +108,29 @@ class static_array {
     new (_data + sizeof(T) * ind) T(std::forward<Args>(args)...);
     _initialized[ind] = true;
     ++_current_size;
-    return static_array::iterator(reinterpret_cast<T*>(_data + sizeof(T) * ind));
+    return static_array::iterator(reinterpret_cast<T*>(_data) + ind, this);
   };
 
-  void erase(static_array::iterator) {
-
+  void erase(static_array::iterator iter) {
+    iter->~T();
+    --_current_size;
   };
 
   T& at(size_t ind) {
     _check_bounds(ind);
     _check_is_initialized(ind);
-    return *reinterpret_cast<T*>(_data + sizeof(T) * ind);
+    return *(reinterpret_cast<T*>(_data) + ind);
   };
 
   static_array::iterator begin() {
     return static_array::iterator(
-             reinterpret_cast<T*>(_data + sizeof(T) * _get_mext_avaliable_index(-1))
+             reinterpret_cast<T*>(_data) + _get_mext_avaliable_index(-1),
+             this
            );
   };
 
   static_array::iterator end() {
-    return static_array::iterator(reinterpret_cast<T*>(_data + sizeof(T) * _copacity));
+    return static_array::iterator(reinterpret_cast<T*>(_data) + _copacity, this);
   };
 
  protected:
@@ -134,8 +147,14 @@ class static_array {
     if (!_initialized[ind])
       throw std::runtime_error("static_array: Value is not initialized");
   }
-  size_t _get_mext_avaliable_index(size_t index) {
+  int _get_mext_avaliable_index(int index) {
     for (++index; index < _copacity; ++index)
+      if (_initialized[index])
+        break;
+    return index;
+  }
+  int _get_prev_avaliable_index(int index) {
+    for (--index; index >= 0; --index)
       if (_initialized[index])
         break;
     return index;
