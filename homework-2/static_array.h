@@ -16,7 +16,7 @@ class static_array {
    protected:
     size_t _index;
     static_array* _owner;
-    iterator(size_t _index, static_array* owner);
+    iterator(size_t index, static_array* owner);
 
    public:
     iterator(const iterator& other) = default;
@@ -58,7 +58,7 @@ class static_array {
   static_array::iterator begin();
   static_array::iterator end();
 
- protected:
+ private:
   char* _data;
   std::vector<bool> _initialized;
   size_t _copacity;
