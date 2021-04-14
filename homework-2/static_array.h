@@ -14,9 +14,9 @@ class static_array {
  public:
   class iterator {
    protected:
-    T* _item;
+    size_t _index;
     static_array* _owner;
-    iterator(T* item, static_array* owner);
+    iterator(size_t &_index, static_array* owner);
 
    public:
     iterator(const iterator& other) = default;
