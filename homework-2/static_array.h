@@ -16,7 +16,7 @@ class static_array {
    protected:
     size_t _index;
     static_array* _owner;
-    iterator(size_t &_index, static_array* owner);
+    iterator(size_t _index, static_array* owner);
 
    public:
     iterator(const iterator& other) = default;
@@ -28,11 +28,11 @@ class static_array {
     iterator& operator++();
     iterator& operator--();
 
-    T* operator->() const;
-    T& operator*() const;
+    T* operator->();
+    T& operator*();
 
-    bool operator==(const iterator& other);
-    bool operator!=(const iterator& other);
+    bool operator==(const iterator& other) const;
+    bool operator!=(const iterator& other) const;
 
     friend class static_array;
   };
@@ -42,8 +42,8 @@ class static_array {
 
   ~static_array();
 
-  size_t current_size();
-  size_t size();
+  size_t current_size() const;
+  size_t size() const;
   void clear();
 
   T& at(size_t index);
@@ -64,16 +64,10 @@ class static_array {
   size_t _copacity;
   size_t _current_size;
 
-  T* _get_pointer_on_index(const size_t& index) const;
-
-  void _check_bounds(const size_t& index) const;
-  void _check_is_initialized(const size_t& index) const;
-
-  int _get_next_avaliable_index(int index) const;
-  int _get_prev_avaliable_index(int index) const;
+  T* _get_pointer_on_index(const size_t index) const;
 };
 
-#define _STATIC_ARRAY_IMPL_
+#define _STATIC_ARRAY_IMPLEMENTATION_
 #include "static_array.cpp"
 
 #endif //_HOMEWORK_2_STATIC_ARRAY_H_

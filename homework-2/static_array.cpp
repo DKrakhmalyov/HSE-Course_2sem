@@ -1,4 +1,4 @@
-#ifdef _STATIC_ARRAY_IMPL_
+#ifdef _STATIC_ARRAY_IMPLEMENTATION_
 
 template<typename T, size_t sz>
 inline static_array<T, sz>::static_array()
@@ -20,113 +20,94 @@ inline static_array<T, sz>::~static_array() {
 }
 
 template<typename T, size_t sz>
-inline size_t static_array<T, sz>::current_size() {
+inline size_t static_array<T, sz>::current_size() const {
   return this->_current_size;
 }
 
 template<typename T, size_t sz>
-inline size_t static_array<T, sz>::size() {
+inline size_t static_array<T, sz>::size() const {
   return this->_copacity;
 }
 
 template<typename T, size_t sz>
 inline void static_array<T, sz>::clear() {
-  for (size_t index = 0; index < _copacity; ++index){
-    if (_initialized[index]){
-      _get_pointer_on_index(index)->~T();
-      --_current_size;
-      _initialized[index] = false;
-    }
+  for (auto i = begin(); i != end(); ++i) {
+    erase(i);
   }
 }
 
 template<typename T, size_t sz>
-inline static_array<T, sz>::iterator static_array<T, sz>::emplace(size_t ind, T &&obj) {
-  if (ind >= _copacity){
+inline static_array<T, sz>::iterator static_array<T, sz>::emplace(size_t index, T &&obj) {
+  if (index >= _copacity) {
     throw std::out_of_range("static_array: Index out of range");
   }
-  if (_initialized[ind]) {
-    _get_pointer_on_index(ind)->~T();
-    --_current_size;
+  if (_initialized[index]) {
+    erase(iterator(index, this));
   }
-  new (_data + sizeof(T) * ind) T(std::forward<T>(obj));
-  _initialized[ind] = true;
+  new (_get_pointer_on_index(index)) T(std::forward<T>(obj));
+  _initialized[index] = true;
   ++_current_size;
-  return static_array::iterator(ind, this);
+  return static_array::iterator(index, this);
 }
 
 template<typename T, size_t sz>
 template<class... Args>
-inline static_array<T, sz>::iterator static_array<T, sz>::emplace(size_t ind, Args &&... args) {
-  if (ind >= _copacity){
+inline static_array<T, sz>::iterator static_array<T, sz>::emplace(size_t index, Args &&... args) {
+  if (index >= _copacity) {
     throw std::out_of_range("static_array: Index out of range");
   }
-  if (_initialized[ind]) {
-    _get_pointer_on_index(ind)->~T();
-    --_current_size;
+  if (_initialized[index]) {
+    erase(iterator(index, this));
   }
-  new (_data + sizeof(T) * ind) T(std::forward<Args>(args)...);
-  _initialized[ind] = true;
+  new (_get_pointer_on_index(index)) T(std::forward<Args>(args)...);
+  _initialized[index] = true;
   ++_current_size;
-  return static_array::iterator(ind, this);
+  return static_array::iterator(index, this);
 }
 
 template<typename T, size_t sz>
 inline void static_array<T, sz>::erase(static_array::iterator iter) {
+  if (!_initialized[iter._index]) {
+    throw std::runtime_error("static_array: Invalid iterator on erase");
+  }
   iter->~T();
   --_current_size;
   _initialized[iter._index] = false;
 }
 
 template<typename T, size_t sz>
-inline T& static_array<T, sz>::at(size_t ind) {
-  if (ind >= _copacity){
+inline T& static_array<T, sz>::at(size_t index) {
+  if (index >= _copacity) {
     throw std::out_of_range("static_array: Index out of range");
   }
-  _check_is_initialized(ind);
-  return *_get_pointer_on_index(ind);
+  if (!_initialized[index]) {
+    throw std::runtime_error("static_array: Value is not initialized");
+  }
+  return *_get_pointer_on_index(index);
 }
 
 template<typename T, size_t sz>
 inline static_array<T, sz>::iterator static_array<T, sz>::begin() {
-  return static_array::iterator(_get_next_avaliable_index(-1), this);
+  auto iter = iterator(0, this);
+  if (_copacity > 0 && !_initialized[0]) {
+    ++iter;
+  }
+  return iter;
 }
 
 template<typename T, size_t sz>
 inline static_array<T, sz>::iterator static_array<T, sz>::end() {
-  return static_array::iterator(_copacity, this);
+  return iterator(_copacity, this);
 }
 
 template<typename T, size_t sz>
-inline void static_array<T, sz>::_check_is_initialized(const size_t& ind) const {
-  if (!_initialized[ind])
-    throw std::runtime_error("static_array: Value is not initialized");
-}
-
-template<typename T, size_t sz>
-inline int static_array<T, sz>::_get_next_avaliable_index(int index) const {
-  for (++index; index < _copacity; ++index)
-    if (_initialized[index])
-      break;
-  return index;
-}
-
-template<typename T, size_t sz>
-inline int static_array<T, sz>::_get_prev_avaliable_index(int index) const {
-  for (--index; index >= 0; --index)
-    if (_initialized[index])
-      break;
-  return index;
-}
-
-template<typename T, size_t sz>
-inline T* static_array<T, sz>::_get_pointer_on_index(const size_t& index) const {
+inline T* static_array<T, sz>::_get_pointer_on_index(size_t index) const {
   return reinterpret_cast<T*>(this->_data) + index;
 }
 
 
 template<typename T, size_t sz>
-inline static_array<T, sz>::iterator::iterator(size_t& index, static_array* owner)
+inline static_array<T, sz>::iterator::iterator(size_t index, static_array* owner)
   : _index(index)
   , _owner(owner)
 { };
@@ -140,38 +121,54 @@ inline static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator=(c
 
 template<typename T, size_t sz>
 inline static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator++() {
-  _index = _owner->_get_next_avaliable_index(_index);
+  if (_index > _owner->_copacity) {
+    throw std::out_of_range("static_array::iterator: Cannot increment end iterator");
+  }
+
+  do {
+    ++_index;
+  } while (_index < _owner->_copacity && !_owner->_initialized[_index]);
+
   return *this;
 }
 
 template<typename T, size_t sz>
 inline static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator--() {
-  auto prev_index = _owner->_get_prev_avaliable_index(_index);
-  if (prev_index == -1) {
-    _index = _copacity;
+  if (_index == 0) {
+    throw std::out_of_range("static_array::iterator: Cannot dectrement _index == 0 iterator");
   }
-  _index = prev_index;
+
+  do {
+    --_index;
+  } while (_index > 0 && !_owner->_initialized[_index]);
+
   return *this;
 }
 
 template<typename T, size_t sz>
-inline T* static_array<T, sz>::iterator::operator->() const {
-  return _get_pointer_on_index(_index);
+inline T* static_array<T, sz>::iterator::operator->() {
+  if (!_owner->_initialized[_index]) {
+    throw std::runtime_error("static_array: Cannot access invalid iterator");
+  }
+  return _owner->_get_pointer_on_index(_index);
 }
 
 template<typename T, size_t sz>
-inline T& static_array<T, sz>::iterator::operator*() const {
-  return *_get_pointer_on_index(_index);
+inline T& static_array<T, sz>::iterator::operator*() {
+  if (!_owner->_initialized[_index]) {
+    throw std::runtime_error("static_array: Cannot access invalid iterator");
+  }
+  return *_owner->_get_pointer_on_index(_index);
 }
 
 template<typename T, size_t sz>
-inline bool static_array<T, sz>::iterator::operator==(const iterator& other) {
+inline bool static_array<T, sz>::iterator::operator==(const iterator& other) const {
   return this->_index == other._index && this->_owner == other._owner;
 }
 
 template<typename T, size_t sz>
-inline bool static_array<T, sz>::iterator::operator!=(const iterator& other) {
+inline bool static_array<T, sz>::iterator::operator!=(const iterator& other) const {
   return !(*this == other);
 }
 
-#endif // _STATIC_ARRAY_IMPL_
+#endif // _STATIC_ARRAY_IMPLEMENTATION_
