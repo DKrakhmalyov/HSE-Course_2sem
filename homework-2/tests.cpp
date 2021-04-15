@@ -3,6 +3,8 @@
 #include <iostream>
 #include "gtest/gtest.h"
 #include "static_array.h"
+#include "static_array.cpp"
+
 
 #include <vector>
 #include <array>
