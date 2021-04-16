@@ -18,44 +18,41 @@ public:
 
         iterator() {}
 
+        iterator(int index, std::vector<T*>* ptrs) : _index(index), _ptrs(ptrs) {
+        }
+
         iterator(const iterator& it) {
             *this = it;
         }
 
         ~iterator() {};
 
-        bool is_null() {
-            return (_index == -1 || _is_null == nullptr) ? true : (*_is_null)[_index];
-        }
-
         iterator& operator=(const iterator& it) {
-            _value = it._value;
             _index = it._index;
-            _next = it._next;
-            _prev = it._prev;
+            _ptrs = it._ptrs;
             return *this;
         }
 
         iterator& operator++() {
             do {
-                *this = *this->_next;
-            } while (this->is_null() && this->_next != nullptr);
+                _index++;
+            } while (_index < (*_ptrs).size() && _get_ptr() == nullptr);
             return *this;
         }
 
         iterator& operator--() {
             do {
-                *this = *this->_prev;
-            } while (this->is_null() && this->_prev != nullptr);
+                _index--;
+            } while (_index >= 0 && _get_ptr() == nullptr);
             return *this;
         }
 
         T* operator->() const {
-            return _value;
+            return _get_ptr();
         };
 
         T& operator*() const {
-            return *_value;
+            return *_get_ptr();
         };
 
         friend bool operator==(const iterator& a, const iterator& b) {
@@ -68,51 +65,21 @@ public:
 
     private:
         int _index = -1;
-        std::vector<bool>* _is_null = nullptr;
-        T* _value = nullptr;
-        iterator* _next = nullptr;
-        iterator* _prev = nullptr;
+        std::vector<T*>* _ptrs = nullptr;
+
+        T* _get_ptr() const {
+            return (*_ptrs)[_index];
+        }
     };
 
     static_array() : static_array(sz) {};
 
     static_array(size_t size) {
-        _is_null.assign(size, true);
-        iterator* prev_it = nullptr;
-        _end = new iterator();
-
-        for (int i = 0; i < size; i++) {
-            auto it = new iterator();
-            it->_index = i;
-            it->_is_null = &_is_null;
-
-            if (i == size - 1) {
-                it->_next = _end;
-                _end->_prev = it;
-            }
-
-            if (i == 0) {
-                _begin = it;
-            } else {
-                it->_prev = prev_it;
-                prev_it->_next = it;
-            }
-
-            prev_it = it;
-        }
+        _ptrs.assign(size, nullptr);
     };
 
     ~static_array() {
-        auto it = _begin;
-
-        while (it->_next != nullptr) {
-            erase(*it);
-            auto prev = it;
-            it = it->_next;
-            delete prev;
-        }
-
-        delete it;
+        clear();
     }
 
     size_t current_size() {
@@ -120,26 +87,24 @@ public:
     };
 
     size_t size() {
-        return _is_null.size();
+        return _ptrs.size();
     };
 
     void clear() {
-        for (auto it = _begin; it->_next != nullptr; it = it->_next) {
-            erase(*it);
+        for (int i = 0; i < _ptrs.size(); i++) {
+            _free_ptr(i);
         }
     };
 
     static_array::iterator emplace(size_t ind, T&& obj) {
-        auto it = _begin;
-        for (int i = 0; i < ind; i++) it = it->_next;
-        it->_value = new T(std::forward<T>(obj));
-
-        if (_is_null[ind]) {
+        if (_ptrs[ind] == nullptr) {
             _current_size++;
-            _is_null[ind] = false;
         }
 
-        return *it;
+        _free_ptr(ind);
+        _ptrs[ind] = new T(std::forward<T>(obj));
+
+        return iterator(ind, &_ptrs);
     };
 
     template<class... Args>
@@ -148,36 +113,33 @@ public:
     };
 
     void erase(static_array::iterator it) {
-        if (!_is_null[it._index]) {
-            _current_size--;
-            delete it._value;
-        }
-        _is_null[it._index] = true;
+        _free_ptr(it._index);
     };
 
     T& at(size_t ind) {
-        if (ind >= _is_null.size()) {
-            throw std::out_of_range("Given index is out of static_array range");
-        }
-
-        auto it = _begin;
-        for (int i = 0; i < ind; i++) it = it->_next;
-        return **it;
+        return *_ptrs[ind];
     };
 
     static_array::iterator begin() {
-        return *_begin;
+        return iterator(0, &_ptrs);
     };
 
     static_array::iterator end() {
-        return *_end;
+        return iterator(_ptrs.size(), &_ptrs);
     };
 
 private:
     size_t _current_size = 0;
-    std::vector<bool> _is_null;
-    iterator* _begin = nullptr;
-    iterator* _end = nullptr;
+    std::vector<T*> _ptrs;
+
+    void _free_ptr(int i) {
+        if (_ptrs[i] != nullptr) {
+            _current_size--;
+        }
+
+        delete _ptrs[i];
+        _ptrs[i] = nullptr;
+    }
 };
 
 #endif //HOMEWORK_2_STATIC_ARRAY_H
