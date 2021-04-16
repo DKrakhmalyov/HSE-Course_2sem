@@ -104,8 +104,8 @@ TEST(static_array, iteratorsfunc) {
         st.emplace(i, B(i * 3));
     auto it = st.end();
     for (int i = 9; i >= 0; i -= 3) {
-        EXPECT_EQ(it->getNum(), i * 3);
         --it;
+        EXPECT_EQ(it->getNum(), i * 3);
     }
 }
 
