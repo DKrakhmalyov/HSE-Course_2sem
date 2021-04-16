@@ -147,7 +147,7 @@ static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator--() {
 
 template<typename T, size_t sz>
 T* static_array<T, sz>::iterator::operator->() {
-  if (!_owner->_initialized[_index]) {
+  if (_index >= _owner->size() || !_owner->_initialized[_index]) {
     throw std::runtime_error("static_array: Cannot access invalid iterator");
   }
   return _owner->_get_pointer_on_index(_index);
@@ -155,7 +155,7 @@ T* static_array<T, sz>::iterator::operator->() {
 
 template<typename T, size_t sz>
 T& static_array<T, sz>::iterator::operator*() {
-  if (!_owner->_initialized[_index]) {
+  if (_index >= _owner->size() || !_owner->_initialized[_index]) {
     throw std::runtime_error("static_array: Cannot access invalid iterator");
   }
   return *_owner->_get_pointer_on_index(_index);
