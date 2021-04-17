@@ -15,6 +15,7 @@ public:
     virtual void AddEdge(int from, int to, T &&element);
 
     MatrixGraph() = default;
+    ~MatrixGraph();
 
     MatrixGraph(IGraph<T> *_oth);
 
@@ -154,6 +155,17 @@ MatrixGraph<T>::MatrixGraph(IGraph<T> *_oth) {
     _oth->GetEdges(edges);
     for (auto edge : edges) {
         AddEdge(get<0>(edge), get<1>(edge), std::move(get<2>(edge)));
+    }
+}
+
+template<typename T>
+MatrixGraph<T>::~MatrixGraph() {
+    for (size_t i = 0; i < _g.size(); ++i) {
+        for (size_t j = 0; j < _g.size(); ++j) {
+            if (_g[i][j]) {
+                delete _g[i][j];
+            }
+        }
     }
 }
 
