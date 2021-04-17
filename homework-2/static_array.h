@@ -5,11 +5,16 @@
 #ifndef HOMEWORK_2_STATIC_ARRAY_H
 #define HOMEWORK_2_STATIC_ARRAY_H
 
+#include <cstddef>
+
 template<typename T, size_t sz = 0>
 class static_array {
 public:
     class iterator {
     public:
+        friend static_array<T, sz>;
+        iterator(T**, int, int );
+
         iterator(const iterator &);
 
         ~iterator();
@@ -24,14 +29,20 @@ public:
 
         T &operator*() const;
 
-        friend bool operator==(const iterator &, const iterator &);
+        bool operator==(iterator const &other) const;
 
-        friend bool operator!=(const iterator &, const iterator &);
+        bool operator!=(iterator const& other) const;
+
+        T **ptr;
+        int index;
+        int size;
     };
 
     static_array();
 
-    static_array(size_t sz);
+    explicit static_array(size_t size);
+
+    ~static_array();
 
     size_t current_size();
 
@@ -51,6 +62,12 @@ public:
     static_array::iterator begin();
 
     static_array::iterator end();
+
+private:
+    T **array;
+    size_t m_size;
+    size_t m_current_size;
 };
+
 
 #endif //HOMEWORK_2_STATIC_ARRAY_H
