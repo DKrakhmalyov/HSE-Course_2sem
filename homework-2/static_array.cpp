@@ -2,6 +2,8 @@
 // Created by Denis on 12.03.2021.
 //
 #pragma once
+
+#include <stdexcept>
 #include "static_array.h"
 
 template<typename T, size_t sz>
@@ -105,6 +107,8 @@ void static_array<T, sz>::erase(size_t ind) {
 
 template<typename T, size_t sz>
 T &static_array<T, sz>::at(size_t ind) {
+    if (ind >= size_ || !mask_[ind])
+        throw std::out_of_range("element doesn't exist");
     return data_[ind];
 }
 
