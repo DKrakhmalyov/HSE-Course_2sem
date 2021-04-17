@@ -9,6 +9,7 @@ template<typename T, size_t sz = 0>
 class static_array {
 public:
     class iterator {
+    public:
         iterator(const iterator &);
 
         ~iterator();
