@@ -14,9 +14,7 @@ class static_array {
     std::vector<bool> mask_;
     size_t size_, count_ = 0, last_ = 0;
 
-    size_t index(T *ptr) {
-        return ptr - data_;
-    }
+    size_t index(T *ptr);
 
 public:
     class iterator {
@@ -28,110 +26,51 @@ public:
     public:
         iterator(const iterator &) = default;
 
-        iterator(T *ptr, static_array &instance) : ptr_(ptr), instance_(&instance) {}
+        iterator(T *ptr, static_array &instance);
 
         iterator &operator=(const iterator &) = default;
 
-        iterator &operator++() {
-            for (; ptr_ != instance_->end() || instance_->mask_[instance_->index(ptr_)]; ++ptr_);
-        }
+        iterator &operator++();
 
-        iterator &operator--() {
-            for (; instance_->mask_[instance_->index(ptr_)]; --ptr_);
-        };
+        iterator &operator--();
 
-        T *operator->() const {
-            return ptr_;
-        };
+        T *operator->() const;
 
-        T &operator*() const {
-            return *ptr_;
-        };
+        T &operator*() const;
 
-        friend bool operator==(const iterator &first, const iterator &second) {
-            return first.ptr_ == second.ptr_ && first.instance_ == second.instance_;
-        };
+        friend bool operator==(const iterator &first, const iterator &second);
 
-        friend bool operator!=(const iterator &first, const iterator &second) {
-            return !(first == second);
-        };
+        friend bool operator!=(const iterator &first, const iterator &second);
     };
 
-    static_array(size_t size) : data_((T *) ::operator new(size * sizeof(T))), size_(size), mask_(size) {}
+    static_array(size_t size);
 
-    static_array() : static_array(sz) {}
+    static_array();
 
-    ~static_array() {
-        clear();
-        ::operator delete(data_);
-    }
+    ~static_array();
 
-    size_t current_size() {
-        return count_;
-    }
+    size_t current_size();
 
-    size_t size() {
-        return size_;
-    }
+    size_t size();
 
-    void clear() {
-        for (size_t i = 0; i < size_; ++i) {
-            if (mask_[i]) {
-                data_[i].~T();
-            }
-        }
-        count_ = 0;
-    }
+    void clear();
 
-    static_array::iterator emplace(size_t ind, T &&obj) {
-        erase(ind);
-        new(data_ + ind) T(std::forward<T>(obj));
-        mask_[ind] = true;
-        ++count_;
-        return iterator(data_ +ind, *this);
-    }
+    static_array::iterator emplace(size_t ind, T &&obj);
 
     template<class... Args>
-    static_array::iterator emplace(size_t ind, Args &&... args) {
-        erase(ind);
-        new(data_ + ind) T(std::forward<Args>(args)...);
-        mask_[ind] = true;
-        ++count_;
-        return iterator(data_ + ind, *this);
-    }
+    static_array::iterator emplace(size_t ind, Args &&... args);
 
-    void erase(static_array::iterator it) {
-        if (!mask_[index(it.ptr_)])
-            return;
-        it->~T();
-        mask_[index(it.ptr_)] = false;
-        --count_;
-    };
+    void erase(static_array::iterator it);
 
-    void erase(size_t ind) {
-        if (!mask_[ind])
-            return;
-        data_[ind].~T();
-        mask_[ind] = false;
-        --count_;
-    }
+    void erase(size_t ind);
 
-    T &at(size_t ind) {
-        return data_[ind];
-    }
+    T &at(size_t ind);
 
-    static_array::iterator begin() {
-        for (size_t i = 0; i < 0; ++i) {
-            if (mask_[i])
-                return iterator(data_ + i, *this);
-        }
-        return iterator(data_ + size_, *this);
-    }
+    static_array::iterator begin();
 
-    static_array::iterator end() {
-        return iterator(data_ + size_, *this);
-    }
+    static_array::iterator end();
 };
+
 
 #include "static_array.cpp"
 
