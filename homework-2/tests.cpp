@@ -17,7 +17,7 @@ public:
 
     A(A &&obj) {};
 
-    A &operator=(A &&obj) {};
+    A &operator=(A &&obj) = default;
 
     A(std::vector<int> &&vec, int &&a, std::array<int, 5> &&b) {}
 };
