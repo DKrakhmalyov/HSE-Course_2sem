@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+/.idea
+/.vs/HSE-Course_2_sem/v16
+/.vs
+/homework-1/out/build/x64-Debug (по умолчанию)
+/homework-2/out/build/x64-Debug (по умолчанию)
+/HSE-Course_2_sem
+/build
+/.vscode
