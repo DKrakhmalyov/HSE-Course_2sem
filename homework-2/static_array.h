@@ -5,14 +5,32 @@
 #ifndef HOMEWORK_2_STATIC_ARRAY_H
 #define HOMEWORK_2_STATIC_ARRAY_H
 
-template<typename T, size_t sz = 0>
+#include <cstddef>
+
+template<typename T, size_t SZ = 0>
 class static_array {
+private:
+    T *mem_ptr;
+    char *mask;
+    size_t _sz;
+    size_t _true_sz;
+
+    bool get_init(size_t i);
+
+    void set_init(size_t i, bool init);
+
 public:
     class iterator {
+        friend class static_array;
+    private:
+        T *_ptr;
+        static_array& _instance;
     public:
+
+        iterator(T *, static_array& instance);
         iterator(const iterator &);
 
-        ~iterator();
+        ~iterator() = default;
 
         iterator &operator=(const iterator &);
 
@@ -24,14 +42,20 @@ public:
 
         T &operator*() const;
 
-        friend bool operator==(const iterator &, const iterator &);
+        friend bool operator==(const iterator &lhs, const iterator &rhs){
+            return lhs._ptr == rhs._ptr;
+        }
 
-        friend bool operator!=(const iterator &, const iterator &);
+        friend bool operator!=(const iterator &lhs, const iterator &rhs){
+            return !(lhs == rhs);
+        }
     };
 
     static_array();
 
-    static_array(size_t sz);
+    explicit static_array(size_t sz);
+
+    ~static_array();
 
     size_t current_size();
 
@@ -53,4 +77,5 @@ public:
     static_array::iterator end();
 };
 
+#include "static_array.cpp"
 #endif //HOMEWORK_2_STATIC_ARRAY_H
