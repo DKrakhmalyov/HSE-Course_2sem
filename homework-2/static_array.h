@@ -30,22 +30,20 @@ public:
 
         T &operator*() const;
 
-        template <typename, size_t>
-        friend bool operator==(const iterator &, const iterator &);
+        bool operator==(const iterator &);
 
-        template <typename, size_t>
-        friend bool operator!=(const iterator &, const iterator &);
+        bool operator!=(const iterator &);
 
     private:
 
-        iterator(T* data, bool *used, bool *initialized);
+        iterator(T* data, int *used, bool *initialized);
 
 
     public:
 
         T *m_data_ptr;
 
-        bool *m_used_ptr;
+        int *m_used_ptr;
 
         bool *m_initialized_ptr;
 
@@ -80,7 +78,7 @@ public:
     
     T *m_data;
 
-    bool *m_used;
+    int *m_used;
 
     bool *m_initialized;
 

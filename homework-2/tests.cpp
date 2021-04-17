@@ -80,7 +80,6 @@ TEST(static_array, complexClass) {
 
 
 TEST(static_array, iterator) {
-
     static_array<int, 10> st;
     static_array<int, 10>::iterator it1 = st.emplace(1, 13);
     auto it2 = st.emplace(4, 199);
@@ -104,6 +103,7 @@ TEST(static_array, iteratorsfunc) {
     static_array<B> st(10);
     for (int i = 9; i >= 0; i -= 3)
         st.emplace(i, B(i * 3));
+
     auto it = st.end();
     for (int i = 9; i >= 0; i -= 3) {
         --it;
