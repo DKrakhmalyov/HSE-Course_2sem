@@ -3,6 +3,7 @@
 #include <iostream>
 #include "gtest/gtest.h"
 #include "static_array.h"
+#include "static_array.cpp"
 
 #include <vector>
 #include <array>
@@ -92,7 +93,7 @@ TEST(static_array, iterators) {
     for (int i = 0; i < 10; i += 2)
         st.emplace(i, 2 * i);
     auto it = st.begin();
-    for (int i = 0; i < 10, it != st.end(); i += 2) {
+    for (int i = 0; i < 10, it == st.end(); i += 2) {
         EXPECT_EQ(*it, 2 * i);
         ++it;
     }

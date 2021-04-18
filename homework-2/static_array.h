@@ -1,6 +1,7 @@
 //
 // Created by Denis on 12.03.2021.
 //
+#include <cstdlib>
 
 #ifndef HOMEWORK_2_STATIC_ARRAY_H
 #define HOMEWORK_2_STATIC_ARRAY_H
@@ -10,6 +11,13 @@ class static_array {
 public:
     class iterator {
     public:
+        T** ptr;
+        static_array<T, sz> *arr;
+
+        iterator() = delete;
+
+        explicit iterator(T**_ptr, static_array<T, sz> *_arr) : ptr(_ptr), arr(_arr) {};
+
         iterator(const iterator &);
 
         ~iterator();
@@ -24,14 +32,17 @@ public:
 
         T &operator*() const;
 
-        friend bool operator==(const iterator &, const iterator &);
+        bool operator==(const static_array<T, sz>::iterator &);
 
-        friend bool operator!=(const iterator &, const iterator &);
+        bool operator!=(const static_array<T, sz>::iterator &);
+
     };
 
     static_array();
 
-    static_array(size_t sz);
+    explicit static_array(size_t newSize);
+
+    ~static_array();
 
     size_t current_size();
 
@@ -39,18 +50,24 @@ public:
 
     void clear();
 
-    static_array::iterator emplace(size_t ind, T &&obj);
+    typename static_array<T, sz>::iterator emplace(size_t ind, T &&obj);
 
     template<class... Args>
-    static_array::iterator emplace(size_t ind, Args &&... args);
+    typename static_array<T, sz>::iterator emplace(size_t ind, Args &&... args);
 
-    void erase(static_array::iterator);
+    void erase(typename static_array<T, sz>::iterator);
 
     T &at(size_t ind);
 
-    static_array::iterator begin();
+    typename static_array<T, sz>::iterator begin();
 
-    static_array::iterator end();
+    typename static_array<T, sz>::iterator end();
+private:
+    T **data;
+    T **beginPtr = nullptr;
+    T **endPtr = nullptr;
+    size_t filledCount = 0;
+    size_t totalSize = sz;
 };
 
 #endif //HOMEWORK_2_STATIC_ARRAY_H
