@@ -16,11 +16,16 @@ class PtrsGraph : public IPtrsGraph<T> {
 
   void AddEdge(Node<T> *from, Node<T> *to, T &&weight) override {
     from->edges.emplace_back(to, weight);
-    m_nodes.insert(from);
-    m_nodes.insert(to);
+    to->income_edges.emplace_back(from, weight);
+    if (from->edges.empty() && from->income_edges.empty()) {
+      m_size++;
+    }
+    if (to->edges.empty() && from->income_edges.empty()) {
+      m_size++;
+    }
   }
 
-  int VerticesCount() const override { return m_nodes.size(); };
+  int VerticesCount() const override { return m_size; };
 
   void GetNextVertices(Node<T> *vertex,
                        std::vector<Node<T> *> &vertices) const override {
@@ -33,14 +38,8 @@ class PtrsGraph : public IPtrsGraph<T> {
   void GetPrevVertices(Node<T> *vertex,
                        std::vector<Node<T> *> &vertices) const override {
     vertices.clear();
-    for (auto &node : m_nodes) {
-      auto it = std::find_if(node->edges.begin(), node->edges.end(),
-                          [vertex](const std::pair<Node<T> *, T> &arg) {
-                            return arg.first == vertex;
-                          });
-      if (it != node->edges.end()) {
-        vertices.emplace_back(node);
-      }
+    for (auto &[node, _] : vertex->income_edges) {
+      vertices.emplace_back(node);
     }
   };
 
@@ -90,7 +89,7 @@ class PtrsGraph : public IPtrsGraph<T> {
   }
 
  private:
-  std::set<Node<T> *> m_nodes;
+  size_t m_size = 0;
 };
 
 #endif  // HOMEWORK_1_PTRSGRAPH_H
