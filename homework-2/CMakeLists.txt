@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 
 include(GoogleTest)
 project(homework_2)
@@ -36,9 +36,9 @@ endif ()
 add_executable(homework_2 tests.cpp static_array.h static_array.cpp)
 target_link_libraries(homework_2 LINK_PUBLIC gtest_main)
 
-if (UNIX OR APPLE)
-    target_compile_options(homework_2 PUBLIC -fsanitize=address)
-    target_link_options(homework_2 PUBLIC -fsanitize=address)
-endif ()
+#if (UNIX OR APPLE)
+target_compile_options(homework_2 PUBLIC -fsanitize=address)
+target_link_options(homework_2 PUBLIC -fsanitize=address)
+#endif ()
 
 add_test(NAME homework_2_test COMMAND homework_2)
