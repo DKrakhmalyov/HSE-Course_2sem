@@ -5,14 +5,25 @@
 #ifndef HOMEWORK_2_STATIC_ARRAY_H
 #define HOMEWORK_2_STATIC_ARRAY_H
 
+#include <cstddef>
+#include <cstdint>
+#include <utility>
+#include <memory>
+
 template<typename T, size_t sz = 0>
 class static_array {
 public:
     class iterator {
+        /*
+         * Класс итератора
+         * при index == size() считается end()-итератором
+         */
     public:
+        iterator(T** arr, size_t index, size_t size);
+
         iterator(const iterator &);
 
-        ~iterator();
+        ~iterator() = default;
 
         iterator &operator=(const iterator &);
 
@@ -24,14 +35,22 @@ public:
 
         T &operator*() const;
 
-        friend bool operator==(const iterator &, const iterator &);
+        bool operator==(const iterator &);
 
-        friend bool operator!=(const iterator &, const iterator &);
+        bool operator!=(const iterator &);
+
+        size_t index;
+
+    private:
+        size_t _size;
+        T** _arr;
     };
 
     static_array();
 
-    static_array(size_t sz);
+    explicit static_array(size_t a_sz);
+
+    ~static_array();
 
     size_t current_size();
 
@@ -51,6 +70,10 @@ public:
     static_array::iterator begin();
 
     static_array::iterator end();
+private:
+    size_t _size = sz;
+    size_t _real_size = 0;
+    T** _data;
 };
 
 #endif //HOMEWORK_2_STATIC_ARRAY_H
