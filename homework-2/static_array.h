@@ -5,52 +5,70 @@
 #ifndef HOMEWORK_2_STATIC_ARRAY_H
 #define HOMEWORK_2_STATIC_ARRAY_H
 
+#include <cstddef>
+
 template<typename T, size_t sz = 0>
 class static_array {
 public:
-    class iterator {
-    public:
-        iterator(const iterator &);
+	class iterator {
+	public:
+		iterator(const iterator &);
 
-        ~iterator();
+		~iterator();
 
-        iterator &operator=(const iterator &);
+		iterator &operator=(const iterator &);
 
-        iterator &operator++();
+		iterator &operator++();
 
-        iterator &operator--();
+		iterator &operator--();
 
-        T *operator->() const;
+		T *operator->() const;
 
-        T &operator*() const;
+		T &operator*() const;
 
-        friend bool operator==(const iterator &, const iterator &);
+		bool operator==(iterator const &other) const;
 
-        friend bool operator!=(const iterator &, const iterator &);
-    };
+		bool operator!=(iterator const& other) const;
+		
+		friend static_array<T, sz>;
 
-    static_array();
+		iterator(T**, size_t, size_t);
 
-    static_array(size_t sz);
+		T **ptr;
+		size_t size;
+		size_t index;
+	};
 
-    size_t current_size();
+	static_array();
 
-    size_t size();
+	static_array(size_t size);
 
-    void clear();
+	~static_array();
 
-    static_array::iterator emplace(size_t ind, T &&obj);
+	size_t current_size();
 
-    template<class... Args>
-    static_array::iterator emplace(size_t ind, Args &&... args);
+	size_t size();
 
-    void erase(static_array::iterator);
+	void clear();
 
-    T &at(size_t ind);
+	static_array::iterator emplace(size_t ind, T &&obj);
 
-    static_array::iterator begin();
+	template<class... Args>
+	static_array::iterator emplace(size_t ind, Args &&... args);
 
-    static_array::iterator end();
+	void erase(static_array::iterator);
+
+	T &at(size_t ind);
+
+	static_array::iterator begin();
+
+	static_array::iterator end();
+
+private:
+	T **arr;
+	size_t _size;
+	size_t _curr_size;
 };
+
 
 #endif //HOMEWORK_2_STATIC_ARRAY_H
