@@ -2,12 +2,12 @@
 
 template <typename T, std::size_t sz>
 static_array<T, sz>::iterator::iterator(const static_array<T, sz>::iterator& it) {
-    curr_iter = it.curr_iter;
+    self_iter = it.self_iter;
 }
 
 template <typename T, std::size_t sz>
 static_array<T, sz>::iterator::~iterator() {
-    curr_iter = nullptr;
+    self_iter = nullptr;
 }
 
 template <typename T, std::size_t sz>
@@ -15,9 +15,7 @@ typename static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator=
     const static_array<T, sz>::iterator &other
 ) {
     if (this != &other) {
-        curr_iter = other.curr_iter;
-        begin_iter = other.begin_iter;
-        end_iter = other.end_iter;
+        self_iter = other.self_iter;
     }
     return *this;
  }
@@ -25,8 +23,8 @@ typename static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator=
 template <typename T, std::size_t sz>
 typename static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator++() {
     bool first_step_flag = true;
-    while ((curr_iter != end_iter) && ((*curr_iter == nullptr) || first_step_flag)) {
-        ++curr_iter;
+    while ((self_iter != arr->array + arr->size()) && ((*self_iter == nullptr) || first_step_flag)) {
+        ++self_iter;
         first_step_flag = false;
     }
     return *this;
@@ -35,8 +33,8 @@ typename static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator+
 template <typename T, std::size_t sz>
 typename static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator--() {
     bool first_step_flag = true;
-    while ((curr_iter != begin_iter) && ((*curr_iter == nullptr) || first_step_flag)) {
-        --curr_iter;
+    while ((self_iter != arr->array) && ((*self_iter == nullptr) || first_step_flag)) {
+        --self_iter;
         first_step_flag = false;
     }
     return *this;
@@ -44,19 +42,19 @@ typename static_array<T, sz>::iterator& static_array<T, sz>::iterator::operator-
 
 template <typename T, std::size_t sz>
 T* static_array<T, sz>::iterator::operator->() {
-    return *this->curr_iter;
+    return *this->self_iter;
 }
 
 template<typename T, std::size_t sz>
 T& static_array<T, sz>::iterator::operator*() {
-    return **this->curr_iter;
+    return **this->self_iter;
 }
 
 template <typename T, std::size_t sz >
 bool static_array<T, sz>::iterator::operator==(
     const static_array<T, sz>::iterator &other
 ) {
-    return curr_iter == other.curr_iter;
+    return self_iter == other.self_iter;
 }
 
 template <typename T, std::size_t sz>
@@ -67,10 +65,9 @@ bool static_array<T, sz>::iterator::operator!=(
 }
 
 template <typename T, std::size_t sz>
-static_array<T, sz>::iterator::iterator(T** _curr_iter, T** _begin_iter, T** _end_iter) :
-    curr_iter(_curr_iter),
-    begin_iter(_begin_iter),
-    end_iter(_end_iter)
+static_array<T, sz>::iterator::iterator(T** _self_iter, static_array<T, sz>* _arr) :
+    self_iter(_self_iter),
+    arr(_arr)
 {}
 
 template <typename T, std::size_t sz>
@@ -125,10 +122,10 @@ static_array<T, sz>::iterator static_array<T, sz>::static_array::emplace(size_t 
 
 template <typename T, std::size_t sz>
 void static_array<T, sz>::static_array::erase(static_array<T, sz>::iterator iter) {
-    if (*iter.curr_iter != nullptr) {
-        delete *iter.curr_iter;
+    if (*iter.self_iter != nullptr) {
+        delete *iter.self_iter;
         --elements_count;
-        *iter.curr_iter = nullptr;
+        *iter.self_iter = nullptr;
     }
 }
 
@@ -190,5 +187,5 @@ void static_array<T, sz>::static_array::delete_elements() {
 
 template <typename T, std::size_t sz>
 static_array<T, sz>::iterator static_array<T, sz>::static_array::create_iter(std::size_t pos) {
-    return static_array<T, sz>::iterator(array + pos, array, array + total_count);
+    return static_array<T, sz>::iterator(array + pos, this);
 }

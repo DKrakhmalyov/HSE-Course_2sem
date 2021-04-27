@@ -38,13 +38,11 @@ class static_array {
 
             private:
 
-                iterator(T**, T**, T**);
+                iterator(T**, static_array*);
 
-                T **curr_iter;
+                T **self_iter;
 
-                T **begin_iter;
-
-                T **end_iter;
+                static_array *arr;
         };
 
         static_array();
