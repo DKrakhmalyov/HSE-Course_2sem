@@ -148,13 +148,3 @@ template<typename T, size_t sz>
 T &static_array<T, sz>::iterator::operator*() const{
     return *(master->array + it_index);
 }
-
-template<typename T, size_t sz>
-bool operator==(const typename static_array<T, sz>::iterator& a, const typename static_array<T, sz>::iterator& b){
-    return (a.it_index == b.it_index) && (a.master == b.master);
-}
-
-template<typename T, size_t sz>
-bool operator!=(const typename static_array<T, sz>::iterator& a, const typename static_array<T, sz>::iterator& b){
-    return !(a == b);
-}
