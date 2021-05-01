@@ -1,0 +1,14 @@
+# Target labels
+ googletest
+# Source files and their labels
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/CMakeFiles/googletest
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/CMakeFiles/googletest.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/CMakeFiles/googletest-complete.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-install.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-mkdir.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-download.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-update.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-patch.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-configure.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-build.rule
+/home/nbst/HSE/HSE-Course_2sem/homework-2/build/googletest-download/googletest-prefix/src/googletest-stamp/googletest-test.rule

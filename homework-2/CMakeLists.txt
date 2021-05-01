@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.17)
 include(GoogleTest)
 project(homework_2)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_STANDARD 20)
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 

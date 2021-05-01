@@ -7,6 +7,18 @@
 #include <vector>
 #include <array>
 
+
+
+
+
+#include "static_array.cpp"
+
+
+
+
+
+
+
 class A {
 public:
     A() = delete;
@@ -114,3 +126,14 @@ int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
+
+// int main(){
+//     static_array<int, 10> st;
+//     for (int i = 0; i < 10; i += 2)
+//         st.emplace(i, 2 * i);
+//     auto it = st.begin();
+//     for (int i = 0; i < 10, it != st.end(); i += 2) {
+//         EXPECT_EQ(*it, 2 * i);
+//         ++it;
+//     }
+// }
