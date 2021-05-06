@@ -6,6 +6,7 @@
 #include "type_traits/is_copy_constructible.h"
 #include "type_traits/is_nothrow_move_constructible.h"
 #include "type_traits/move_if_noexcept.h"
+#include "type_traits/utility.h"
 
 #include "gtest/gtest.h"
 
@@ -29,7 +30,7 @@ TEST(is_constructible, Test2) {
 }
 
 TEST(is_constructible, Test3) {
- 
+
     struct Base {};
 
     struct Derived : Base {};
@@ -40,7 +41,7 @@ TEST(is_constructible, Test3) {
 }
 
 TEST(is_constructible, Test4) {
- 
+
     struct Foo {};
 
     static_assert(!is_constructible<Foo&, Foo>::value, "expected false");
@@ -51,7 +52,7 @@ TEST(is_constructible, Test4) {
 }
 
 TEST(is_constructible, Test5) {
- 
+
     struct Foo {};
 
     static_assert(is_constructible<Foo&&, Foo>::value, "expected true");
@@ -62,7 +63,7 @@ TEST(is_constructible, Test5) {
 }
 
 TEST(is_constructible, Test6) {
- 
+
     struct Foo {};
 
     static_assert(is_constructible<Foo, Foo>::value, "expected true");
@@ -72,8 +73,69 @@ TEST(is_constructible, Test6) {
     static_assert(is_constructible<Foo, Foo&&>::value, "expected true");
 }
 
+TEST(is_copy_constructible, Test1) {
+
+    struct Foo {};
+
+    static_assert(is_copy_constructible<Foo>::value, "expected true");
+
+    static_assert(is_copy_constructible<Foo&>::value, "expected true");
+
+    static_assert(!is_copy_constructible<Foo&&>::value, "expected false");
+}
+
+TEST(is_copy_constructible, Test2) {
+
+    struct Foo {
+        Foo(const Foo&) = delete;
+    };
+
+    static_assert(!is_copy_constructible<Foo>::value, "expected false");
+
+    static_assert(is_copy_constructible<Foo&>::value, "expected true");
+
+    static_assert(!is_copy_constructible<Foo&&>::value, "expected false");
+}
+
+TEST(is_nothrow_constructible, Test1) {
+
+    struct Foo {};
+
+    static_assert(is_nothrow_constructible<Foo>::value, "expected true");
+
+    static_assert(is_nothrow_constructible<Foo, Foo&>::value, "expected true");
+
+    static_assert(is_nothrow_constructible<Foo, Foo&&>::value, "expected true");
+}
+
+TEST(is_nothrow_constructible, Test2) {
+
+    struct Foo {};
+
+    static_assert(!is_nothrow_constructible<Foo&>::value, "expected false");
+
+    static_assert(is_nothrow_constructible<Foo&, Foo&>::value, "expected true");
+
+    static_assert(is_nothrow_constructible<Foo&&, Foo&&>::value, "expected true");
+}
+
+TEST(is_nothrow_constructible, Test3) {
+
+    struct Foo {
+        Foo();
+        Foo(const Foo&);
+        Foo(Foo&&);
+    };
+
+    static_assert(!is_nothrow_constructible<Foo>::value, "expected false");
+
+    static_assert(!is_nothrow_constructible<Foo, Foo&>::value, "expected false");
+
+    static_assert(!is_nothrow_constructible<Foo, Foo&&>::value, "expected false");
+}
+
 TEST(is_nothrow_move_constructible, Test1) {
- 
+
     struct Foo {
         std::string str;
     };
@@ -82,7 +144,7 @@ TEST(is_nothrow_move_constructible, Test1) {
 }
 
 TEST(is_nothrow_move_constructible, Test2) {
- 
+
     struct Foo {
         int n;
         Foo(Foo&&) = default;
@@ -92,7 +154,7 @@ TEST(is_nothrow_move_constructible, Test2) {
 }
 
 TEST(is_nothrow_move_constructible, Test3) {
- 
+
     struct Foo {
         Foo(const Foo&) {}
     };
@@ -101,7 +163,7 @@ TEST(is_nothrow_move_constructible, Test3) {
 }
 
 TEST(move_if_noexcept, Test1) {
-    
+
     struct ThrowFoo {
         bool copy = false;
         ThrowFoo() = default;
@@ -109,12 +171,12 @@ TEST(move_if_noexcept, Test1) {
         ThrowFoo(const ThrowFoo&) { copy = true; };
     };
     ThrowFoo foo;
-    ThrowFoo foo2 = move_if_noexcept(foo); 
+    ThrowFoo foo2 = move_if_noexcept(foo);
     ASSERT_TRUE(foo2.copy);
 }
 
 TEST(move_if_noexcept, Test2) {
- 
+
     struct NonThrowFoo {
         bool copy = false;
         NonThrowFoo() = default;
@@ -122,6 +184,24 @@ TEST(move_if_noexcept, Test2) {
         NonThrowFoo(const NonThrowFoo&) noexcept { copy = true; };
     };
     NonThrowFoo foo;
-    NonThrowFoo foo2 = move_if_noexcept(foo); 
+    NonThrowFoo foo2 = move_if_noexcept(foo);
     ASSERT_FALSE(foo2.copy);
+}
+
+TEST(utils, Test1) {
+    using lvalue_cast_1 = add_lvalue_reference_t<int>;
+    using lvalue_cast_2 = add_lvalue_reference_t<int&>;
+    using lvalue_cast_3 = add_lvalue_reference_t<int&&>;
+    ASSERT_TRUE(std::is_lvalue_reference_v<lvalue_cast_1>);
+    ASSERT_TRUE(std::is_lvalue_reference_v<lvalue_cast_2>);
+    ASSERT_TRUE(std::is_lvalue_reference_v<lvalue_cast_3>);
+}
+
+TEST(utils, Test2) {
+    using rvalue_cast_1 = add_rvalue_reference_t<int>;
+    using rvalue_cast_2 = add_rvalue_reference_t<int&>;
+    using rvalue_cast_3 = add_rvalue_reference_t<int&&>;
+    ASSERT_TRUE(std::is_rvalue_reference_v<rvalue_cast_1>);
+    ASSERT_TRUE(std::is_lvalue_reference_v<rvalue_cast_2>);
+    ASSERT_TRUE(std::is_rvalue_reference_v<rvalue_cast_3>);
 }
