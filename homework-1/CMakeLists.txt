@@ -35,6 +35,7 @@ endif ()
 
 add_subdirectory(src)
 add_executable(homework_1 tests.cpp)
+add_executable(my main.cpp)
 target_link_libraries(homework_1 LINK_PUBLIC graph gtest_main)
 
 if (UNIX OR APPLE)

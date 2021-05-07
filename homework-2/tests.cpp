@@ -3,6 +3,7 @@
 #include <iostream>
 #include "gtest/gtest.h"
 #include "static_array.h"
+#include "static_array.cpp"
 
 #include <vector>
 #include <array>
@@ -83,7 +84,7 @@ TEST(static_array, iterator) {
     static_array<int, 10>::iterator it1 = st.emplace(1, 13);
     auto it2 = st.emplace(4, 199);
     st.erase(it2);
-    EXPECT_EQ(st.size(), 1);
+    EXPECT_EQ(st.current_size(), 1);
     EXPECT_EQ(*it1, 13);
 }
 
@@ -92,7 +93,7 @@ TEST(static_array, iterators) {
     for (int i = 0; i < 10; i += 2)
         st.emplace(i, 2 * i);
     auto it = st.begin();
-    for (int i = 0; i < 10, it != st.end(); i += 2) {
+    for (int i = 0; i < 10, it == st.end(); i += 2) {
         EXPECT_EQ(*it, 2 * i);
         ++it;
     }
@@ -104,8 +105,8 @@ TEST(static_array, iteratorsfunc) {
         st.emplace(i, B(i * 3));
     auto it = st.end();
     for (int i = 9; i >= 0; i -= 3) {
-        EXPECT_EQ(it->getNum(), i * 3);
         --it;
+        EXPECT_EQ(it->getNum(), i * 3);
     }
 }
 
