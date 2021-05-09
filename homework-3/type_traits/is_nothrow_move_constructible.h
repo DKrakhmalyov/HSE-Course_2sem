@@ -5,23 +5,17 @@
 #include "is_copy_constructible.h"
 #include "utility.h"
 
-//<is_constructible, is_reference, T, Args...>
-template<bool, bool, typename T, typename... Args> struct is_nothrow_constructible_impl;
-
-// is_nothrow_constructible_impl - partial specializations
-...
-
-template<typename T, typename... Args>
-struct is_nothrow_constructible {
-    ...
-};
-
-template<typename T, std::size_t N>
-struct is_nothrow_constructible<T[N]> {
-    ...
+template<typename T>
+struct NoexceptObjectBuilder {
+    static T object() noexcept;
 };
 
 template<typename T>
-struct is_nothrow_move_constructible {
-    ...
-};
+struct is_nothrow_move_constructible : conditional_t<is_constructible_v<T, add_rvalue_reference_t<T>>,
+                                                     conditional_t<noexcept(std::move(T(NoexceptObjectBuilder<T>::object()))),
+                                                                   std::true_type,
+                                                                   std::false_type>,
+                                                     std::false_type> {};
+
+template<typename T>
+constexpr bool is_nothrow_move_constructible_v = is_nothrow_move_constructible<T>::value;

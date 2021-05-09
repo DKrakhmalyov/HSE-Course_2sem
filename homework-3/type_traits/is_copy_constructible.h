@@ -4,38 +4,23 @@
 
 #include "utility.h"
 
-template<typename T, typename... Args>
-struct is_constructible_impl;
+template<typename, typename Type, typename... Args>
+struct is_constructible_impl : std::false_type {};
 
-template<typename Derived, typename Base>
-struct is_invalid_base_to_derived_cast {
-   ...
-};
+template<typename Type, typename... Args>
+struct is_constructible_impl<void_t<decltype(Type(ObjectBuilder<Args>::object()...))>, Type, Args...> : std::true_type {};
 
-template<typename To, typename From>
-struct is_invalid_lvalue_to_rvalue_cast : std::false_type {
-    ...
-};
+template<typename Type, typename... Args>
+struct is_constructible : is_constructible_impl<void, Type, Args...> {};
 
-template<typename RefTo, typename RefFrom>
-struct is_invalid_lvalue_to_rvalue_cast<RefTo&&, RefFrom&> {
-    ...
-};
+template<typename Type>
+struct is_constructible<Type&, Type> : std::false_type {};
 
-struct is_constructible_helper {
-    ...
-};
+template<typename Type>
+struct is_constructible<Type&, add_rvalue_reference_t<Type>> : std::false_type {};
 
-template<typename T, typename... Args>
-struct is_constructible_impl {
-    ...
-};
+template<typename Type>
+struct is_constructible<add_rvalue_reference_t<Type>, Type&> : std::false_type {};
 
-// is_constructible_impl - partial specializations
-...
-
-template<typename T, typename... Args>
-struct is_constructible {...};
-
-template<typename T>
-struct is_copy_constructible {...};
+template<typename Type, typename... Args>
+constexpr bool is_constructible_v = is_constructible<Type, Args...>::value;
