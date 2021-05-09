@@ -6,16 +6,7 @@
 #include "is_nothrow_move_constructible.h"
 #include "utility.h"
 
-// conditional
-template<bool condition, typename T, typename F>
-struct conditional {
-    ...
+template<typename T>
+auto move_if_noexcept(T& x) -> decltype(auto) {
+    return is_nothrow_move_constructible<T>::value ? std::move(x) : x;
 };
-
-// conditional - partial specialization
-...
-
-template<bool condition, typename T, typename F>
-using conditional_v = ...
-
-// move_if_noexcept
