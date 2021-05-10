@@ -44,7 +44,7 @@ TEST(is_constructible, Test4) {
 
     struct Foo {};
 
-    static_assert(!is_constructible<Foo&, Foo>::value, "expected false");
+    static_assert(!std::is_constructible<Foo&, Foo>::value, "expected false");
 
     static_assert(is_constructible<Foo&, Foo&>::value, "expected true");
 
@@ -192,16 +192,18 @@ TEST(utils, Test1) {
     using lvalue_cast_1 = add_lvalue_reference_t<int>;
     using lvalue_cast_2 = add_lvalue_reference_t<int&>;
     using lvalue_cast_3 = add_lvalue_reference_t<int&&>;
-    ASSERT_TRUE(std::is_lvalue_reference_v<lvalue_cast_1>);
-    ASSERT_TRUE(std::is_lvalue_reference_v<lvalue_cast_2>);
-    ASSERT_TRUE(std::is_lvalue_reference_v<lvalue_cast_3>);
+
+    static_assert(std::is_lvalue_reference_v<lvalue_cast_1>);
+    static_assert(std::is_lvalue_reference_v<lvalue_cast_2>);
+    static_assert(std::is_lvalue_reference_v<lvalue_cast_3>);
 }
 
 TEST(utils, Test2) {
     using rvalue_cast_1 = add_rvalue_reference_t<int>;
     using rvalue_cast_2 = add_rvalue_reference_t<int&>;
     using rvalue_cast_3 = add_rvalue_reference_t<int&&>;
-    ASSERT_TRUE(std::is_rvalue_reference_v<rvalue_cast_1>);
-    ASSERT_TRUE(std::is_lvalue_reference_v<rvalue_cast_2>);
-    ASSERT_TRUE(std::is_rvalue_reference_v<rvalue_cast_3>);
+
+    static_assert(std::is_rvalue_reference_v<rvalue_cast_1>);
+    static_assert(std::is_lvalue_reference_v<rvalue_cast_2>);
+    static_assert(std::is_rvalue_reference_v<rvalue_cast_3>);
 }
