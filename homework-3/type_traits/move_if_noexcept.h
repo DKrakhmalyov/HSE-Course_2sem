@@ -6,16 +6,11 @@
 #include "is_nothrow_move_constructible.h"
 #include "utility.h"
 
-// conditional
-template<bool condition, typename T, typename F>
-struct conditional {
-    ...
-};
-
-// conditional - partial specialization
-...
-
-template<bool condition, typename T, typename F>
-using conditional_v = ...
-
-// move_if_noexcept
+template<typename T>
+decltype(auto) move_if_noexcept(T&& value)
+{
+    if constexpr (is_nothrow_move_constructible<decay_t<T>>::value)
+        return std::move(std::forward<T>(value));
+    else
+        return std::forward<T>(value);
+}
