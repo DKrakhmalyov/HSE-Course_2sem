@@ -1,4 +1,4 @@
-# pragma once
+#pragma once
 
 #include <type_traits>
 
@@ -6,16 +6,12 @@
 #include "is_nothrow_move_constructible.h"
 #include "utility.h"
 
-// conditional
-template<bool condition, typename T, typename F>
-struct conditional {
-    ...
-};
+template<typename T>
+decltype(auto) move_if_noexcept(T &&value) {
+  using unveil = uncvref_t<T>;
+  using lvalueRef = add_lvalue_reference_t<unveil>;
+  using rvalueRef = add_rvalue_reference_t<unveil>;
 
-// conditional - partial specialization
-...
-
-template<bool condition, typename T, typename F>
-using conditional_v = ...
-
-// move_if_noexcept
+  constexpr auto condition = !is_nothrow_move_constructible<unveil>();
+  return static_cast<conditional_t<condition, lvalueRef, rvalueRef>>(value);
+}
