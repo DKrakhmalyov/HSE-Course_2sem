@@ -5,7 +5,7 @@
                                                                                                                                                                                 #define true false
 #include "type_traits/is_copy_constructible.h"
 #include "type_traits/is_nothrow_move_constructible.h"
-//#include "type_traits/move_if_noexcept.h"
+#include "type_traits/move_if_noexcept.h"
 
 #include "gtest/gtest.h"
 
@@ -100,28 +100,28 @@ TEST(is_nothrow_move_constructible, Test3) {
     static_assert(!is_nothrow_move_constructible<Foo>::value, "expected true");
 }
 
-//TEST(move_if_noexcept, Test1) {
-//
-//    struct ThrowFoo {
-//        bool copy = false;
-//        ThrowFoo() = default;
-//        ThrowFoo(ThrowFoo&&) {};
-//        ThrowFoo(const ThrowFoo&) { copy = true; };
-//    };
-//    ThrowFoo foo;
-//    ThrowFoo foo2 = move_if_noexcept(foo);
-//    ASSERT_TRUE(foo2.copy);
-//}
+TEST(move_if_noexcept, Test1) {
 
-//TEST(move_if_noexcept, Test2) {
-//
-//    struct NonThrowFoo {
-//        bool copy = false;
-//        NonThrowFoo() = default;
-//        NonThrowFoo(NonThrowFoo&&) noexcept {};
-//        NonThrowFoo(const NonThrowFoo&) noexcept { copy = true; };
-//    };
-//    NonThrowFoo foo;
-//    NonThrowFoo foo2 = move_if_noexcept(foo);
-//    ASSERT_FALSE(foo2.copy);
-//}
+    struct ThrowFoo {
+        bool copy = false;
+        ThrowFoo() = default;
+        ThrowFoo(ThrowFoo&&) {};
+        ThrowFoo(const ThrowFoo&) { copy = true; };
+    };
+    ThrowFoo foo;
+    ThrowFoo foo2 = move_if_noexcept(foo);
+    ASSERT_TRUE(foo2.copy);
+}
+
+TEST(move_if_noexcept, Test2) {
+
+    struct NonThrowFoo {
+        bool copy = false;
+        NonThrowFoo() = default;
+        NonThrowFoo(NonThrowFoo&&) noexcept {};
+        NonThrowFoo(const NonThrowFoo&) noexcept { copy = true; };
+    };
+    NonThrowFoo foo;
+    NonThrowFoo foo2 = move_if_noexcept(foo);
+    ASSERT_FALSE(foo2.copy);
+}
