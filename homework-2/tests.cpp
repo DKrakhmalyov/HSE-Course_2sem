@@ -8,16 +8,27 @@
 #include <vector>
 #include <array>
 
-class A{
+class A {
 public:
     A() = delete;
-    A(const A&) = delete;
-    A& operator=(const A&) = delete;
 
-    A(A&& obj) {};
-    A& operator=(A&& obj) {};
+    A(const A &) = delete;
 
-    A(std::vector<int>&& vec, int&& a, std::array<int, 5>&& b){}
+    A &operator=(const A &) = delete;
+
+    A(A &&obj) {};
+
+    A &operator=(A &&obj) {};
+
+    A(std::vector<int> &&vec, int &&a, std::array<int, 5> &&b) {}
+};
+
+struct B {
+    B(int n) : num(n) {}
+
+    int getNum() { return num; };
+private:
+    int num;
 };
 
 struct B {
@@ -36,7 +47,7 @@ TEST(static_array, Creating2) {
     static_array<A, 10> st;
 }
 
-TEST(static_array, CountElem){
+TEST(static_array, CountElem) {
     static_array<int> st(10);
     st.emplace(1, 13);
     st.emplace(4, 199);
@@ -47,42 +58,48 @@ TEST(static_array, CountElem){
     EXPECT_EQ(st.current_size(), 0);
 }
 
-TEST(static_array, GetElem){
+TEST(static_array, GetElem) {
     static_array<int> st(10);
     st.emplace(1, 13);
     st.emplace(4, 199);
     EXPECT_EQ(st.at(4), 199);
-    try
-    {
+    try {
         st.at(8);
     }
-    catch(...)
-    {
+    catch (...) {
         EXPECT_EQ(2, 2);
     }
 }
 
-TEST(static_array, complexClass){
-    static_array<A, 10> st(10);
-    A tst({1,2,3}, 10, std::array<int, 5>({1,2,3,4,5}));
+TEST(static_array, complexClass) {
+    static_array<A, 10> st;
+    A tst({1, 2, 3}, 10, std::array<int, 5>({1, 2, 3, 4, 5}));
     st.emplace(1, std::move(tst));
-    st.emplace(2,{ {1,2,3}, 8, {1,2,3,4,5}});
+    st.emplace(2, {{1, 2, 3}, 8, {1, 2, 3, 4, 5}});
 
-    std::vector<int> vec = {2,2,2,2,2};
-    std::array<int, 5> arr = {2,2,2,2,2};
+    std::vector<int> vec = {2, 2, 2, 2, 2};
+    std::array<int, 5> arr = {2, 2, 2, 2, 2};
     int i = 10;
     st.emplace(4, std::move(vec), std::move(i), std::move(arr));
 
     EXPECT_EQ(st.current_size(), 3);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8f105d4a91102d0853c68cd292f650f558295612
 TEST(static_array, iterator) {
 
     static_array<int, 10> st;
     static_array<int, 10>::iterator it1 = st.emplace(1, 13);
     auto it2 = st.emplace(4, 199);
     st.erase(it2);
+<<<<<<< HEAD
     EXPECT_EQ(st.current_size(), 1);
+=======
+    EXPECT_EQ(st.size(), 1);
+>>>>>>> 8f105d4a91102d0853c68cd292f650f558295612
     EXPECT_EQ(*it1, 13);
 }
 
@@ -103,11 +120,20 @@ TEST(static_array, iteratorsfunc) {
         st.emplace(i, B(i * 3));
     auto it = st.end();
     for (int i = 9; i >= 0; i -= 3) {
+<<<<<<< HEAD
         --it;
         EXPECT_EQ(it->getNum(), i * 3);
     }
 }
 
+=======
+        EXPECT_EQ(it->getNum(), i * 3);
+        --it;
+    }
+}
+
+
+>>>>>>> 8f105d4a91102d0853c68cd292f650f558295612
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
