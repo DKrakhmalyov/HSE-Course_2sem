@@ -1,7 +1,6 @@
 # pragma once
 
 #include <type_traits>
-#include <utility>
 
 #include "is_copy_constructible.h"
 #include "is_nothrow_move_constructible.h"
