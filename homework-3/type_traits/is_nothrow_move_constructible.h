@@ -16,8 +16,6 @@ struct is_nothrow_constructible_impl : std::conjunction<
 > {
 };
 
-// is_nothrow_constructible_impl - partial specializations
-
 
 template<typename T, typename... Args>
 struct is_nothrow_constructible : is_nothrow_constructible_impl<

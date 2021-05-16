@@ -4,27 +4,6 @@
 
 #include "utility.h"
 
-//template<typename Derived, typename Base>
-//struct is_invalid_base_to_derived_cast {
-//    static_assert(std::is_reference<Derived>::value, "Wrong specialization");
-//    using _RawFrom = uncvref_t<Base>;
-//    using _RawTo = uncvref_t<Derived>;
-//    static const bool value = std::conjunction<
-//            std::negation<std::is_same<_RawFrom, _RawTo>>,
-//            std::is_base_of<_RawFrom, _RawTo>,
-//            std::negation<is_constructible<_RawTo, Derived>>
-//    >::value; //wtf is this i dont know
-//};
-//
-//template<typename To, typename From>
-//struct is_invalid_lvalue_to_rvalue_cast : std::false_type {
-//    ...
-//};
-//
-//template<typename RefTo, typename RefFrom>
-//struct is_invalid_lvalue_to_rvalue_cast<RefTo &&, RefFrom &> {
-//    ...
-//};
 
 struct is_constructible_helper {
     template<typename T>
