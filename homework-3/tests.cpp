@@ -96,8 +96,7 @@ TEST(is_nothrow_move_constructible, Test3) {
     struct Foo {
         Foo(const Foo&) {}
     };
-
-    static_assert(!is_nothrow_move_constructible<Foo>::value, "expected true");
+    static_assert(!is_nothrow_move_constructible<Foo>::value, "expected false");
 }
 
 TEST(move_if_noexcept, Test1) {
@@ -122,6 +121,6 @@ TEST(move_if_noexcept, Test2) {
         NonThrowFoo(const NonThrowFoo&) noexcept { copy = true; };
     };
     NonThrowFoo foo;
-    NonThrowFoo foo2 = move_if_noexcept(foo); 
+    NonThrowFoo foo2 = move_if_noexcept<NonThrowFoo>(foo);
     ASSERT_FALSE(foo2.copy);
 }
