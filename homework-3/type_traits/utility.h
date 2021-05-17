@@ -74,3 +74,7 @@ struct conditional<false, T, F> {
 
 template<bool condition, typename T, typename F>
 using conditional_t = typename conditional<condition, T, F>::type;
+
+
+template<typename... Ts> 
+using void_t = void;
