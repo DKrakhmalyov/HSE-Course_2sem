@@ -4,38 +4,32 @@
 
 #include "utility.h"
 
-template<typename T, typename... Args>
-struct is_constructible_impl;
 
-template<typename Derived, typename Base>
-struct is_invalid_base_to_derived_cast {
-   ...
+
+
+
+
+template<typename C, typename... Args>
+struct is_constructible {
+private:
+    template<typename...>
+    static char f(...) {return 0;};
+
+    template<typename T, typename... kwArgs>
+    static decltype(T(declval<kwArgs>()... ), int()) f(int) {return 0;};
+
+
+public:
+    static const bool value = sizeof(f<C, Args...>(1337)) == sizeof(int);
+
+
 };
+template<typename T>
+struct is_copy_constructible : is_constructible<T, add_lvalue_reference_t<add_const_t<T>>> {
 
-template<typename To, typename From>
-struct is_invalid_lvalue_to_rvalue_cast : std::false_type {
-    ...
 };
-
-template<typename RefTo, typename RefFrom>
-struct is_invalid_lvalue_to_rvalue_cast<RefTo&&, RefFrom&> {
-    ...
-};
-
-struct is_constructible_helper {
-    ...
-};
-
-template<typename T, typename... Args>
-struct is_constructible_impl {
-    ...
-};
-
-// is_constructible_impl - partial specializations
-...
-
-template<typename T, typename... Args>
-struct is_constructible {...};
 
 template<typename T>
-struct is_copy_constructible {...};
+struct is_constructible<T &&, T &> : std::false_type {
+};
+
