@@ -26,10 +26,10 @@ template<typename T, typename Arg>
 struct is_constructible<T&&, Arg> : decltype(details::try_ref_construct<T&&>(declval<Arg>())) {};
 
 template<typename T, typename ...Args>
-using is_constructible_v = typename is_constructible<T, Args...>::value;
+inline constexpr bool is_constructible_v = typename is_constructible<T, Args...>::value;
 
 template<typename T>
 struct is_copy_constructible : is_constructible<T, add_lvalue_reference_t<T>> {};
 
 template<typename T>
-using is_copy_constructible_v = typename is_copy_constructible<T>::value;
+inline constexpr bool is_copy_constructible_v = typename is_copy_constructible<T>::value;

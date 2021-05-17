@@ -27,10 +27,10 @@ template<typename T, typename Arg>
 struct is_nothrow_constructible<T&&, Arg> : decltype(details::try_ref_nothrow_construct<T&&>(declval<Arg>())) {};
 
 template<typename T, typename ...Args>
-using is_nothrow_constructible_v = typename is_nothrow_constructible<T, Args...>::value;
+inline constexpr bool is_nothrow_constructible_v = typename is_nothrow_constructible<T, Args...>::value;
 
 template<typename T>
 struct is_nothrow_move_constructible : is_nothrow_constructible<T, add_rvalue_reference_t<T>> {};
 
 template<typename T>
-using is_nothrow_move_constructible_v = typename is_nothrow_move_constructible<T>::value;
+inline constexpr bool is_nothrow_move_constructible_v = typename is_nothrow_move_constructible<T>::value;
