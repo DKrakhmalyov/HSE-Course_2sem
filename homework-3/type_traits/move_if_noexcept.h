@@ -6,16 +6,24 @@
 #include "is_nothrow_move_constructible.h"
 #include "utility.h"
 
-// conditional
 template<bool condition, typename T, typename F>
 struct conditional {
-    ...
 };
 
-// conditional - partial specialization
-...
+template<typename T, typename F>
+struct conditional<true, T, F> {
+    using type = F;
+};
+
+template<typename T, typename F>
+struct conditional<false, T, F> {
+    using type = T;
+};
 
 template<bool condition, typename T, typename F>
-using conditional_v = ...
+using conditional_v = typename conditional<condition, T, F>::type;
 
-// move_if_noexcept
+template<typename T>
+conditional_v<is_nothrow_move_constructible<T>::value, uncvref_t<T>&, uncvref_t<T>&&> move_if_noexcept(T& arg){
+    return static_cast<conditional_v<is_nothrow_move_constructible<T>::value, uncvref_t<T>&, uncvref_t<T>&&>>(arg);
+}
