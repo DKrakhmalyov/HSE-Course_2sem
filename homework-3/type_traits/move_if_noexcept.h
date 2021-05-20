@@ -29,4 +29,7 @@ constexpr typename conditional<
         std::conjunction_v<std::negation<is_nothrow_move_constructible<T>>,  is_copy_constructible<T>>,
         const T&,
         T&&
->::type move_if_noexcept(T& x) noexcept;
+>::type move_if_noexcept(T& x) noexcept { return (typename conditional<
+            std::conjunction_v<std::negation<is_nothrow_move_constructible<T>>,  is_copy_constructible<T>>,
+            const T&,
+            T&&>::type) x; };

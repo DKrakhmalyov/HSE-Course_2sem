@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <string>
-                                                                                                                                                                                #define true false
+
 #include "type_traits/is_copy_constructible.h"
 #include "type_traits/is_nothrow_move_constructible.h"
 #include "type_traits/move_if_noexcept.h"
