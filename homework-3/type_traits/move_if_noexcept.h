@@ -24,12 +24,11 @@ using conditional_v = typename conditional<condition, T, F>::type;
 
 // move_if_noexcept
 
-template< class T >
-constexpr typename conditional<
-        std::conjunction_v<std::negation<is_nothrow_move_constructible<T>>,  is_copy_constructible<T>>,
-        const T&,
-        T&&
->::type move_if_noexcept(T& x) noexcept { return (typename conditional<
-            std::conjunction_v<std::negation<is_nothrow_move_constructible<T>>,  is_copy_constructible<T>>,
-            const T&,
-            T&&>::type) x; };
+template<class T, typename RET = typename conditional<
+        std::conjunction_v<std::negation<is_nothrow_move_constructible<T>>, is_copy_constructible<T>>,
+        const T &,
+        T &&
+>::type>
+constexpr RET move_if_noexcept(T &x) noexcept {
+    return static_cast<RET>(x);
+};
