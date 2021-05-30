@@ -1,7 +1,6 @@
 # pragma once
 
 #include <type_traits>
-
 #include "utility.h"
 
 template<typename To, typename From>

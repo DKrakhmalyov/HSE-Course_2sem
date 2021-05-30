@@ -1,7 +1,6 @@
 #pragma once 
 
 #include <type_traits>
-
 #include "is_copy_constructible.h"
 #include "utility.h"
 
