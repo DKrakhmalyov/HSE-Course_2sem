@@ -29,6 +29,6 @@ template<typename T>
 using actual_move_if_noexcept_t = typename actual_move_if_noexcept<T>::type;
 
 template<typename T>
-actual_move_if_noexcept_t<T> move_if_noexcept(T&& x) {
+actual_move_if_noexcept_t<T> move_if_noexcept(T& x) {
     return static_cast<actual_move_if_noexcept_t<T>>(x);
 }
