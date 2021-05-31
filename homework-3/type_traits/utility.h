@@ -55,7 +55,9 @@ template<typename T>
 using add_const_t = const T;
 
 template<typename T>
-using add_lvalue_reference_t = T&;
+using add_rvalue_reference_t = T&&;
 
 template<typename T>
-using add_rvalue_reference_t = T&&;
+using add_lvalue_reference_t = T&;
+
+
