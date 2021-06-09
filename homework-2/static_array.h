@@ -60,9 +60,9 @@ public:
         }
 
         iterator& operator--() {
-            while (true) {
+            while (element_ind != 0) {
                 element_ind--;
-                if (element_ind < 0 || element->arr_used[element_ind]) {
+                if(element->arr_used[element_ind]) {
                     break;
                 }
             }
@@ -176,6 +176,12 @@ public:
         iterator it;
         it.element = this;
         it.element_ind = arr_size;
+        while(true) {
+            it.element_ind--;
+            if (it.element_ind < 0 || arr_used[it.element_ind]) {
+                break;
+            }
+        }
         it.max_size = arr_size;
         return it;
     }

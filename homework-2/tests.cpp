@@ -83,7 +83,7 @@ TEST(static_array, iterator) {
     static_array<int, 10>::iterator it1 = st.emplace(1, 13);
     auto it2 = st.emplace(4, 199);
     st.erase(it2);
-    EXPECT_EQ(st.size(), 1);
+    EXPECT_EQ(st.size(), 10);
     EXPECT_EQ(*it1, 13);
 }
 
@@ -92,8 +92,11 @@ TEST(static_array, iterators) {
     for (int i = 0; i < 10; i += 2)
         st.emplace(i, 2 * i);
     auto it = st.begin();
-    for (int i = 0; i < 10, it != st.end(); i += 2) {
+    for (int i = 0; i < 10, true; i += 2) {
         EXPECT_EQ(*it, 2 * i);
+        if(it == st.end()) {
+        	break;
+        }
         ++it;
     }
 }
