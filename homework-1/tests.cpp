@@ -102,6 +102,8 @@ TEST(PtrsGraph, Cycled) {
     ptrGr->GetPrevVertices(third, res2);
     EXPECT_EQ(res2.size(), 1);
 
+    // Возможно, лучше не удалять объекты вершин, а передавать владение сразу графу
+    // Решите точно в реализации и удалите строки, если что
     delete first;
     delete second;
     delete third;

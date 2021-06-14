@@ -7,6 +7,18 @@
 #include <vector>
 #include <array>
 
+
+
+
+
+#include "static_array.cpp"
+
+
+
+
+
+
+
 class A {
 public:
     A() = delete;
@@ -83,7 +95,7 @@ TEST(static_array, iterator) {
     static_array<int, 10>::iterator it1 = st.emplace(1, 13);
     auto it2 = st.emplace(4, 199);
     st.erase(it2);
-    EXPECT_EQ(st.size(), 1);
+    EXPECT_EQ(st.current_size(), 1);
     EXPECT_EQ(*it1, 13);
 }
 
@@ -104,8 +116,8 @@ TEST(static_array, iteratorsfunc) {
         st.emplace(i, B(i * 3));
     auto it = st.end();
     for (int i = 9; i >= 0; i -= 3) {
-        EXPECT_EQ(it->getNum(), i * 3);
         --it;
+        EXPECT_EQ(it->getNum(), i * 3);
     }
 }
 
