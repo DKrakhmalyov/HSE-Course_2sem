@@ -6,16 +6,7 @@
 #include "is_nothrow_move_constructible.h"
 #include "utility.h"
 
-// conditional
-template<bool condition, typename T, typename F>
-struct conditional {
-    ...
-};
-
-// conditional - partial specialization
-...
-
-template<bool condition, typename T, typename F>
-using conditional_v = ...
-
-// move_if_noexcept
+template<typename T>
+decltype(auto) move_if_noexcept(T&& value) {
+    return static_cast<conditional_t<is_nothrow_move_constructible<uncvref_t<T>>::value, uncvref_t<T>&&, uncvref_t<T>&>>(value);
+}
