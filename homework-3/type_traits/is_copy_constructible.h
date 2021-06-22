@@ -44,5 +44,5 @@ struct is_constructible {
 
 template<typename T>
 struct is_copy_constructible { 
-	constexpr static bool value = is_constructable<T, T>::value;
+	constexpr static bool value = is_constructible<T, T>::value;
 };
